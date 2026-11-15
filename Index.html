@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trainer Support Survey</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>Rate Your Trainer</h1>
+    <p class="sub">Please choose the trainer who supported you today.</p>
+
+    <div id="trainer-grid" class="trainer-grid"></div>
+
+    <form id="eval-form" hidden>
+      <div class="selected-trainer" id="selected-trainer">
+        <img id="sel-photo" alt="" />
+        <span id="sel-name"></span>
+        <button type="button" id="change-trainer">Change</button>
+      </div>
+
+      <fieldset>
+        <legend>How was the support you received?</legend>
+        <label class="opt"><input type="radio" name="rating" value="Excellent" required /> Excellent</label>
+        <label class="opt"><input type="radio" name="rating" value="Good" /> Good</label>
+        <label class="opt"><input type="radio" name="rating" value="Average" /> Average</label>
+        <label class="opt"><input type="radio" name="rating" value="Needs Improvement" /> Needs Improvement</label>
+        <label class="opt"><input type="radio" name="rating" value="Poor" /> Poor</label>
+      </fieldset>
+
+      <label>
+        Comment (optional)
+        <textarea id="comment" rows="3"></textarea>
+      </label>
+
+      <button type="submit" id="submit-btn">Submit</button>
+      <p id="msg" class="msg"></p>
+    </form>
+  </main>
+
+  <script>
+    const ENDPOINT = 'PASTE_YOUR_WEB_APP_URL_HERE';
+    let current = null;
+
+    // Load trainers
+    fetch('trainers.json').then(r => r.json()).then(list => {
+      const grid = document.getElementById('trainer-grid');
+      list.forEach(t => {
+        const el = document.createElement('button');
+        el.type = 'button';
+        el.className = 'trainer-card';
+        el.innerHTML = `
+          <img src="${t.photo}" alt="${t.name}" />
+          <span>${t.name}</span>`;
+        el.addEventListener('click', () => select(t));
+        grid.appendChild(el);
+      });
+    });
+
+    function select(t) {
+      current = t;
+      document.getElementById('sel-photo').src = t.photo;
+      document.getElementById('sel-name').textContent = t.name;
+      document.getElementById('trainer-grid').hidden = true;
+      document.getElementById('eval-form').hidden = false;
+    }
+
+    document.getElementById('change-trainer').addEventListener('click', () => {
+      current = null;
+      document.getElementById('eval-form').hidden = true;
+      document.getElementById('trainer-grid').hidden = false;
+      document.getElementById('eval-form').reset();
+      document.getElementById('msg').textContent = '';
+    });
+
+    document.getElementById('eval-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const msg = document.getElementById('msg');
+      btn.disabled = true; msg.textContent = 'Submitting…';
+
+      const payload = {
+        trainer: current.id,
+        rating: document.querySelector('input[name="rating"]:checked').value,
+        comment: document.getElementById('comment').value.trim()
+      };
+
+      try {
+        const res = await fetch(ENDPOINT, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        msg.textContent = data.ok
+          ? `Thank you for rating ${current.name}!`
+          : (data.error || 'Something went wrong.');
+        if (data.ok) {
+          e.target.reset();
+          setTimeout(() => {
+            current = null;
+            document.getElementById('eval-form').hidden = true;
+            document.getElementById('trainer-grid').hidden = false;
+            msg.textContent = '';
+          }, 1500);
+        }
+      } catch {
+        msg.textContent = 'Network error — please try again.';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
