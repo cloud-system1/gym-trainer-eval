@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Trainer Performance Scoreboard</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <main class="card wide">
+    <h1>Instructor Performance Evaluation</h1>
+    <p class="sub">Marking: Excellent = 3 · Good = 2 · Average = 1 · Needs Improvement = 0 · Poor = -1</p>
+    <table id="scoreboard">
+      <thead>
+        <tr>
+          <th>Rank</th><th>Instructor</th><th>Clients</th><th>Marks</th>
+          <th>Excellent</th><th>Good</th><th>Average</th>
+          <th>Needs Improvement</th><th>Poor</th>
+          <th>Overall</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </main>
+  <script>
+    const ENDPOINT = 'PASTE_YOUR_WEB_APP_URL_HERE';
+    fetch('trainers.json').then(r => r.json()).then(trainers => {
+      const byId = Object.fromEntries(trainers.map(t => [t.id, t]));
+
+      fetch(ENDPOINT).then(r => r.json()).then(({ ok, data }) => {
+        if (!ok) return;
+        const tbody = document.querySelector('#scoreboard tbody');
+        data.forEach(t => {
+          const info = byId[t.trainer_id] || { name: t.trainer_id, photo: '' };
+          const perc = k => t.clients ? ((t[k] / t.clients) * 100).toFixed(1) : '0.0';
+          tbody.insertAdjacentHTML('beforeend', `
+            <tr>
+              <td>${t.rank}</td>
+              <td><div class="name-cell">
+                <img src="${info.photo}" alt="" width="32" height="32" style="border-radius:50%;object-fit:cover">
+                ${info.name}</div></td>
+              <td>${t.clients}</td>
+              <td><strong>${t.marks}</strong></td>
+              <td>${t.Excellent} <small>(${perc('Excellent')}%)</small></td>
+              <td>${t.Good} <small>(${perc('Good')}%)</small></td>
+              <td>${t.Average} <small>(${perc('Average')}%)</small></td>
+              <td>${t['Needs Improvement']} <small>(${perc('Needs Improvement')}%)</small></td>
+              <td>${t.Poor} <small>(${perc('Poor')}%)</small></td>
+              <td>${pie(t)}</td>
+            </tr>`);
+        });
+      });
+    });
+
+    function pie(t) {
+      if (!t.clients) return '';
+      const colors = { Excellent:'#4caf50', Good:'#2196f3', Average:'#ffc107',
+                       'Needs Improvement':'#e91e63', Poor:'#9e9e9e' };
+      let a = 0, stops = [];
+      for (const [k, c] of Object.entries(colors)) {
+        if (!t[k]) continue;
+        const pct = (t[k] / t.clients) * 100;
+        stops.push(`${c} ${a}% ${a + pct}%`);
+        a += pct;
+      }
+      return `<div class="pie" style="background:conic-gradient(${stops.join(',')})"></div>`;
+    }
+  </script>
+</body>
+</html>
