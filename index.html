@@ -98,7 +98,7 @@
       });
 
       // Check if URL is pasted
-      if (ENDPOINT === 'https://script.google.com/macros/s/AKfycbwvt7yo09az27RbZ5-1Z4-8Pz9MyETXFvUWEs7s5h4tkVZnMaUozhYb3H6Yz8Ry0-og/exec') {
+      if (ENDPOINT === 'https://script.google.com/macros/library/d/1-YaGwqmTR8d2gHCudh1yXLAj4kUai0rrJBGFHOKPFbqT9dLrlIInfNrT/3') {
         msg.textContent = 'Test Mode: Please paste your Google Script URL in the code.';
         btn.disabled = false;
         return;
@@ -106,10 +106,10 @@
 
               try {
   await fetch(ENDPOINT, { 
-    method: 'POST', 
-    mode: 'no-cors', // This bypasses the CORS preflight check
-    body: JSON.stringify(payload) 
-  });
+  method: 'POST', 
+  mode: 'no-cors', 
+  body: JSON.stringify(payload) 
+});
   
   // Since we used 'no-cors', we can't read Google's response.
   // We just assume it worked and reset the form.
