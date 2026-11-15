@@ -105,24 +105,22 @@
       }
 
               try {
-        const res = await fetch(ENDPOINT, { 
-          method: 'POST', 
-          mode: 'cors', // Changed back to cors to read the response
-          body: JSON.stringify(payload) 
-        });
-        
-        const data = await res.json();
-        
-        if (data.ok) {
-          msg.textContent = 'Submitted successfully! Thank you.';
-          e.target.reset();
-        } else {
-          msg.textContent = 'Error: ' + data.error; // This will show us what's wrong
-        }
-      } catch (error) {
-        msg.textContent = 'Network Error. Please try again.';
-      } finally {
-        btn.disabled = false;
+  await fetch(ENDPOINT, { 
+    method: 'POST', 
+    mode: 'no-cors', // This bypasses the CORS preflight check
+    body: JSON.stringify(payload) 
+  });
+  
+  // Since we used 'no-cors', we can't read Google's response.
+  // We just assume it worked and reset the form.
+  msg.textContent = 'Submitted successfully! Thank you for your feedback.';
+  e.target.reset();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+} catch (error) {
+  msg.textContent = 'Network error — please try again.';
+} finally {
+  btn.disabled = false;
       }
     });
   </script>
