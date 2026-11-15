@@ -1,0 +1,89 @@
+:root { --green:#8bc34a; --dark:#1f4e1a; }
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: #f4f6f3; color: #1c2b1a;
+  display: flex; justify-content: center; padding: 24px;
+}
+.card {
+  background: #fff; border-radius: 14px; padding: 28px;
+  box-shadow: 0 6px 24px rgba(0,0,0,.08);
+  max-width: 520px; width: 100%;
+}
+.card.wide { max-width: 1100px; }
+h1 { font-size: 1.4rem; color: var(--dark); margin: 0 0 8px; }
+.sub { color: #4b5a48; font-size: .9rem; margin-bottom: 20px; }
+
+/* trainer picker */
+.trainer-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+}
+.trainer-card {
+  background: #f7faf5; border: 1px solid #d8e0d4; border-radius: 12px;
+  padding: 12px; cursor: pointer; display: flex; flex-direction: column;
+  align-items: center; gap: 8px; font-weight: 600; color: var(--dark);
+  transition: transform .1s ease, box-shadow .1s ease;
+}
+.trainer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  border-color: var(--green);
+}
+.trainer-card img {
+  width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+}
+
+/* selected trainer */
+.selected-trainer {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 12px; background: #eaf6e3; border-radius: 10px;
+  margin-bottom: 16px;
+}
+.selected-trainer img {
+  width: 44px; height: 44px; border-radius: 50%; object-fit: cover;
+}
+.selected-trainer span { flex: 1; font-weight: 700; color: var(--dark); }
+.selected-trainer button {
+  background: transparent; border: 1px solid var(--green); color: var(--dark);
+  padding: 6px 10px; border-radius: 6px; font-size: .85rem; cursor: pointer;
+}
+
+label { display: block; font-weight: 600; margin: 14px 0 6px; }
+textarea {
+  width: 100%; padding: 10px 12px; border: 1px solid #ccd6c8;
+  border-radius: 8px; font-size: 1rem;
+}
+fieldset { border: none; padding: 0; margin: 16px 0; }
+legend { font-weight: 600; margin-bottom: 8px; }
+.opt {
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+  border: 1px solid #d8e0d4; border-radius: 8px; margin-bottom: 6px;
+  font-weight: 500; cursor: pointer;
+}
+.opt:hover { background: #f4fbf0; }
+button[type="submit"] {
+  margin-top: 16px; width: 100%; padding: 12px;
+  background: var(--green); color: #fff; border: none;
+  border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer;
+}
+button[type="submit"]:disabled { opacity: .6; cursor: not-allowed; }
+.msg { margin-top: 12px; font-size: .9rem; color: #33691e; }
+
+/* scoreboard table */
+table { width: 100%; border-collapse: collapse; font-size: .85rem; }
+th, td { padding: 8px; text-align: left; border-bottom: 1px solid #e3e9df; vertical-align: middle; }
+thead th { background: #e6f2dd; }
+.name-cell { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.pie {
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,.2);
+}
+small { color: #667; font-weight: 400; }
+
+@media (max-width: 600px) {
+  .trainer-grid { grid-template-columns: 1fr 1fr; }
+  table, thead, tbody, th, td, tr { display: block; }
+  thead { display: none; }
+  tr { margin-bottom: 12px; padding: 8px; border: 1px solid #e3e9df; border-radius: 8px; }
+  td::before { content: attr(data-label); font-weight: 600; display: inline-block; width: 130px; }
+}
