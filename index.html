@@ -79,7 +79,7 @@
     });
 
     // 3. Handle Submission
-    // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL BELOW 🚨
+    // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL BELOW (Must end in /exec) 🚨
     const ENDPOINT = 'PASTE_YOUR_WEB_APP_URL_HERE'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
@@ -97,30 +97,31 @@
         payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
       });
 
-      // Check if URL is pasted
-      if (ENDPOINT === 'https://script.google.com/macros/library/d/1-YaGwqmTR8d2gHCudh1yXLAj4kUai0rrJBGFHOKPFbqT9dLrlIInfNrT/4') {
-        msg.textContent = 'Test Mode: Please paste your Google Script URL in the code.';
+      // Safety check: Make sure you replaced the URL
+      if (ENDPOINT === 'https://script.google.com/macros/s/AKfycbwvt7yo09az27RbZ5-1Z4-8Pz9MyETXFvUWEs7s5h4tkVZnMaUozhYb3H6Yz8Ry0-og/exec' || !ENDPOINT.includes('/exec')) {
+        msg.textContent = 'Error: Please paste your correct Google Script URL (ending in /exec) into the code.';
         btn.disabled = false;
         return;
       }
 
-              try {
-  await fetch(ENDPOINT, { 
-  method: 'POST', 
-  mode: 'no-cors', 
-  body: JSON.stringify(payload) 
-});
-  
-  // Since we used 'no-cors', we can't read Google's response.
-  // We just assume it worked and reset the form.
-  msg.textContent = 'Submitted successfully! Thank you for your feedback.';
-  e.target.reset();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+      try {
+        // We use 'no-cors' to bypass Google's strict security block
+        await fetch(ENDPOINT, { 
+          method: 'POST', 
+          mode: 'no-cors', 
+          body: JSON.stringify(payload) 
+        });
+        
+        // Because we used 'no-cors', we can't read Google's reply. 
+        // We assume it worked and show success!
+        msg.textContent = 'Submitted successfully! Thank you for your feedback.';
+        e.target.reset();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
 
-} catch (error) {
-  msg.textContent = 'Network error — please try again.';
-} finally {
-  btn.disabled = false;
+      } catch (error) {
+        msg.textContent = 'Network error — please try again.';
+      } finally {
+        btn.disabled = false;
       }
     });
   </script>
