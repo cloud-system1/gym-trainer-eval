@@ -80,7 +80,7 @@
 
     // 3. Handle Submission
     // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL BELOW (Must end in /exec) 🚨
-    const ENDPOINT = 'PASTE_YOUR_WEB_APP_URL_HERE'; 
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwvt7yo09az27RbZ5-1Z4-8Pz9MyETXFvUWEs7s5h4tkVZnMaUozhYb3H6Yz8Ry0-og/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -98,7 +98,7 @@
       });
 
       // Safety check: Make sure you replaced the URL
-      if (ENDPOINT === 'https://script.google.com/macros/s/AKfycbwvt7yo09az27RbZ5-1Z4-8Pz9MyETXFvUWEs7s5h4tkVZnMaUozhYb3H6Yz8Ry0-og/exec' || !ENDPOINT.includes('/exec')) {
+      if (ENDPOINT === 'PASTE_YOUR_WEB_APP_URL_HERE' || !ENDPOINT.includes('/exec')) {
         msg.textContent = 'Error: Please paste your correct Google Script URL (ending in /exec) into the code.';
         btn.disabled = false;
         return;
