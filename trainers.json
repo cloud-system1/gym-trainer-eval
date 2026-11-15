@@ -1,10 +1,8 @@
 [
-  { "id": "sameera",  "name": "Sameera",  "photo": "assets/trainers/sameera.jpg"  },
-  { "id": "chamindu", "name": "Chamindu", "photo": "assets/trainers/chamindu.jpg" },
-  { "id": "anushka",  "name": "Anushka",  "photo": "assets/trainers/anushka.jpg"  },
-  { "id": "ravija",   "name": "Ravija",   "photo": "assets/trainers/ravija.jpg"   },
-  { "id": "bhagya",   "name": "Bhagya",   "photo": "assets/trainers/bhagya.jpg"   },
-  { "id": "dilshan",  "name": "Dilshan",  "photo": "assets/trainers/dilshan.jpg"  },
-  { "id": "pavani",   "name": "Pavani",   "photo": "assets/trainers/pavani.jpg"   },
-  { "id": "indika",   "name": "Indika",   "photo": "assets/trainers/indika.jpg"   }
+  { "id": "1",  "name": "Sameera",  "photo": "assets/trainers/sameera.png"  },
+  { "id": "2",   "name": "Ravija",   "photo": "assets/trainers/ravija.png"   },
+  { "id": "3",   "name": "Bhagya",   "photo": "assets/trainers/bhagya.png"   },
+  { "id": "4",  "name": "Dilshan",  "photo": "assets/trainers/dilshan.png"  },
+  { "id": "5",   "name": "Pavani",   "photo": "assets/trainers/pavani.png"   },
+  { "id": "6",   "name": "Indika",   "photo": "assets/trainers/indika.png"   }
 ]
