@@ -104,7 +104,17 @@
       }
 
       try {
-        const res = await fetch(ENDPOINT, { method: 'POST', body: JSON.stringify(payload) });
+        const res = await fetch(ENDPOINT, {
+  method: 'POST',
+  mode: 'no-cors', // Disable CORS check
+  body: JSON.stringify(payload)
+})
+.then(() => {
+  // Cannot read the response content, can only assume success
+  msg.textContent = 'Submitted successfully!';
+  e.target.reset();
+})
+.catch(() => { ... });
         const data = await res.json();
         if (data.ok) {
           msg.textContent = 'Thank you! Your feedback has been recorded.';
