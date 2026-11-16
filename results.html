@@ -6,49 +6,64 @@
   <title>Trainer Performance Dashboard</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    /* Dashboard Specific Styles */
-    body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    .dashboard-container { max-width: 1000px; margin: 0 auto; padding: 20px; }
+    /* Dark Theme Overrides for Dashboard */
+    body { 
+      background: var(--bg-gradient); 
+      background-attachment: fixed;
+      color: var(--text-main); 
+    }
     
-    /* Top Metric Cards */
+    .dashboard-container { max-width: 1000px; margin: 0 auto; padding: 20px; margin-top: 100px; }
+    
+    /* Top Metric Cards (Glassmorphism) */
     .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-    .metric-card { background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; }
-    .metric-card h3 { margin: 0; color: #666; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
-    .metric-card .value { font-size: 2rem; font-weight: bold; color: #1c2b1a; margin-top: 10px; }
+    .metric-card { 
+      background: var(--surface); 
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 20px; border-radius: 16px; 
+      box-shadow: var(--shadow-md); text-align: center; 
+    }
+    .metric-card h3 { margin: 0; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
+    .metric-card .value { font-size: 2rem; font-weight: bold; color: var(--green-primary); margin-top: 10px; text-shadow: 0 0 10px var(--green-glow); }
 
     /* Leaderboard Cards */
     .leaderboard { display: flex; flex-direction: column; gap: 20px; }
     .trainer-card { 
-      background: #fff; border-radius: 12px; padding: 20px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
+      background: var(--surface); 
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 20px; padding: 24px; 
+      box-shadow: var(--shadow-md); 
+      transition: transform 0.3s ease;
     }
+    .trainer-card:hover { transform: translateY(-3px); }
     
-    /* Top row of the card: Rank, Photo, Name, Total */
-    .card-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
+    /* Top row of the card */
+    .card-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
     .trainer-info { display: flex; align-items: center; gap: 15px; }
     
     .rank-circle { 
-      width: 35px; height: 35px; border-radius: 50%; background: #e0e0e0; 
-      display: flex; justify-content: center; align-items: center; font-weight: bold; color: #333;
+      width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); 
+      display: flex; justify-content: center; align-items: center; font-weight: bold; color: #fff;
     }
-    .rank-1 { background: #ffd700; color: #000; box-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    .rank-1 { background: #ffd700; color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
     .rank-2 { background: #c0c0c0; color: #000; }
     .rank-3 { background: #cd7f32; color: #fff; }
     
-    .trainer-info img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #eee; }
-    .trainer-info h4 { margin: 0; font-size: 1.3rem; color: #1c2b1a; }
+    .trainer-info img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid var(--green-primary); box-shadow: 0 0 10px var(--green-glow); }
+    .trainer-info h4 { margin: 0; font-size: 1.3rem; color: #fff; }
     
-    /* Fixed spacing for Total Score */
     .total-score { text-align: right; display: flex; align-items: center; gap: 30px; }
-    .total-score .clients-count { font-size: 0.9rem; color: #666; text-align: right; }
+    .total-score .clients-count { font-size: 0.9rem; color: var(--text-muted); }
     .total-score .score-box { text-align: center; }
-    .total-score .score { font-size: 2rem; font-weight: bold; color: #1c2b1a; line-height: 1; }
-    .total-score .label { font-size: 0.8rem; color: #888; text-transform: uppercase; }
+    .total-score .score { font-size: 2.2rem; font-weight: bold; color: #fff; line-height: 1; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
+    .total-score .label { font-size: 0.8rem; color: var(--green-primary); text-transform: uppercase; font-weight: bold; }
 
     /* Detailed Breakdown */
-    .breakdown-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; text-align: center; }
-    .stat-box { padding: 10px; border-radius: 8px; background: #f9f9f9; }
-    .stat-box h5 { margin: 0 0 5px 0; font-size: 0.8rem; color: #555; }
+    .breakdown-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; text-align: center; }
+    .stat-box { padding: 12px; border-radius: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); }
+    .stat-box h5 { margin: 0 0 8px 0; font-size: 0.8rem; color: var(--text-muted); }
     .stat-box .count { font-size: 1.5rem; font-weight: bold; }
     
     /* Colors for specific stats */
@@ -59,6 +74,7 @@
     .stat-poor .count { color: #9e9e9e; }
 
     @media (max-width: 768px) {
+      .dashboard-container { margin-top: 90px; padding: 15px; }
       .card-header { flex-direction: column; align-items: flex-start; gap: 15px; }
       .total-score { text-align: left; width: 100%; justify-content: space-between; }
       .breakdown-grid { grid-template-columns: repeat(2, 1fr); }
@@ -67,12 +83,12 @@
 </head>
 <body>
 
-      <header class="app-header">
-    <!-- 🟢 ADD LOGO HERE -->
-    <img src="logo.png" alt="High Impact Gym" class="brand-logo" style="max-width: 150px; margin-bottom: 15px; filter: drop-shadow(0 0 10px rgba(76, 175, 80, 0.3));">
-    
-    <h1>Instructor Performance Evaluation</h1>
-    <p><strong>Marking Criteria:</strong> Excellent = 3 | Good = 2 | Average = 1 | Needs Improvement = 0 | Poor = -1</p>
+  <header class="app-header" id="main-header">
+    <div class="header-text">
+      <h1>Instructor Performance</h1>
+      <p><strong>Marking Criteria:</strong> Excellent = 3 | Good = 2 | Average = 1 | Needs Improvement = 0 | Poor = -1</p>
+    </div>
+    <img src="logo.png" alt="High Impact Gym" class="header-logo">
   </header>
 
   <main class="dashboard-container">
@@ -101,6 +117,20 @@
   </main>
 
   <script>
+    // 1. HIDE/SHOW HEADER ON SCROLL
+    let lastScrollTop = 0;
+    const header = document.getElementById('main-header');
+    window.addEventListener('scroll', function() {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop && scrollTop > 100) {
+        header.classList.add('header-hidden');
+      } else {
+        header.classList.remove('header-hidden');
+      }
+      lastScrollTop = scrollTop;
+    });
+
+    // 2. FETCH AND DISPLAY DATA
     // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL HERE 🚨
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec';
 
@@ -129,7 +159,7 @@
         const leaderboardDiv = document.getElementById('leaderboard');
         leaderboardDiv.innerHTML = ''; 
 
-        // 1. Update Top Metrics
+        // Update Top Metrics
         const topTrainer = data[0]; 
         document.getElementById('top-trainer').textContent = topTrainer.name;
         document.getElementById('highest-score').textContent = topTrainer.marks;
@@ -138,7 +168,7 @@
         data.forEach(t => totalEvals += t.clients);
         document.getElementById('total-evals').textContent = totalEvals;
 
-        // 2. Build the Leaderboard Cards
+        // Build the Leaderboard Cards
         data.forEach(t => {
           let rankClass = "";
           if (t.rank === 1) rankClass = "rank-1";
@@ -148,7 +178,6 @@
           leaderboardDiv.insertAdjacentHTML('beforeend', `
             <div class="trainer-card">
               
-              <!-- Top Row -->
               <div class="card-header">
                 <div class="trainer-info">
                   <div class="rank-circle ${rankClass}">${t.rank}</div>
@@ -165,7 +194,6 @@
                 </div>
               </div>
 
-              <!-- Detailed Breakdown (No Calculations) -->
               <div class="breakdown-grid">
                 <div class="stat-box stat-excellent">
                   <h5>Excellent</h5>
