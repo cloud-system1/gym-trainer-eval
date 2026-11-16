@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style.css?v=16" /> 
+  <link rel="stylesheet" href="style.css?v=19" /> 
   <style>
     /* 🔒 LOGIN GATE STYLES */
     #login-gate {
@@ -155,7 +155,7 @@
     
     trainers.forEach((t, index) => {
       const card = document.createElement('div');
-      card.className = index === 0 ? 'trainer-card active' : 'trainer-card';
+      card.className = 'trainer-card';
       
       let buttonsHTML = '';
       ratings.forEach((r, i) => {
@@ -168,7 +168,7 @@
         `;
       });
 
-              card.innerHTML = `
+      card.innerHTML = `
         <div class="trainer-header">
           <img src="${t.img}" alt="${t.name}" onerror="this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=90'">
           <h2>
@@ -194,9 +194,7 @@
       if (e.target.type === 'radio') {
         setTimeout(() => {
           if (currentIndex < totalTrainers - 1) {
-            cards[currentIndex].classList.remove('active');
             currentIndex++;
-            cards[currentIndex].classList.add('active');
             container.style.transform = `translateX(-${currentIndex * 100}%)`;
           } else {
             submitArea.classList.add('show-submit');
@@ -206,7 +204,7 @@
     });
 
     // 🚨 PASTE YOUR URL HERE 🚨
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDTsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -227,10 +225,6 @@
       submitArea.classList.remove('show-submit'); 
       
       currentIndex = 0;
-      cards.forEach((card, i) => {
-        if (i === 0) card.classList.add('active');
-        else card.classList.remove('active');
-      });
       container.style.transform = `translateX(0%)`;
 
       setTimeout(() => {
