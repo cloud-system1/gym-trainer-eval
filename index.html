@@ -22,7 +22,7 @@
     <img src="logo.png" alt="High Impact Gym" class="header-logo">
   </header>
 
-  <main class="survey-container">
+  <main class="survey-container" id="scroll-container">
     <form id="survey-form">
       <div id="trainer-cards"></div>
       
@@ -48,25 +48,27 @@
   </div>
 
   <script>
-    // 1. COMBINED SCROLL EFFECTS (Header Hide + Continuous Background Zoom)
+    // 1. SCROLL EFFECTS (Listening to the survey container, not the window)
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     const bgZoom = document.getElementById('bg-zoom');
+    const scrollContainer = document.getElementById('scroll-container');
 
-    window.addEventListener('scroll', function() {
-      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    // We listen to the container scrolling (since overflow-y is on the container)
+    scrollContainer.addEventListener('scroll', function() {
+      let scrollTop = scrollContainer.scrollTop;
       
       // A. Hide/Show Header
-      if (scrollTop > lastScrollTop && scrollTop > 100) {
-        header.classList.add('header-hidden');
+      if (scrollTop > lastScrollTop && scrollTop > 50) {
+        header.classList.add('header-hidden'); // Scroll down -> Hide
       } else {
-        header.classList.remove('header-hidden');
+        header.classList.remove('header-hidden'); // Scroll up -> Show
       }
       lastScrollTop = scrollTop;
 
       // B. Continuous Background Zoom Effect
       if (bgZoom) {
-        let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        let maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight;
         if (maxScroll > 0) {
           let scrollPercent = scrollTop / maxScroll; 
           let scale = 1 + (scrollPercent * 1.5); 
@@ -120,14 +122,13 @@
       container.appendChild(card);
     });
 
-    // 🟢 3. CHECK IF ALL TRAINERS ARE RATED BEFORE SHOWING BUTTON
+    // 3. CHECK IF ALL TRAINERS ARE RATED BEFORE SHOWING BUTTON
     const submitArea = document.getElementById('submit-area');
     const formElement = document.getElementById('survey-form');
 
     formElement.addEventListener('change', () => {
       let answeredCount = 0;
       
-      // Count how many trainers have a rating selected
       trainers.forEach(t => {
         const selected = document.querySelector(`input[name="trainer_${t.id}"]:checked`);
         if (selected) {
@@ -135,7 +136,6 @@
         }
       });
 
-      // Show the button only when all trainers are rated
       if (answeredCount === trainers.length) {
         submitArea.classList.add('show-submit');
       } else {
@@ -143,7 +143,7 @@
       }
     });
 
-    // 4. SUBMIT FORM (INSTANT UI + BACKGROUND SEND)
+    // 4. SUBMIT FORM (5 SECOND POPUP + BACKGROUND SEND)
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
@@ -165,14 +165,15 @@
       
       // Reset the form instantly in the background
       e.target.reset(); 
-      submitArea.classList.remove('show-submit'); // Hide the button again for the next customer
+      submitArea.classList.remove('show-submit'); 
       
-      // Wait 3 seconds while the popup is showing, then hide it and restore the button
+      // 🟢 Wait exactly 5 seconds (5000ms) before hiding the popup
       setTimeout(() => {
         popup.classList.remove('show');
         btn.textContent = 'Complete Evaluation';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 3000);
+        // Scroll back to top smoothly
+        scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 5000); 
 
       // Send data in background
       try {
