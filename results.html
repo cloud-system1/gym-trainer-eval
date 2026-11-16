@@ -4,77 +4,76 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Performance Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=10" />
   <style>
-    /* Dark Theme Overrides for Dashboard */
-    body { 
-      background: var(--bg-gradient); 
-      background-attachment: fixed;
-      color: var(--text-main); 
+    /* Login Gate Styles */
+    #login-gate {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: var(--bg-gradient);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease;
     }
-    
-    .dashboard-container { max-width: 1000px; margin: 0 auto; padding: 20px; margin-top: 100px; }
-    
-    /* Top Metric Cards (Glassmorphism) */
-    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
-    .metric-card { 
-      background: var(--surface); 
+    .login-box {
+      background: var(--surface);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 20px; border-radius: 16px; 
-      box-shadow: var(--shadow-md); text-align: center; 
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: var(--shadow-md);
     }
+    .login-box h2 { color: #fff; margin-top: 0; }
+    .login-box input {
+      width: 100%; padding: 15px; margin: 15px 0;
+      background: rgba(0,0,0,0.3); border: 1px solid var(--green-primary);
+      border-radius: 10px; color: #fff; font-size: 1.1rem; text-align: center;
+      outline: none;
+    }
+    .login-box button {
+      width: 100%; padding: 15px; background: var(--green-primary);
+      color: #fff; border: none; border-radius: 10px; font-size: 1.1rem;
+      font-weight: bold; cursor: pointer; transition: 0.2s;
+    }
+    .login-box button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px var(--green-glow); }
+    .error { color: #ff5252; margin-top: 10px; display: none; font-weight: bold; }
+
+    /* Dashboard Styles */
+    .dashboard-container { max-width: 1000px; margin: 0 auto; padding: 20px; margin-top: 100px; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+    .metric-card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 16px; box-shadow: var(--shadow-md); text-align: center; }
     .metric-card h3 { margin: 0; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
     .metric-card .value { font-size: 2rem; font-weight: bold; color: var(--green-primary); margin-top: 10px; text-shadow: 0 0 10px var(--green-glow); }
-
-    /* Leaderboard Cards */
     .leaderboard { display: flex; flex-direction: column; gap: 20px; }
-    .trainer-card { 
-      background: var(--surface); 
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
-      border-radius: 20px; padding: 24px; 
-      box-shadow: var(--shadow-md); 
-      transition: transform 0.3s ease;
-    }
-    .trainer-card:hover { transform: translateY(-3px); }
-    
-    /* Top row of the card */
+    .trainer-card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-md); }
     .card-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
     .trainer-info { display: flex; align-items: center; gap: 15px; }
-    
-    .rank-circle { 
-      width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); 
-      display: flex; justify-content: center; align-items: center; font-weight: bold; color: #fff;
-    }
+    .rank-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; font-weight: bold; color: #fff; }
     .rank-1 { background: #ffd700; color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
     .rank-2 { background: #c0c0c0; color: #000; }
     .rank-3 { background: #cd7f32; color: #fff; }
-    
     .trainer-info img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid var(--green-primary); box-shadow: 0 0 10px var(--green-glow); }
     .trainer-info h4 { margin: 0; font-size: 1.3rem; color: #fff; }
-    
     .total-score { text-align: right; display: flex; align-items: center; gap: 30px; }
     .total-score .clients-count { font-size: 0.9rem; color: var(--text-muted); }
     .total-score .score-box { text-align: center; }
     .total-score .score { font-size: 2.2rem; font-weight: bold; color: #fff; line-height: 1; text-shadow: 0 0 10px rgba(255,255,255,0.2); }
     .total-score .label { font-size: 0.8rem; color: var(--green-primary); text-transform: uppercase; font-weight: bold; }
-
-    /* Detailed Breakdown */
     .breakdown-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; text-align: center; }
     .stat-box { padding: 12px; border-radius: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.03); }
     .stat-box h5 { margin: 0 0 8px 0; font-size: 0.8rem; color: var(--text-muted); }
     .stat-box .count { font-size: 1.5rem; font-weight: bold; }
-    
-    /* Colors for specific stats */
     .stat-excellent .count { color: #4caf50; }
     .stat-good .count { color: #2196f3; }
     .stat-average .count { color: #ffc107; }
     .stat-needs .count { color: #e91e63; }
     .stat-poor .count { color: #9e9e9e; }
-
     @media (max-width: 768px) {
-      .dashboard-container { margin-top: 90px; padding: 15px; }
       .card-header { flex-direction: column; align-items: flex-start; gap: 15px; }
       .total-score { text-align: left; width: 100%; justify-content: space-between; }
       .breakdown-grid { grid-template-columns: repeat(2, 1fr); }
@@ -83,6 +82,19 @@
 </head>
 <body>
 
+  <!-- 🔒 THE LOGIN GATE -->
+  <div id="login-gate">
+    <div class="login-box">
+      <img src="logo.png" alt="Logo" style="max-width: 100px; margin-bottom: 20px;">
+      <h2>Manager Access Only</h2>
+      <p style="color: #8bb393; font-size: 0.9rem;">Please enter the password to view the dashboard.</p>
+      <input type="password" id="password-input" placeholder="Enter Password">
+      <button onclick="checkPassword()">Unlock Dashboard</button>
+      <p class="error" id="error-msg">Incorrect password. Try again.</p>
+    </div>
+  </div>
+
+  <!-- 📊 THE DASHBOARD (Hidden behind the login gate) -->
   <header class="app-header" id="main-header">
     <div class="header-text">
       <h1>Instructor Performance</h1>
@@ -92,59 +104,70 @@
   </header>
 
   <main class="dashboard-container">
-    
-    <!-- Top Metrics -->
     <div class="metrics-grid" id="top-metrics">
-      <div class="metric-card">
-        <h3>Top Performer</h3>
-        <div class="value" id="top-trainer">Loading...</div>
-      </div>
-      <div class="metric-card">
-        <h3>Total Evaluations</h3>
-        <div class="value" id="total-evals">0</div>
-      </div>
-      <div class="metric-card">
-        <h3>Highest Score</h3>
-        <div class="value" id="highest-score">0</div>
-      </div>
+      <div class="metric-card"><h3>Top Performer</h3><div class="value" id="top-trainer">Loading...</div></div>
+      <div class="metric-card"><h3>Total Evaluations</h3><div class="value" id="total-evals">0</div></div>
+      <div class="metric-card"><h3>Highest Score</h3><div class="value" id="highest-score">0</div></div>
     </div>
-
-    <!-- Leaderboard List -->
     <div class="leaderboard" id="leaderboard">
       <p style="text-align:center;">Loading data...</p>
     </div>
-
   </main>
 
   <script>
-    // 1. HIDE/SHOW HEADER ON SCROLL
+    // 🔒 PASSWORD LOGIC
+    // Change 'highimpact123' to whatever password you want!
+    const SECRET_PASSWORD = "highimpact123"; 
+
+    function checkPassword() {
+      const input = document.getElementById('password-input').value;
+      const gate = document.getElementById('login-gate');
+      const error = document.getElementById('error-msg');
+
+      if (input === SECRET_PASSWORD) {
+        // Hide the gate smoothly
+        gate.style.opacity = '0';
+        setTimeout(() => {
+          gate.style.display = 'none';
+          // Save login to browser so they don't have to type it again today
+          sessionStorage.setItem('isLoggedIn', 'true');
+        }, 500);
+      } else {
+        error.style.display = 'block';
+        document.getElementById('password-input').value = '';
+      }
+    }
+
+    // Check if they already logged in during this session
+    if (sessionStorage.getItem('isLoggedIn') === 'true') {
+      document.getElementById('login-gate').style.display = 'none';
+    }
+
+    // Allow pressing "Enter" to submit password
+    document.getElementById('password-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') checkPassword();
+    });
+
+    // ----------------------------------------------------
+    // THE REST OF YOUR DASHBOARD LOGIC
+    // ----------------------------------------------------
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     window.addEventListener('scroll', function() {
       let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (scrollTop > lastScrollTop && scrollTop > 100) {
-        header.classList.add('header-hidden');
-      } else {
-        header.classList.remove('header-hidden');
-      }
+      if (scrollTop > lastScrollTop && scrollTop > 100) header.classList.add('header-hidden');
+      else header.classList.remove('header-hidden');
       lastScrollTop = scrollTop;
     });
 
-    // 2. FETCH AND DISPLAY DATA
-    // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL HERE 🚨
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec';
 
     const trainerImages = {
-      "Sameera": "assets/trainers/Sameera.png",
-      "Chamindu": "assets/trainers/Chamindu.png",
-      "Kavindu": "assets/trainers/Kavindu.png",
-      "Ravija": "assets/trainers/Navija.png",
-      "Bhagya": "assets/trainers/bhagya.png",
-      "Dilshan": "assets/trainers/Dilshan.png",
-      "Pavani": "assets/trainers/pavani.png",
-      "Thilini": "assets/trainers/Thilini.png",
-      "Hiruka": "assets/trainers/Hiruka.png",
-      "Shalani": "assets/trainers/Shalani.png"
+      "Sameera": "assets/trainers/Sameera.png", "Chamindu": "assets/trainers/Chamindu.png",
+      "Kavindu": "assets/trainers/Kavindu.png", "Ravija": "assets/trainers/Navija.png",
+      "Bhagya": "assets/trainers/bhagya.png", "Dilshan": "assets/trainers/Dilshan.png",
+      "Pavani": "assets/trainers/pavani.png", "Thilini": "assets/trainers/Thilini.png",
+      "Hiruka": "assets/trainers/Hiruka.png", "Shalani": "assets/trainers/Shalani.png"
     };
 
     fetch(ENDPOINT)
@@ -159,7 +182,6 @@
         const leaderboardDiv = document.getElementById('leaderboard');
         leaderboardDiv.innerHTML = ''; 
 
-        // Update Top Metrics
         const topTrainer = data[0]; 
         document.getElementById('top-trainer').textContent = topTrainer.name;
         document.getElementById('highest-score').textContent = topTrainer.marks;
@@ -168,23 +190,17 @@
         data.forEach(t => totalEvals += t.clients);
         document.getElementById('total-evals').textContent = totalEvals;
 
-        // Build the Leaderboard Cards
         data.forEach(t => {
-          let rankClass = "";
-          if (t.rank === 1) rankClass = "rank-1";
-          else if (t.rank === 2) rankClass = "rank-2";
-          else if (t.rank === 3) rankClass = "rank-3";
+          let rankClass = t.rank === 1 ? "rank-1" : (t.rank === 2 ? "rank-2" : (t.rank === 3 ? "rank-3" : ""));
 
           leaderboardDiv.insertAdjacentHTML('beforeend', `
             <div class="trainer-card">
-              
               <div class="card-header">
                 <div class="trainer-info">
                   <div class="rank-circle ${rankClass}">${t.rank}</div>
-                  <img src="${trainerImages[t.name] || ''}" alt="${t.name}" onerror="this.src='https://via.placeholder.com/60?text=?'">
+                  <img src="${trainerImages[t.name] || ''}" alt="${t.name}" onerror="this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=60'">
                   <h4>${t.name}</h4>
                 </div>
-                
                 <div class="total-score">
                   <div class="clients-count">${t.clients} Total Clients</div>
                   <div class="score-box">
@@ -193,30 +209,13 @@
                   </div>
                 </div>
               </div>
-
               <div class="breakdown-grid">
-                <div class="stat-box stat-excellent">
-                  <h5>Excellent</h5>
-                  <div class="count">${t.Excellent}</div>
-                </div>
-                <div class="stat-box stat-good">
-                  <h5>Good</h5>
-                  <div class="count">${t.Good}</div>
-                </div>
-                <div class="stat-box stat-average">
-                  <h5>Average</h5>
-                  <div class="count">${t.Average}</div>
-                </div>
-                <div class="stat-box stat-needs">
-                  <h5>Needs Improve</h5>
-                  <div class="count">${t['Needs Improvement']}</div>
-                </div>
-                <div class="stat-box stat-poor">
-                  <h5>Poor</h5>
-                  <div class="count">${t.Poor}</div>
-                </div>
+                <div class="stat-box stat-excellent"><h5>Excellent</h5><div class="count">${t.Excellent}</div></div>
+                <div class="stat-box stat-good"><h5>Good</h5><div class="count">${t.Good}</div></div>
+                <div class="stat-box stat-average"><h5>Average</h5><div class="count">${t.Average}</div></div>
+                <div class="stat-box stat-needs"><h5>Needs Improve</h5><div class="count">${t['Needs Improvement']}</div></div>
+                <div class="stat-box stat-poor"><h5>Poor</h5><div class="count">${t.Poor}</div></div>
               </div>
-
             </div>
           `);
         });
