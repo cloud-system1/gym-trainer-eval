@@ -20,14 +20,14 @@
 body {
   margin: 0; 
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #050805; /* Base dark color */
+  background-color: #050805;
   color: var(--text-main);
   min-height: 100vh;
   padding-bottom: 80px;
   overflow-x: hidden;
 }
 
-/* 🏋️‍♂️ ANIMATED BACKGROUND */
+/* 🏋️‍♂️ ANIMATED ZOOMING BACKGROUND */
 .bg-container {
   position: fixed;
   top: 0;
@@ -36,27 +36,31 @@ body {
   height: 100vh;
   z-index: -2;
   background: var(--bg-gradient);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* This allows the JS to scale it smoothly */
+  transition: transform 0.1s ease-out; 
 }
 
+/* HUGE Icons */
 .bg-icon {
   position: absolute;
-  color: rgba(76, 175, 80, 0.08); /* Very faint green */
-  font-size: 5rem;
+  color: rgba(76, 175, 80, 0.05); /* Even fainter so it doesn't distract */
   user-select: none;
   pointer-events: none;
-  animation: floatUp 20s linear infinite;
+  animation: floatUp 25s linear infinite;
 }
 
-/* Different speeds and positions for each icon */
-.icon-1 { top: 10%; left: 10%; animation-duration: 25s; font-size: 6rem; }
-.icon-2 { top: 40%; right: 15%; animation-duration: 18s; font-size: 4rem; animation-delay: -5s; }
-.icon-3 { top: 70%; left: 20%; animation-duration: 30s; font-size: 8rem; animation-delay: -10s; }
-.icon-4 { top: 85%; right: 30%; animation-duration: 22s; font-size: 5rem; animation-delay: -2s; }
-.icon-5 { top: 25%; left: 50%; animation-duration: 28s; font-size: 4.5rem; animation-delay: -15s; }
+/* Using vw (viewport width) makes them massive but responsive */
+.icon-1 { top: 5%; left: 5%; font-size: 35vw; animation-duration: 25s; }
+.icon-2 { top: 40%; right: -5%; font-size: 40vw; animation-duration: 30s; animation-delay: -5s; }
+.icon-3 { top: 70%; left: -10%; font-size: 45vw; animation-duration: 35s; animation-delay: -10s; }
+.icon-4 { top: 90%; right: 20%; font-size: 30vw; animation-duration: 20s; animation-delay: -2s; }
 
 @keyframes floatUp {
   0% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-40px) rotate(10deg); }
+  50% { transform: translateY(-30px) rotate(5deg); }
   100% { transform: translateY(0px) rotate(0deg); }
 }
 
@@ -94,7 +98,7 @@ body {
   margin: 120px auto 30px auto; 
   padding: 0 16px; 
   position: relative;
-  z-index: 1; /* Keeps form above background */
+  z-index: 1;
 }
 
 /* Trainer Cards */
