@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style.css?v=13" /> 
+  <link rel="stylesheet" href="style.css?v=14" /> 
   <style>
     /* 🔒 LOGIN GATE STYLES */
     #login-gate {
@@ -157,16 +157,15 @@
       const card = document.createElement('div');
       card.className = index === 0 ? 'trainer-card active' : 'trainer-card';
       
-           let buttonsHTML = '';
+      let buttonsHTML = '';
       ratings.forEach((r, i) => {
         const colorClass = ['btn-excellent', 'btn-good', 'btn-average', 'btn-needs', 'btn-poor'][i];
         buttonsHTML += `
           <label class="rating-btn ${colorClass}">
             <input type="radio" name="trainer_${t.id}" value="${r}" required>
-            <span>${r}</span> <!-- THIS IS THE TEXT! -->
+            <span>${r}</span> 
           </label>
         `;
-    
       });
 
       card.innerHTML = `
@@ -206,6 +205,7 @@
       }
     });
 
+    // 🚨 PASTE YOUR URL HERE 🚨
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
