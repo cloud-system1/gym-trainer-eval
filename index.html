@@ -106,13 +106,13 @@
       });
 
       card.innerHTML = `
-        <div class="trainer-header">
-          <img src="${t.img}" alt="${t.name}" onerror="this.src='https://via.placeholder.com/80?text=No+Photo'">
-          <h2>${t.name}</h2>
-        </div>
-        <div class="rating-options">
-          ${buttonsHTML}
-        </div>
+        <div id="success-popup" class="success-popup">
+    <div class="success-icon-ring">
+      <div class="success-icon">✓</div>
+    </div>
+    <h2>Feedback Sent!</h2>
+    <p>Your evaluation has been securely recorded.<br>Thank you for shaping the High Impact experience!</p>
+  </div>
       `;
       
       container.appendChild(card);
