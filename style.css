@@ -114,7 +114,7 @@ body {
 .trainer-header img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--green-primary); box-shadow: 0 0 15px var(--green-glow); }
 .trainer-header h2 { margin: 0; font-size: 1.4rem; font-weight: 700; color: #fff; }
 
-/* 🟢 FIXED RATING BUTTONS */
+/* 🟢 PERFECTED RATING BUTTONS */
 .rating-options { display: flex; flex-direction: column; gap: 10px; }
 .rating-btn {
   position: relative;
@@ -131,16 +131,25 @@ body {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(5px);
   color: #ccc; 
+  
+  /* 🟢 Prevents the text from highlighting/flashing when clicked */
+  user-select: none; 
+  -webkit-user-select: none;
+}
+
+.rating-btn input[type="radio"] { 
+  /* 🟢 Hides the radio button without breaking layout */
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .rating-btn span {
   position: relative;
-  z-index: 1; /* Pushes text above the input */
-  color: inherit;
+  z-index: 1;
   pointer-events: none;
 }
-
-.rating-btn input[type="radio"] { display: none; }
 
 .rating-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
 .rating-btn:has(input:checked) { color: #fff; border-color: transparent; transform: scale(1.02); box-shadow: 0 6px 20px rgba(0,0,0,0.4); backdrop-filter: none; font-weight: 700; }
