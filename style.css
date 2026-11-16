@@ -99,6 +99,21 @@ body {
   padding: 0 16px; 
   position: relative;
   z-index: 1;
+  
+  /* 🟢 NEW: Scroll Snapping */
+  height: calc(100vh - 120px); /* Fills the screen below the header */
+  overflow-y: auto; /* Allows scrolling inside this container */
+  scroll-snap-type: y mandatory; /* Forces the snap */
+  scroll-behavior: smooth; /* Makes the snap animation smooth */
+  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  
+  /* Hide scrollbar for a cleaner look */
+  scrollbar-width: none; 
+  -ms-overflow-style: none;
+}
+
+.survey-container::-webkit-scrollbar { 
+  display: none; 
 }
 
 /* Trainer Cards */
@@ -115,6 +130,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  
+  /* 🟢 NEW: Snap to the center of the screen */
+  scroll-snap-align: center; 
+  scroll-margin-top: 20px;
 }
 
 .trainer-card:hover { transform: translateY(-3px); }
