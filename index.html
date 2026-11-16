@@ -4,31 +4,111 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style.css?v=4" />
+  <link rel="stylesheet" href="style.css?v=6" />
+  <style>
+    /* 🟢 PREMIUM SLIDER STYLES */
+    .survey-container {
+      overflow: hidden; /* Hide the scrollbar */
+      height: calc(100vh - 120px);
+      display: flex;
+      align-items: center; 
+      justify-content: center;
+      position: relative;
+      max-width: 650px;
+      margin: 120px auto 0;
+      padding: 0;
+      /* Remove scroll snapping that was here before */
+      scroll-snap-type: none; 
+      overflow-y: hidden;
+    }
+    
+    #trainer-cards {
+      display: flex;
+      width: 100%;
+      /* 🟢 The Magic Animation: Apple-style smooth glide */
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+
+    .trainer-card {
+      min-width: 100%;
+      box-sizing: border-box;
+      padding: 0 16px; /* Gives it breathing room on mobile */
+      margin: 0;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Only the active card is fully visible and full size */
+    .trainer-card.active {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Adjust the submit button position for the new layout */
+    .submit-area {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: rgba(5, 8, 5, 0.95); 
+      backdrop-filter: blur(16px); 
+      padding: 15px; 
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.8); 
+      margin: 0; 
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none; 
+      transform: translateY(100%);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .submit-area.show-submit {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* Mobile adjustments */
+    @media (min-width: 769px) {
+      .submit-area {
+        max-width: 650px;
+        left: 50%;
+        transform: translateX(-50%) translateY(100%);
+        border-radius: 20px 20px 0 0;
+      }
+      .submit-area.show-submit {
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="bg-container" id="bg-zoom"></div>
+  <div class="bg-container" id="bg-zoom"></div>
   
   <header class="app-header" id="main-header">
-      <div class="header-text">
+    <div class="header-text">
       <h1>Trainer Excellence Feedback</h1>
-      <p>Help us recognize excellence by rating your instructor's performance and professionalism.</p>
+      <p>Tap a rating. The next trainer will glide in automatically.</p>
     </div>
     <img src="logo.png" alt="High Impact Gym" class="header-logo">
   </header>
 
-  <main class="survey-container" id="scroll-container">
+  <main class="survey-container">
     <form id="survey-form">
+      
+      <!-- The slider wrapper -->
       <div id="trainer-cards"></div>
       
-      <!-- The button is hidden by default. It will slide up when all 10 are rated. -->
+      <!-- The button is hidden until the last trainer is rated -->
       <div class="submit-area" id="submit-area">
         <button type="submit" id="submit-btn">Complete Evaluation</button>
       </div>
     </form>
   </main>
 
-  <!-- 🎉 The Creative Success Popup -->
+  <!-- The Creative Success Popup -->
    <div id="success-popup" class="success-popup">
     <div class="success-icon-ring">
       <div class="success-icon">
@@ -43,27 +123,22 @@
   </div>
 
   <script>
-    // 1. SCROLL EFFECTS (Listening to the survey container, not the window)
+    // 1. HEADER HIDE ON SCROLL & BACKGROUND ZOOM
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     const bgZoom = document.getElementById('bg-zoom');
-    const scrollContainer = document.getElementById('scroll-container');
 
-    // We listen to the container scrolling (since overflow-y is on the container)
-    scrollContainer.addEventListener('scroll', function() {
-      let scrollTop = scrollContainer.scrollTop;
-      
-      // A. Hide/Show Header
+    window.addEventListener('scroll', function() {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
       if (scrollTop > lastScrollTop && scrollTop > 50) {
-        header.classList.add('header-hidden'); // Scroll down -> Hide
+        header.classList.add('header-hidden');
       } else {
-        header.classList.remove('header-hidden'); // Scroll up -> Show
+        header.classList.remove('header-hidden');
       }
       lastScrollTop = scrollTop;
 
-      // B. Continuous Background Zoom Effect
       if (bgZoom) {
-        let maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight;
+        let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         if (maxScroll > 0) {
           let scrollPercent = scrollTop / maxScroll; 
           let scale = 1 + (scrollPercent * 1.5); 
@@ -91,7 +166,8 @@
     
     trainers.forEach((t, index) => {
       const card = document.createElement('div');
-      card.className = 'trainer-card';
+      // Add 'active' class to the very first card
+      card.className = index === 0 ? 'trainer-card active' : 'trainer-card';
       
       let buttonsHTML = '';
       ratings.forEach((r, i) => {
@@ -107,7 +183,7 @@
       card.innerHTML = `
         <div class="trainer-header">
           <img src="${t.img}" alt="${t.name}" onerror="this.src='https://via.placeholder.com/80?text=No+Photo'">
-          <h2>${t.name}</h2>
+          <h2>${t.name} <span style="font-size:0.9rem; color:#8bb393; font-weight:normal;">(${index + 1} of 10)</span></h2>
         </div>
         <div class="rating-options">
           ${buttonsHTML}
@@ -117,28 +193,38 @@
       container.appendChild(card);
     });
 
-    // 3. CHECK IF ALL TRAINERS ARE RATED BEFORE SHOWING BUTTON
+    // 3. AUTO-ADVANCE LOGIC WITH SMOOTH FADE
+    let currentIndex = 0;
+    const totalTrainers = trainers.length;
     const submitArea = document.getElementById('submit-area');
-    const formElement = document.getElementById('survey-form');
+    const cards = document.querySelectorAll('.trainer-card');
 
-    formElement.addEventListener('change', () => {
-      let answeredCount = 0;
-      
-      trainers.forEach(t => {
-        const selected = document.querySelector(`input[name="trainer_${t.id}"]:checked`);
-        if (selected) {
-          answeredCount++;
-        }
-      });
-
-      if (answeredCount === trainers.length) {
-        submitArea.classList.add('show-submit');
-      } else {
-        submitArea.classList.remove('show-submit');
+    container.addEventListener('change', (e) => {
+      if (e.target.type === 'radio') {
+        
+        // Wait 450ms so the user sees the button turn green
+        setTimeout(() => {
+          if (currentIndex < totalTrainers - 1) {
+            
+            // Remove active class from current card
+            cards[currentIndex].classList.remove('active');
+            
+            currentIndex++;
+            
+            // Add active class to next card
+            cards[currentIndex].classList.add('active');
+            
+            // Slide the container
+            container.style.transform = `translateX(-${currentIndex * 100}%)`;
+          } else {
+            // Last trainer rated! Show the button.
+            submitArea.classList.add('show-submit');
+          }
+        }, 450); 
       }
     });
 
-    // 4. SUBMIT FORM (5 SECOND POPUP + BACKGROUND SEND)
+    // 4. SUBMIT FORM
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
@@ -155,22 +241,24 @@
         payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
       });
 
-      // Show the popup immediately
       popup.classList.add('show');
-      
-      // Reset the form instantly in the background
       e.target.reset(); 
       submitArea.classList.remove('show-submit'); 
       
-      // 🟢 Wait exactly 5 seconds (5000ms) before hiding the popup
+      // 🟢 RESET THE SLIDER FOR THE NEXT CUSTOMER
+      currentIndex = 0;
+      cards.forEach((card, i) => {
+        if (i === 0) card.classList.add('active');
+        else card.classList.remove('active');
+      });
+      container.style.transform = `translateX(0%)`;
+
       setTimeout(() => {
         popup.classList.remove('show');
         btn.textContent = 'Complete Evaluation';
-        // Scroll back to top smoothly
-        scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 5000); 
 
-      // Send data in background
       try {
         fetch(ENDPOINT, { 
           method: 'POST', 
