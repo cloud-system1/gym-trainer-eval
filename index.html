@@ -26,15 +26,21 @@
     <form id="survey-form">
       <div id="trainer-cards"></div>
       <div class="submit-area">
-        <button type="submit" id="submit-btn">Submit All Feedback</button>
+        <button type="submit" id="submit-btn">Complete Evaluation</button>
       </div>
     </form>
   </main>
 
   <!-- 🎉 The Creative Success Popup (Corrected Location) -->
-  <div id="success-popup" class="success-popup">
+   <div id="success-popup" class="success-popup">
     <div class="success-icon-ring">
-      <div class="success-icon">✓</div>
+      <!-- Custom Dumbbell SVG -->
+      <div class="success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 36px; height: 36px;">
+          <path d="M6.5 6.5h11M6.5 17.5h11M3 9v6M21 9v6"/>
+          <rect x="6.5" y="8.5" width="11" height="7" rx="1.5"/>
+        </svg>
+      </div>
     </div>
     <h2>Feedback Sent!</h2>
     <p>Your evaluation has been securely recorded.<br>Thank you for shaping the High Impact experience!</p>
@@ -140,10 +146,9 @@
       // Wait 3 seconds while the popup is showing, then hide it and restore the button
       setTimeout(() => {
         popup.classList.remove('show');
-        btn.textContent = 'Submit All Feedback';
+        btn.textContent = 'Complete Evaluation'; // <--- Change this too!
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 3000);
-
       // 🟢 SEND DATA IN BACKGROUND (User doesn't wait for this)
       try {
         fetch(ENDPOINT, { 
