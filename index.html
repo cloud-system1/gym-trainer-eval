@@ -4,79 +4,32 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style.css?v=19" /> 
-  <style>
-    /* 🔒 LOGIN GATE STYLES */
-    #login-gate {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: var(--bg-gradient);
-      z-index: 9999;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 0.5s ease;
-    }
-    .login-box {
-      background: var(--surface);
-      backdrop-filter: blur(12px);
-      padding: 40px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: var(--shadow-md);
-    }
-    .login-box h2 { color: #fff; margin-top: 0; }
-    .login-box input {
-      width: 100%; padding: 15px; margin: 15px 0;
-      background: rgba(0,0,0,0.3); border: 1px solid var(--green-primary);
-      border-radius: 10px; color: #fff; font-size: 1.1rem; text-align: center;
-      outline: none;
-    }
-    .login-box button {
-      width: 100%; padding: 15px; background: var(--green-primary);
-      color: #fff; border: none; border-radius: 10px; font-size: 1.1rem;
-      font-weight: bold; cursor: pointer; transition: 0.2s;
-    }
-    .login-box button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px var(--green-glow); }
-    .error { color: #ff5252; margin-top: 10px; display: none; font-weight: bold; }
-  </style>
+  <link rel="stylesheet" href="style.css?v=4" />
 </head>
 <body>
-
-  <div id="login-gate">
-    <div class="login-box">
-      <img src="logo.png" alt="Logo" style="max-width: 100px; margin-bottom: 20px;">
-      <h2>Welcome</h2>
-      <p style="color: #8bb393; font-size: 0.9rem;">Please enter the access code to start the survey.</p>
-      <input type="password" id="password-input" placeholder="Enter Code">
-      <button onclick="checkPassword()">Start Survey</button>
-      <p class="error" id="error-msg">Incorrect code. Try again.</p>
-    </div>
-  </div>
-
-  <div class="bg-container" id="bg-zoom"></div>
+<div class="bg-container" id="bg-zoom"></div>
   
   <header class="app-header" id="main-header">
-    <div class="header-text">
+      <div class="header-text">
       <h1>Trainer Excellence Feedback</h1>
-      <p>Tap a rating. The next trainer will glide in automatically.</p>
+      <p>Help us recognize excellence by rating your instructor's performance and professionalism.</p>
     </div>
     <img src="logo.png" alt="High Impact Gym" class="header-logo">
   </header>
 
-  <main class="survey-container">
+  <main class="survey-container" id="scroll-container">
     <form id="survey-form">
       <div id="trainer-cards"></div>
+      
+      <!-- The button is hidden by default. It will slide up when all 10 are rated. -->
       <div class="submit-area" id="submit-area">
         <button type="submit" id="submit-btn">Complete Evaluation</button>
       </div>
     </form>
   </main>
 
-  <div id="success-popup" class="success-popup">
+  <!-- 🎉 The Creative Success Popup -->
+   <div id="success-popup" class="success-popup">
     <div class="success-icon-ring">
       <div class="success-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 36px; height: 36px;">
@@ -90,45 +43,27 @@
   </div>
 
   <script>
-    const SECRET_PASSWORD = "Ranga1"; 
-
-    function checkPassword() {
-      const input = document.getElementById('password-input').value;
-      const gate = document.getElementById('login-gate');
-      const error = document.getElementById('error-msg');
-
-      if (input === SECRET_PASSWORD) {
-        gate.style.opacity = '0';
-        setTimeout(() => {
-          gate.style.display = 'none';
-          sessionStorage.setItem('surveyUnlocked', 'true');
-        }, 500);
-      } else {
-        error.style.display = 'block';
-        document.getElementById('password-input').value = '';
-      }
-    }
-
-    if (sessionStorage.getItem('surveyUnlocked') === 'true') {
-      document.getElementById('login-gate').style.display = 'none';
-    }
-
-    document.getElementById('password-input').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') checkPassword();
-    });
-
+    // 1. SCROLL EFFECTS (Listening to the survey container, not the window)
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     const bgZoom = document.getElementById('bg-zoom');
+    const scrollContainer = document.getElementById('scroll-container');
 
-    window.addEventListener('scroll', function() {
-      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (scrollTop > lastScrollTop && scrollTop > 50) header.classList.add('header-hidden');
-      else header.classList.remove('header-hidden');
+    // We listen to the container scrolling (since overflow-y is on the container)
+    scrollContainer.addEventListener('scroll', function() {
+      let scrollTop = scrollContainer.scrollTop;
+      
+      // A. Hide/Show Header
+      if (scrollTop > lastScrollTop && scrollTop > 50) {
+        header.classList.add('header-hidden'); // Scroll down -> Hide
+      } else {
+        header.classList.remove('header-hidden'); // Scroll up -> Show
+      }
       lastScrollTop = scrollTop;
 
+      // B. Continuous Background Zoom Effect
       if (bgZoom) {
-        let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        let maxScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight;
         if (maxScroll > 0) {
           let scrollPercent = scrollTop / maxScroll; 
           let scale = 1 + (scrollPercent * 1.5); 
@@ -137,6 +72,7 @@
       }
     });
 
+    // 2. BUILD THE TRAINER CARDS
     const trainers = [
       { id: "1", name: "Sameera", img: "assets/trainers/Sameera.png" },
       { id: "2", name: "Chamindu", img: "assets/trainers/Chamindu.png" },
@@ -163,19 +99,15 @@
         buttonsHTML += `
           <label class="rating-btn ${colorClass}">
             <input type="radio" name="trainer_${t.id}" value="${r}" required>
-            <span>${r}</span> 
+            <span>${r}</span>
           </label>
         `;
       });
 
       card.innerHTML = `
         <div class="trainer-header">
-          <img src="${t.img}" alt="${t.name}" onerror="this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=90'">
-          <h2>
-            ${t.name} 
-            <br>
-            <span>(${index + 1} of 10)</span>
-          </h2>
+          <img src="${t.img}" alt="${t.name}" onerror="this.src='https://via.placeholder.com/80?text=No+Photo'">
+          <h2>${t.name}</h2>
         </div>
         <div class="rating-options">
           ${buttonsHTML}
@@ -185,26 +117,29 @@
       container.appendChild(card);
     });
 
-    let currentIndex = 0;
-    const totalTrainers = trainers.length;
+    // 3. CHECK IF ALL TRAINERS ARE RATED BEFORE SHOWING BUTTON
     const submitArea = document.getElementById('submit-area');
-    const cards = document.querySelectorAll('.trainer-card');
+    const formElement = document.getElementById('survey-form');
 
-    container.addEventListener('change', (e) => {
-      if (e.target.type === 'radio') {
-        setTimeout(() => {
-          if (currentIndex < totalTrainers - 1) {
-            currentIndex++;
-            container.style.transform = `translateX(-${currentIndex * 100}%)`;
-          } else {
-            submitArea.classList.add('show-submit');
-          }
-        }, 450); 
+    formElement.addEventListener('change', () => {
+      let answeredCount = 0;
+      
+      trainers.forEach(t => {
+        const selected = document.querySelector(`input[name="trainer_${t.id}"]:checked`);
+        if (selected) {
+          answeredCount++;
+        }
+      });
+
+      if (answeredCount === trainers.length) {
+        submitArea.classList.add('show-submit');
+      } else {
+        submitArea.classList.remove('show-submit');
       }
     });
 
-    // 🚨 PASTE YOUR URL HERE 🚨
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDTsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
+    // 4. SUBMIT FORM (5 SECOND POPUP + BACKGROUND SEND)
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -220,19 +155,22 @@
         payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
       });
 
+      // Show the popup immediately
       popup.classList.add('show');
+      
+      // Reset the form instantly in the background
       e.target.reset(); 
       submitArea.classList.remove('show-submit'); 
       
-      currentIndex = 0;
-      container.style.transform = `translateX(0%)`;
-
+      // 🟢 Wait exactly 5 seconds (5000ms) before hiding the popup
       setTimeout(() => {
         popup.classList.remove('show');
         btn.textContent = 'Complete Evaluation';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Scroll back to top smoothly
+        scrollContainer.scrollTo({ top: 0, behavior: 'smooth' });
       }, 5000); 
 
+      // Send data in background
       try {
         fetch(ENDPOINT, { 
           method: 'POST', 
