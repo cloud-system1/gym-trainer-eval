@@ -38,16 +38,18 @@
     .trainer-info img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 3px solid #eee; }
     .trainer-info h4 { margin: 0; font-size: 1.3rem; color: #1c2b1a; }
     
-    .total-score { text-align: right; }
+    /* Fixed spacing for Total Score */
+    .total-score { text-align: right; display: flex; align-items: center; gap: 30px; }
+    .total-score .clients-count { font-size: 0.9rem; color: #666; text-align: right; }
+    .total-score .score-box { text-align: center; }
     .total-score .score { font-size: 2rem; font-weight: bold; color: #1c2b1a; line-height: 1; }
     .total-score .label { font-size: 0.8rem; color: #888; text-transform: uppercase; }
 
-    /* Detailed Breakdown (The Matrix) */
+    /* Detailed Breakdown */
     .breakdown-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; text-align: center; }
     .stat-box { padding: 10px; border-radius: 8px; background: #f9f9f9; }
     .stat-box h5 { margin: 0 0 5px 0; font-size: 0.8rem; color: #555; }
-    .stat-box .count { font-size: 1.5rem; font-weight: bold; margin-bottom: 2px; }
-    .stat-box .calc { font-size: 0.75rem; color: #777; }
+    .stat-box .count { font-size: 1.5rem; font-weight: bold; }
     
     /* Colors for specific stats */
     .stat-excellent .count { color: #4caf50; }
@@ -57,8 +59,8 @@
     .stat-poor .count { color: #9e9e9e; }
 
     @media (max-width: 768px) {
-      .card-header { flex-direction: column; align-items: flex-start; gap: 10px; }
-      .total-score { text-align: left; }
+      .card-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+      .total-score { text-align: left; width: 100%; justify-content: space-between; }
       .breakdown-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
@@ -97,7 +99,7 @@
 
   <script>
     // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL HERE 🚨
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec';
+    const ENDPOINT = 'PASTE_YOUR_WEB_APP_URL_HERE';
 
     const trainerImages = {
       "Sameera": "assets/trainers/Sameera.png",
@@ -148,43 +150,39 @@
                 <div class="trainer-info">
                   <div class="rank-circle ${rankClass}">${t.rank}</div>
                   <img src="${trainerImages[t.name] || ''}" alt="${t.name}" onerror="this.src='https://via.placeholder.com/60?text=?'">
-                  <div>
-                    <h4>${t.name}</h4>
-                    <span style="font-size: 0.85rem; color: #666;">${t.clients} Total Clients</span>
-                  </div>
+                  <h4>${t.name}</h4>
                 </div>
+                
                 <div class="total-score">
-                  <div class="score">${t.marks}</div>
-                  <div class="label">Total Marks</div>
+                  <div class="clients-count">${t.clients} Total Clients</div>
+                  <div class="score-box">
+                    <div class="score">${t.marks}</div>
+                    <div class="label">Total Marks</div>
+                  </div>
                 </div>
               </div>
 
-              <!-- Detailed Breakdown -->
+              <!-- Detailed Breakdown (No Calculations) -->
               <div class="breakdown-grid">
                 <div class="stat-box stat-excellent">
                   <h5>Excellent</h5>
                   <div class="count">${t.Excellent}</div>
-                  <div class="calc">(${t.Excellent} × 3 = ${t.Excellent * 3} pts)</div>
                 </div>
                 <div class="stat-box stat-good">
                   <h5>Good</h5>
                   <div class="count">${t.Good}</div>
-                  <div class="calc">(${t.Good} × 2 = ${t.Good * 2} pts)</div>
                 </div>
                 <div class="stat-box stat-average">
                   <h5>Average</h5>
                   <div class="count">${t.Average}</div>
-                  <div class="calc">(${t.Average} × 1 = ${t.Average * 1} pts)</div>
                 </div>
                 <div class="stat-box stat-needs">
                   <h5>Needs Improve</h5>
                   <div class="count">${t['Needs Improvement']}</div>
-                  <div class="calc">(${t['Needs Improvement']} × 0 = 0 pts)</div>
                 </div>
                 <div class="stat-box stat-poor">
                   <h5>Poor</h5>
                   <div class="count">${t.Poor}</div>
-                  <div class="calc">(${t.Poor} × -1 = ${t.Poor * -1} pts)</div>
                 </div>
               </div>
 
