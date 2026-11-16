@@ -82,7 +82,13 @@ body {
   width: 100%;
 }
 
-/* TRAINER CARDS */
+#trainer-cards {
+  display: flex;
+  width: 100%;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
 .trainer-card {
   flex: 0 0 100%; 
   width: 100%;
@@ -99,16 +105,16 @@ body {
   flex-direction: column;
   gap: 20px;
   
-  /* 🟢 REMOVED scale and opacity to stop the glitch */
-  transition: background 0.3s ease; 
+  /* 🟢 Forces the GPU to render the cards perfectly without glitching */
+  transform: translateZ(0); 
 }
 
-/* Make sure images render sharply */
 .trainer-header { 
   display: flex; 
   align-items: center; 
   gap: 20px; 
   margin-bottom: 20px;
+  transform: translateZ(0); /* Fixes the disappearing image */
 }
 
 .trainer-header img { 
@@ -118,7 +124,7 @@ body {
   object-fit: cover; 
   border: 3px solid var(--green-primary); 
   background: #222;
-  display: block; /* 🟢 Forces the browser to paint the image */
+  display: block; 
 }
 
 .trainer-header h2 { 
@@ -133,6 +139,7 @@ body {
   color: var(--text-muted); 
   font-weight: normal;
 }
+
 /* 🟢 PERFECTED RATING BUTTONS */
 .rating-options { display: flex; flex-direction: column; gap: 10px; }
 .rating-btn {
@@ -150,14 +157,11 @@ body {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(5px);
   color: #ccc; 
-  
-  /* 🟢 Prevents the text from highlighting/flashing when clicked */
   user-select: none; 
   -webkit-user-select: none;
 }
 
 .rating-btn input[type="radio"] { 
-  /* 🟢 Hides the radio button without breaking layout */
   position: absolute;
   opacity: 0;
   width: 0;
