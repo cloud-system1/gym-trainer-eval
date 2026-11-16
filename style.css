@@ -1,189 +1,227 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Trainer Excellence Feedback</title>
-  <!-- Make sure this matches your CSS file name (style.css or style2.css) -->
-  <link rel="stylesheet" href="style.css?v=7" /> 
-</head>
-<body>
-  <div class="bg-container" id="bg-zoom"></div>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root { 
+  --bg-gradient: linear-gradient(135deg, rgba(5, 8, 5, 0.85) 0%, rgba(10, 28, 16, 0.9) 100%);
+  --surface: rgba(20, 30, 22, 0.6); 
+  --text-main: #e8f5e9;
+  --text-muted: #8bb393;
+  --green-primary: #4caf50;
+  --green-glow: rgba(76, 175, 80, 0.3);
+  --blue: #2196f3;
+  --yellow: #ffc107;
+  --pink: #e91e63;
+  --gray: #9e9e9e;
+  --shadow-md: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0; 
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background-color: #050805;
+  color: var(--text-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* BACKGROUND */
+.bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -2;
+  background-image: url('bg.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.4);
+  transition: transform 0.1s ease-out; 
+}
+
+.bg-container::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg-gradient);
+}
+
+/* HEADER */
+.app-header {
+  background: rgba(5, 8, 5, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 20px 30px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.4s ease-in-out;
+}
+
+.app-header.header-hidden { transform: translateY(-100%); }
+.header-text h1 { margin: 0 0 5px; font-size: 1.5rem; font-weight: 700; color: #fff; }
+.header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+
+.header-logo {
+  max-width: 120px;
+  height: auto;
+  filter: drop-shadow(0 0 10px var(--green-glow));
+}
+
+/* SLIDER CONTAINER */
+.survey-container {
+  overflow: hidden; 
+  height: calc(100vh - 120px);
+  display: flex;
+  align-items: center; 
+  position: relative;
+  max-width: 650px;
+  margin: 120px auto 0;
+  padding: 0 16px;
+}
+
+#trainer-cards {
+  display: flex;
+  width: 100%;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* TRAINER CARDS */
+.trainer-card {
+  min-width: 100%;
+  box-sizing: border-box;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: var(--shadow-md);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   
-  <header class="app-header" id="main-header">
-    <div class="header-text">
-      <h1>Trainer Excellence Feedback</h1>
-      <p>Tap a rating. The next trainer will glide in automatically.</p>
-    </div>
-    <!-- The logo is back in the header -->
-    <img src="logo.png" alt="High Impact Gym" class="header-logo">
-  </header>
+  /* Animation for fade effect */
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-  <!-- The slider container -->
-  <main class="survey-container">
-    <form id="survey-form">
-      
-      <!-- The cards go here -->
-      <div id="trainer-cards"></div>
-      
-      <!-- The button is hidden until the 10th trainer is rated -->
-      <div class="submit-area" id="submit-area">
-        <button type="submit" id="submit-btn">Complete Evaluation</button>
-      </div>
-    </form>
-  </main>
+.trainer-card.active {
+  opacity: 1;
+  transform: scale(1);
+}
 
-  <!-- Success Popup -->
-  <div id="success-popup" class="success-popup">
-    <div class="success-icon-ring">
-      <div class="success-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 36px; height: 36px;">
-          <path d="M6.5 6.5h11M6.5 17.5h11M3 9v6M21 9v6"/>
-          <rect x="6.5" y="8.5" width="11" height="7" rx="1.5"/>
-        </svg>
-      </div>
-    </div>
-    <h2>Feedback Sent!</h2>
-    <p>Your evaluation has been securely recorded.<br>Thank you for shaping the High Impact experience!</p>
-  </div>
+.trainer-header { display: flex; align-items: center; gap: 20px; }
+.trainer-header img { 
+  width: 90px; height: 90px; border-radius: 50%; object-fit: cover; 
+  border: 3px solid var(--green-primary); box-shadow: 0 0 15px var(--green-glow); 
+}
+.trainer-header h2 { margin: 0; font-size: 1.4rem; font-weight: 700; color: #fff; }
 
-  <script>
-    // 1. HEADER HIDE ON SCROLL & BACKGROUND ZOOM
-    let lastScrollTop = 0;
-    const header = document.getElementById('main-header');
-    const bgZoom = document.getElementById('bg-zoom');
+/* RATING BUTTONS */
+.rating-options { display: flex; flex-direction: column; gap: 10px; }
+.rating-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(5px);
+  color: #ccc;
+}
 
-    window.addEventListener('scroll', function() {
-      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (scrollTop > lastScrollTop && scrollTop > 50) {
-        header.classList.add('header-hidden');
-      } else {
-        header.classList.remove('header-hidden');
-      }
-      lastScrollTop = scrollTop;
+.rating-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+.rating-btn input[type="radio"] { display: none; }
 
-      if (bgZoom) {
-        let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        if (maxScroll > 0) {
-          let scrollPercent = scrollTop / maxScroll; 
-          let scale = 1 + (scrollPercent * 1.5); 
-          bgZoom.style.transform = `scale(${scale})`;
-        }
-      }
-    });
+.rating-btn:has(input:checked) { 
+  color: #fff; border-color: transparent; transform: scale(1.02); 
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4); backdrop-filter: none; font-weight: 700;
+}
+.rating-btn.btn-excellent:has(input:checked) { background: var(--green-primary); box-shadow: 0 0 15px var(--green-glow); }
+.rating-btn.btn-good:has(input:checked) { background: var(--blue); }
+.rating-btn.btn-average:has(input:checked) { background: var(--yellow); color: #000; }
+.rating-btn.btn-needs:has(input:checked) { background: var(--pink); }
+.rating-btn.btn-poor:has(input:checked) { background: var(--gray); }
 
-    // 2. BUILD THE TRAINER CARDS
-    const trainers = [
-      { id: "1", name: "Sameera", img: "assets/trainers/Sameera.png" },
-      { id: "2", name: "Chamindu", img: "assets/trainers/Chamindu.png" },
-      { id: "3", name: "Kavindu", img: "assets/trainers/Kavindu.png" },
-      { id: "4", name: "Ravija", img: "assets/trainers/Navija.png" },
-      { id: "5", name: "Bhagya", img: "assets/trainers/bhagya.png" },
-      { id: "6", name: "Dilshan", img: "assets/trainers/Dilshan.png" },
-      { id: "7", name: "Pavani", img: "assets/trainers/pavani.png" },
-      { id: "8", name: "Thilini", img: "assets/trainers/Thilini.png" },
-      { id: "9", name: "Hiruka", img: "assets/trainers/Hiruka.png" },
-      { id: "10", name: "Shalani", img: "assets/trainers/Shalani.png" }
-    ];
+/* SUBMIT BUTTON */
+.submit-area {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(5, 8, 5, 0.95); 
+  backdrop-filter: blur(16px); 
+  padding: 15px; 
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.8); 
+  margin: 0; 
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none; 
+  transform: translateY(100%);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
 
-    const ratings = ["Excellent", "Good", "Average", "Needs Improvement", "Poor"];
-    const container = document.getElementById('trainer-cards');
-    
-    trainers.forEach((t, index) => {
-      const card = document.createElement('div');
-      // Add 'active' class to the first card so it's visible
-      card.className = index === 0 ? 'trainer-card active' : 'trainer-card';
-      
-      let buttonsHTML = '';
-      ratings.forEach((r, i) => {
-        const colorClass = ['btn-excellent', 'btn-good', 'btn-average', 'btn-needs', 'btn-poor'][i];
-        buttonsHTML += `
-          <label class="rating-btn ${colorClass}">
-            <input type="radio" name="trainer_${t.id}" value="${r}" required>
-            <span>${r}</span>
-          </label>
-        `;
-      });
+.submit-area.show-submit {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
 
-      card.innerHTML = `
-        <div class="trainer-header">
-          <img src="${t.img}" alt="${t.name}" onerror="this.src='https://via.placeholder.com/80?text=No+Photo'">
-          <h2>${t.name} <span style="font-size:0.9rem; color:#8bb393; font-weight:normal;">(${index + 1} of 10)</span></h2>
-        </div>
-        <div class="rating-options">
-          ${buttonsHTML}
-        </div>
-      `;
-      
-      container.appendChild(card);
-    });
+button[type="submit"] {
+  background: var(--green-primary); color: #fff; border: none;
+  padding: 18px 32px; font-size: 1.1rem; font-weight: 700; border-radius: 16px;
+  width: 100%; cursor: pointer; box-shadow: 0 10px 20px var(--green-glow);
+  transition: all 0.2s ease;
+}
+button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(76, 175, 80, 0.5); }
 
-    // 3. AUTO-ADVANCE LOGIC
-    let currentIndex = 0;
-    const totalTrainers = trainers.length;
-    const submitArea = document.getElementById('submit-area');
-    const cards = document.querySelectorAll('.trainer-card');
+/* SUCCESS POPUP */
+.success-popup {
+  display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+  background: rgba(10, 15, 12, 0.95); backdrop-filter: blur(25px); border: 2px solid var(--green-primary);
+  padding: 40px 30px; border-radius: 30px; text-align: center; 
+  box-shadow: 0 0 50px rgba(76, 175, 80, 0.4), inset 0 0 20px rgba(76, 175, 80, 0.2);
+  z-index: 2000; width: 90%; max-width: 420px; opacity: 0; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.success-popup.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+.success-icon-ring {
+  width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--green-primary);
+  background: rgba(76, 175, 80, 0.1); display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 25px; position: relative; box-shadow: 0 0 20px var(--green-glow), inset 0 0 15px var(--green-glow);
+  animation: popRing 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.success-icon { color: var(--green-primary); display: flex; align-items: center; justify-content: center; animation: dropIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both; }
+.success-popup h2 { margin: 0 0 10px; color: #fff; font-size: 1.5rem; }
+.success-popup p { color: var(--text-muted); margin: 0; font-size: 1rem; }
+@keyframes popRing { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes dropIn { 0% { transform: translateY(-40px) scale(1.5); opacity: 0; } 60% { transform: translateY(5px) scale(0.9); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
 
-    container.addEventListener('change', (e) => {
-      if (e.target.type === 'radio') {
-        setTimeout(() => {
-          if (currentIndex < totalTrainers - 1) {
-            cards[currentIndex].classList.remove('active');
-            currentIndex++;
-            cards[currentIndex].classList.add('active');
-            container.style.transform = `translateX(-${currentIndex * 100}%)`;
-          } else {
-            submitArea.classList.add('show-submit');
-          }
-        }, 450); 
-      }
-    });
-
-    // 4. SUBMIT FORM
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
-
-    document.getElementById('survey-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const btn = document.getElementById('submit-btn');
-      const popup = document.getElementById('success-popup');
-      
-      btn.textContent = 'Submitting...';
-
-      const formData = new FormData(e.target);
-      const payload = { timestamp: new Date().toISOString(), ratings: {} };
-      
-      trainers.forEach(t => {
-        payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
-      });
-
-      popup.classList.add('show');
-      e.target.reset(); 
-      submitArea.classList.remove('show-submit'); 
-      
-      // Reset slider
-      currentIndex = 0;
-      cards.forEach((card, i) => {
-        if (i === 0) card.classList.add('active');
-        else card.classList.remove('active');
-      });
-      container.style.transform = `translateX(0%)`;
-
-      setTimeout(() => {
-        popup.classList.remove('show');
-        btn.textContent = 'Complete Evaluation';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 5000); 
-
-      try {
-        fetch(ENDPOINT, { 
-          method: 'POST', 
-          mode: 'no-cors', 
-          body: JSON.stringify(payload) 
-        });
-      } catch (error) {
-        console.log("Background submission error:", error);
-      }
-    });
-  </script>
-</body>
-</html>
+/* Mobile */
+@media (max-width: 768px) {
+  .app-header { padding: 15px; }
+  .header-text h1 { font-size: 1.2rem; }
+  .header-text p { display: none; }
+  .header-logo { max-width: 80px; }
+  .survey-container { margin-top: 90px; height: calc(100vh - 90px); }
+  .trainer-card { padding: 20px; gap: 15px; border-radius: 16px; }
+  .trainer-header img { width: 70px; height: 70px; }
+  .trainer-header h2 { font-size: 1.2rem; }
+  button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 12px; }
+}
