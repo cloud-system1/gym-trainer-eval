@@ -157,15 +157,16 @@
       const card = document.createElement('div');
       card.className = index === 0 ? 'trainer-card active' : 'trainer-card';
       
-      let buttonsHTML = '';
+           let buttonsHTML = '';
       ratings.forEach((r, i) => {
         const colorClass = ['btn-excellent', 'btn-good', 'btn-average', 'btn-needs', 'btn-poor'][i];
         buttonsHTML += `
           <label class="rating-btn ${colorClass}">
             <input type="radio" name="trainer_${t.id}" value="${r}" required>
-            <span>${r}</span>
+            <span>${r}</span> <!-- THIS IS THE TEXT! -->
           </label>
         `;
+    
       });
 
       card.innerHTML = `
