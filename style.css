@@ -27,7 +27,7 @@ body {
   overflow-x: hidden;
 }
 
-/* 📸 NEW: GYM PHOTO BACKGROUND WITH BLUR & ZOOM */
+/* BACKGROUND */
 .bg-container {
   position: fixed;
   top: 0;
@@ -35,21 +35,13 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: -2;
-  
-  /* The Gym Photo */
   background-image: url('bg.jpg');
   background-size: cover;
   background-position: center;
-}
-  
-  /* The Blur and Dark Overlay */
   filter: blur(8px) brightness(0.4);
-  
-  /* This allows the JS to scale it smoothly */
   transition: transform 0.1s ease-out; 
 }
 
-/* Dark gradient overlay on top of the photo */
 .bg-container::after {
   content: '';
   position: absolute;
@@ -57,9 +49,9 @@ body {
   background: var(--bg-gradient);
 }
 
-/* Header Layout */
+/* HEADER */
 .app-header {
-  background: rgba(5, 8, 5, 0.5); /* More transparent to show off the photo */
+  background: rgba(5, 8, 5, 0.5);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 20px 30px;
@@ -86,49 +78,54 @@ body {
   filter: drop-shadow(0 0 10px var(--green-glow));
 }
 
-/* Scroll Snapping Container */
-.survey-container { 
-  max-width: 650px; 
-  margin: 120px auto 30px auto; 
-  padding: 0 16px; 
-  position: relative;
-  z-index: 1;
-  
+/* SLIDER CONTAINER */
+.survey-container {
+  overflow: hidden; 
   height: calc(100vh - 120px);
-  overflow-y: auto; 
-  scroll-snap-type: y mandatory; 
-  scroll-behavior: smooth; 
-  -webkit-overflow-scrolling: touch; 
-  
-  scrollbar-width: none; 
-  -ms-overflow-style: none;
+  display: flex;
+  align-items: center; 
+  position: relative;
+  max-width: 650px;
+  margin: 120px auto 0;
+  padding: 0 16px;
+  width: 100%;
 }
 
-.survey-container::-webkit-scrollbar { display: none; }
+#trainer-cards {
+  display: flex;
+  width: 100%;
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
 
-/* Trainer Cards */
+/* TRAINER CARDS */
 .trainer-card {
+  flex: 0 0 100%; /* Prevents the card from shrinking */
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  
   background: var(--surface);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 20px;
   padding: 24px;
-  margin-bottom: 24px;
   box-shadow: var(--shadow-md);
-  transition: transform 0.3s ease;
   display: flex;
   flex-direction: column;
   gap: 20px;
   
-  /* 🟢 THIS IS THE MAGIC LINE */
-  scroll-snap-align: center; 
-  
-  /* Ensures the card isn't too tall for small screens */
-  max-height: 90vh; 
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.trainer-card:hover { transform: translateY(-3px); }
+.trainer-card.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
 .trainer-header { display: flex; align-items: center; gap: 20px; }
 .trainer-header img { 
   width: 90px; height: 90px; border-radius: 50%; object-fit: cover; 
@@ -136,7 +133,7 @@ body {
 }
 .trainer-header h2 { margin: 0; font-size: 1.4rem; font-weight: 700; color: #fff; }
 
-/* Rating Buttons */
+/* RATING BUTTONS */
 .rating-options { display: flex; flex-direction: column; gap: 10px; }
 .rating-btn {
   position: relative;
@@ -168,8 +165,30 @@ body {
 .rating-btn.btn-needs:has(input:checked) { background: var(--pink); }
 .rating-btn.btn-poor:has(input:checked) { background: var(--gray); }
 
-/* Submit Button */
-.submit-area { margin-top: 30px; text-align: center; }
+/* SUBMIT BUTTON */
+.submit-area {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: rgba(5, 8, 5, 0.95); 
+  backdrop-filter: blur(16px); 
+  padding: 15px; 
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.8); 
+  margin: 0; 
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none; 
+  transform: translateY(100%);
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.submit-area.show-submit {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
 button[type="submit"] {
   background: var(--green-primary); color: #fff; border: none;
   padding: 18px 32px; font-size: 1.1rem; font-weight: 700; border-radius: 16px;
@@ -177,65 +196,27 @@ button[type="submit"] {
   transition: all 0.2s ease;
 }
 button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(76, 175, 80, 0.5); }
-button[type="submit"]:disabled { background: #333; color: #888; cursor: not-allowed; box-shadow: none; }
 
-/* 🎉 CREATIVE SUCCESS POPUP STYLES */
+/* SUCCESS POPUP */
 .success-popup {
-  display: none; 
-  position: fixed; 
-  top: 50%; 
-  left: 50%; 
-  transform: translate(-50%, -50%) scale(0.5);
-  background: rgba(10, 15, 12, 0.95); 
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  border: 2px solid var(--green-primary);
-  padding: 40px 30px; 
-  border-radius: 30px; 
-  text-align: center; 
+  display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
+  background: rgba(10, 15, 12, 0.95); backdrop-filter: blur(25px); border: 2px solid var(--green-primary);
+  padding: 40px 30px; border-radius: 30px; text-align: center; 
   box-shadow: 0 0 50px rgba(76, 175, 80, 0.4), inset 0 0 20px rgba(76, 175, 80, 0.2);
-  z-index: 2000; 
-  width: 90%; 
-  max-width: 420px; 
-  opacity: 0; 
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 2000; width: 90%; max-width: 420px; opacity: 0; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
 .success-popup.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-
 .success-icon-ring {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 3px solid var(--green-primary);
-  background: rgba(76, 175, 80, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 25px;
-  position: relative;
-  box-shadow: 0 0 20px var(--green-glow), inset 0 0 15px var(--green-glow);
+  width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--green-primary);
+  background: rgba(76, 175, 80, 0.1); display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 25px; position: relative; box-shadow: 0 0 20px var(--green-glow), inset 0 0 15px var(--green-glow);
   animation: popRing 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
-.success-icon {
-  color: var(--green-primary);
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  animation: dropIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
-}
-
-@keyframes popRing {
-  0% { transform: scale(0); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-@keyframes dropIn {
-  0% { transform: translateY(-40px) scale(1.5); opacity: 0; }
-  60% { transform: translateY(5px) scale(0.9); opacity: 1; }
-  100% { transform: translateY(0) scale(1); opacity: 1; }
-}
+.success-icon { color: var(--green-primary); display: flex; align-items: center; justify-content: center; animation: dropIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both; }
+.success-popup h2 { margin: 0 0 10px; color: #fff; font-size: 1.5rem; }
+.success-popup p { color: var(--text-muted); margin: 0; font-size: 1rem; }
+@keyframes popRing { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes dropIn { 0% { transform: translateY(-40px) scale(1.5); opacity: 0; } 60% { transform: translateY(5px) scale(0.9); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
 
 /* Mobile */
 @media (max-width: 768px) {
@@ -243,40 +224,9 @@ button[type="submit"]:disabled { background: #333; color: #888; cursor: not-allo
   .header-text h1 { font-size: 1.2rem; }
   .header-text p { display: none; }
   .header-logo { max-width: 80px; }
-  
-  .survey-container { 
-    margin-top: 90px; 
-    height: calc(100vh - 90px); 
-    padding-bottom: 100px; 
-  }
-  
+  .survey-container { margin-top: 90px; height: calc(100vh - 90px); }
   .trainer-card { padding: 20px; gap: 15px; border-radius: 16px; }
   .trainer-header img { width: 70px; height: 70px; }
   .trainer-header h2 { font-size: 1.2rem; }
-  
-  .submit-area {
-    position: fixed; 
-    bottom: 0; 
-    left: 0; 
-    width: 100%; 
-    background: rgba(5, 8, 5, 0.95); 
-    backdrop-filter: blur(16px); 
-    padding: 15px; 
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.8); 
-    margin: 0; 
-    z-index: 1000;
-    
-    opacity: 0;
-    pointer-events: none; 
-    transform: translateY(100%);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  .submit-area.show-submit {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
-
   button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 12px; }
 }
