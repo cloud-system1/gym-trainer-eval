@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
 :root { 
-  --bg-gradient: linear-gradient(135deg, #050805 0%, #0a1c10 100%);
+  --bg-gradient: linear-gradient(135deg, rgba(5, 8, 5, 0.85) 0%, rgba(10, 28, 16, 0.9) 100%);
   --surface: rgba(20, 30, 22, 0.6); 
   --surface-hover: rgba(30, 45, 33, 0.8);
   --text-main: #e8f5e9;
@@ -27,7 +27,7 @@ body {
   overflow-x: hidden;
 }
 
-/* 🏋️‍♂️ ANIMATED ZOOMING BACKGROUND */
+/* 📸 NEW: GYM PHOTO BACKGROUND WITH BLUR & ZOOM */
 .bg-container {
   position: fixed;
   top: 0;
@@ -35,38 +35,30 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: -2;
-  background: var(--bg-gradient);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  
+  /* The Gym Photo */
+  background-image: url('bg.jpg');
+  background-size: cover;
+  background-position: center;
+  
+  /* The Blur and Dark Overlay */
+  filter: blur(8px) brightness(0.4);
+  
   /* This allows the JS to scale it smoothly */
   transition: transform 0.1s ease-out; 
 }
 
-/* HUGE Icons */
-.bg-icon {
+/* Dark gradient overlay on top of the photo */
+.bg-container::after {
+  content: '';
   position: absolute;
-  color: rgba(76, 175, 80, 0.05); /* Even fainter so it doesn't distract */
-  user-select: none;
-  pointer-events: none;
-  animation: floatUp 25s linear infinite;
-}
-
-/* Using vw (viewport width) makes them massive but responsive */
-.icon-1 { top: 5%; left: 5%; font-size: 35vw; animation-duration: 25s; }
-.icon-2 { top: 40%; right: -5%; font-size: 40vw; animation-duration: 30s; animation-delay: -5s; }
-.icon-3 { top: 70%; left: -10%; font-size: 45vw; animation-duration: 35s; animation-delay: -10s; }
-.icon-4 { top: 90%; right: 20%; font-size: 30vw; animation-duration: 20s; animation-delay: -2s; }
-
-@keyframes floatUp {
-  0% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-30px) rotate(5deg); }
-  100% { transform: translateY(0px) rotate(0deg); }
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg-gradient);
 }
 
 /* Header Layout */
 .app-header {
-  background: rgba(5, 8, 5, 0.7);
+  background: rgba(5, 8, 5, 0.5); /* More transparent to show off the photo */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 20px 30px;
@@ -93,6 +85,7 @@ body {
   filter: drop-shadow(0 0 10px var(--green-glow));
 }
 
+/* Scroll Snapping Container */
 .survey-container { 
   max-width: 650px; 
   margin: 120px auto 30px auto; 
@@ -100,21 +93,17 @@ body {
   position: relative;
   z-index: 1;
   
-  /* 🟢 NEW: Scroll Snapping */
-  height: calc(100vh - 120px); /* Fills the screen below the header */
-  overflow-y: auto; /* Allows scrolling inside this container */
-  scroll-snap-type: y mandatory; /* Forces the snap */
-  scroll-behavior: smooth; /* Makes the snap animation smooth */
-  -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+  height: calc(100vh - 120px);
+  overflow-y: auto; 
+  scroll-snap-type: y mandatory; 
+  scroll-behavior: smooth; 
+  -webkit-overflow-scrolling: touch; 
   
-  /* Hide scrollbar for a cleaner look */
   scrollbar-width: none; 
   -ms-overflow-style: none;
 }
 
-.survey-container::-webkit-scrollbar { 
-  display: none; 
-}
+.survey-container::-webkit-scrollbar { display: none; }
 
 /* Trainer Cards */
 .trainer-card {
@@ -130,8 +119,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  
-  /* 🟢 NEW: Snap to the center of the screen */
   scroll-snap-align: center; 
   scroll-margin-top: 20px;
 }
@@ -187,71 +174,6 @@ button[type="submit"] {
 button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(76, 175, 80, 0.5); }
 button[type="submit"]:disabled { background: #333; color: #888; cursor: not-allowed; box-shadow: none; }
 
-/* Popup */
-.success-popup {
-  display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
-  background: rgba(20, 30, 22, 0.95); backdrop-filter: blur(20px); border: 1px solid var(--green-primary);
-  padding: 40px; border-radius: 24px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.8), 0 0 30px var(--green-glow);
-  z-index: 2000; width: 90%; max-width: 400px; opacity: 0; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.success-popup.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.success-icon {
-  width: 80px; height: 80px; background: var(--green-primary); color: white; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-size: 40px; margin: 0 auto 20px;
-  box-shadow: 0 0 20px var(--green-glow); animation: bounceIn 0.6s ease;
-}
-.success-popup h2 { margin: 0 0 10px; color: #fff; font-size: 1.5rem; }
-.success-popup p { color: var(--text-muted); margin: 0; font-size: 1rem; }
-@keyframes bounceIn { 0% { transform: scale(0); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
-
-/* Mobile */
-/* Mobile Optimizations */
-@media (max-width: 768px) {
-  .app-header { padding: 15px; }
-  .header-text h1 { font-size: 1.2rem; }
-  .header-text p { display: none; }
-  .header-logo { max-width: 80px; }
-  
-  /* The container fills the screen minus the header */
-  .survey-container { 
-    margin-top: 90px; 
-    height: calc(100vh - 90px); 
-    padding-bottom: 100px; /* Leaves room so the fixed button doesn't cover the last trainer */
-  }
-  
-  .trainer-card { padding: 20px; gap: 15px; border-radius: 16px; }
-  .trainer-header img { width: 70px; height: 70px; }
-  .trainer-header h2 { font-size: 1.2rem; }
-  
-  /* 🟢 NEW: Fixed Bottom Button that hides by default */
-  .submit-area {
-    position: fixed; 
-    bottom: 0; 
-    left: 0; 
-    width: 100%; 
-    background: rgba(5, 8, 5, 0.95); /* Dark background */
-    backdrop-filter: blur(16px); 
-    padding: 15px; 
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.8); 
-    margin: 0; 
-    z-index: 1000;
-    
-    /* Hidden by default */
-    opacity: 0;
-    pointer-events: none; 
-    transform: translateY(100%);
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-
-  /* Class to show the button */
-  .submit-area.show-submit {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translateY(0);
-  }
-
-  button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 12px; }
-}
 /* 🎉 CREATIVE SUCCESS POPUP STYLES */
 .success-popup {
   display: none; 
@@ -274,13 +196,8 @@ button[type="submit"]:disabled { background: #333; color: #888; cursor: not-allo
   transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.success-popup.show { 
-  display: block; 
-  opacity: 1; 
-  transform: translate(-50%, -50%) scale(1); 
-}
+.success-popup.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
 
-/* Glowing Ring around the icon */
 .success-icon-ring {
   width: 100px;
   height: 100px;
@@ -293,21 +210,17 @@ button[type="submit"]:disabled { background: #333; color: #888; cursor: not-allo
   margin: 0 auto 25px;
   position: relative;
   box-shadow: 0 0 20px var(--green-glow), inset 0 0 15px var(--green-glow);
-  /* Pop animation instead of spin */
   animation: popRing 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* The Dumbbell inside the ring */
 .success-icon {
   color: var(--green-primary);
   display: flex; 
   align-items: center; 
   justify-content: center; 
-  /* Drop animation for the dumbbell */
   animation: dropIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both;
 }
 
-/* Animations */
 @keyframes popRing {
   0% { transform: scale(0); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
@@ -317,4 +230,48 @@ button[type="submit"]:disabled { background: #333; color: #888; cursor: not-allo
   0% { transform: translateY(-40px) scale(1.5); opacity: 0; }
   60% { transform: translateY(5px) scale(0.9); opacity: 1; }
   100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .app-header { padding: 15px; }
+  .header-text h1 { font-size: 1.2rem; }
+  .header-text p { display: none; }
+  .header-logo { max-width: 80px; }
+  
+  .survey-container { 
+    margin-top: 90px; 
+    height: calc(100vh - 90px); 
+    padding-bottom: 100px; 
+  }
+  
+  .trainer-card { padding: 20px; gap: 15px; border-radius: 16px; }
+  .trainer-header img { width: 70px; height: 70px; }
+  .trainer-header h2 { font-size: 1.2rem; }
+  
+  .submit-area {
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    width: 100%; 
+    background: rgba(5, 8, 5, 0.95); 
+    backdrop-filter: blur(16px); 
+    padding: 15px; 
+    box-shadow: 0 -10px 30px rgba(0,0,0,0.8); 
+    margin: 0; 
+    z-index: 1000;
+    
+    opacity: 0;
+    pointer-events: none; 
+    transform: translateY(100%);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .submit-area.show-submit {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 12px; }
 }
