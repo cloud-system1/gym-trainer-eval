@@ -38,18 +38,29 @@
   </div>
 
   <script>
-    // 1. HIDE/SHOW HEADER ON SCROLL
+       // 1. COMBINED SCROLL EFFECTS (Header Hide + Background Zoom)
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
+    const bgZoom = document.getElementById('bg-zoom');
 
     window.addEventListener('scroll', function() {
       let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      // A. Hide/Show Header
       if (scrollTop > lastScrollTop && scrollTop > 100) {
         header.classList.add('header-hidden');
       } else {
         header.classList.remove('header-hidden');
       }
       lastScrollTop = scrollTop;
+
+      // B. Background Zoom Effect
+      if (bgZoom) {
+        // 0.001 is the speed of the zoom. Change to 0.002 for a faster zoom.
+        let scale = 1 + (scrollTop * 0.001); 
+        if (scale > 1.5) scale = 1.5; // Max zoom limit
+        bgZoom.style.transform = `scale(${scale})`;
+      }
     });
 
     // 2. BUILD THE TRAINER CARDS
