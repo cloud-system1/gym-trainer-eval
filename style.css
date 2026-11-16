@@ -110,9 +110,35 @@ body {
 }
 
 .trainer-card.active { opacity: 1; transform: scale(1); }
-.trainer-header { display: flex; align-items: center; gap: 20px; }
-.trainer-header img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--green-primary); box-shadow: 0 0 15px var(--green-glow); }
-.trainer-header h2 { margin: 0; font-size: 1.4rem; font-weight: 700; color: #fff; }
+/* 🟢 FIX FOR THE FLASHING/INVISIBLE BUG */
+.trainer-header {
+  display: flex; 
+  align-items: center; 
+  gap: 20px; 
+  margin-bottom: 20px;
+}
+
+.trainer-header img {
+  width: 90px; 
+  height: 90px; 
+  border-radius: 50%; 
+  object-fit: cover; 
+  border: 3px solid var(--green-primary); 
+  background: #222;
+}
+
+.trainer-header h2 {
+  margin: 0; 
+  font-size: 1.4rem; 
+  color: #fff; 
+  line-height: 1.2;
+}
+
+.trainer-header h2 span {
+  font-size: 0.9rem; 
+  color: var(--text-muted); 
+  font-weight: normal;
+}
 
 /* 🟢 PERFECTED RATING BUTTONS */
 .rating-options { display: flex; flex-direction: column; gap: 10px; }
