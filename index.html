@@ -9,36 +9,40 @@
 <body>
 
   <header class="app-header">
-   
-    
-    <header class="app-header">
     <h1>Trainer Excellence Feedback</h1>
     <p>Help us recognize excellence by rating your instructor's performance and professionalism.</p>
-      
-  </header></p>
+    
+    <!-- Marking Matrix -->
+    <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; font-size: 0.85rem; font-weight: bold;">
+      <span style="color: #4caf50;">Excellent = 3</span> | 
+      <span style="color: #2196f3;">Good = 2</span> | 
+      <span style="color: #ffc107;">Average = 1</span> | 
+      <span style="color: #e91e63;">Needs Improvement = 0</span> | 
+      <span style="color: #757575;">Poor = -1</span>
+    </div>
   </header>
 
   <main class="survey-container">
     <form id="survey-form">
-      
-      <!-- The trainer cards will be generated here by JavaScript -->
       <div id="trainer-cards"></div>
 
       <div class="submit-area">
         <button type="submit" id="submit-btn">Submit All Feedback</button>
-        <p id="msg" class="msg"></p>
       </div>
     </form>
   </main>
-<p style="text-align:center; margin-top:20px;"><a href="results.html" style="color: #1c2b1a; font-weight: bold;">View Live Leaderboard</a></p>
-  <footer>
-        <p>Thank you for helping us shape a high-quality training environment!</p>
-  </footer>
+
+  <!-- 🎉 The Success Popup (Hidden by default) -->
+  <div id="success-popup" class="success-popup">
+    <div class="success-icon">✓</div>
+    <h2>Thank You!</h2>
+    <p>Your feedback has been successfully recorded.</p>
+  </div>
 
   <script>
-    // 1. Trainer Data (Matches your assets/trainers folder)
     const trainers = [
       { id: "1", name: "Sameera", img: "assets/trainers/Sameera.png" },
+      { id: "2", name: "Chamindu", img: "assets/trainers/Chamindu.png" },
       { id: "3", name: "Kavindu", img: "assets/trainers/Kavindu.png" },
       { id: "4", name: "Ravija", img: "assets/trainers/Navija.png" },
       { id: "5", name: "Bhagya", img: "assets/trainers/bhagya.png" },
@@ -51,9 +55,8 @@
 
     const ratings = ["Excellent", "Good", "Average", "Needs Improvement", "Poor"];
     
-    // 2. Build the UI dynamically
+    // Build UI
     const container = document.getElementById('trainer-cards');
-    
     trainers.forEach((t, index) => {
       const card = document.createElement('div');
       card.className = 'trainer-card';
@@ -82,17 +85,17 @@
       container.appendChild(card);
     });
 
-    // 3. Handle Submission
-    // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL BELOW (Must end in /exec) 🚨
+    // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL HERE 🚨
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
+    // Handle Submit
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submit-btn');
-      const msg = document.getElementById('msg');
+      const popup = document.getElementById('success-popup');
       
       btn.disabled = true;
-      msg.textContent = 'Submitting...';
+      btn.textContent = 'Submitting...';
 
       const formData = new FormData(e.target);
       const payload = { timestamp: new Date().toISOString(), ratings: {} };
@@ -101,31 +104,36 @@
         payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
       });
 
-      // Safety check: Make sure you replaced the URL
       if (ENDPOINT === 'PASTE_YOUR_WEB_APP_URL_HERE' || !ENDPOINT.includes('/exec')) {
-        msg.textContent = 'Error: Please paste your correct Google Script URL (ending in /exec) into the code.';
+        alert('Error: Please paste your correct Google Script URL into the code.');
         btn.disabled = false;
+        btn.textContent = 'Submit All Feedback';
         return;
       }
 
       try {
-        // We use 'no-cors' to bypass Google's strict security block
         await fetch(ENDPOINT, { 
           method: 'POST', 
           mode: 'no-cors', 
           body: JSON.stringify(payload) 
         });
         
-        // Because we used 'no-cors', we can't read Google's reply. 
-        // We assume it worked and show success!
-        msg.textContent = 'Submitted successfully! Thank you for your feedback.';
-        e.target.reset();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // 🎉 Show the beautiful popup
+        popup.classList.add('show');
+        
+        // Wait 3 seconds, then reset the form and hide the popup
+        setTimeout(() => {
+          popup.classList.remove('show');
+          e.target.reset(); // Clears all radio buttons
+          btn.disabled = false;
+          btn.textContent = 'Submit All Feedback';
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, 3000);
 
       } catch (error) {
-        msg.textContent = 'Network error — please try again.';
-      } finally {
+        alert('Network error — please try again.');
         btn.disabled = false;
+        btn.textContent = 'Submit All Feedback';
       }
     });
   </script>
