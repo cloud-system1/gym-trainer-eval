@@ -201,3 +201,93 @@ button[type="submit"]:disabled { background: #333; color: #888; cursor: not-allo
   }
   button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 12px; }
 }
+/* 🎉 CREATIVE SUCCESS POPUP STYLES */
+.success-popup {
+  display: none; 
+  position: fixed; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%) scale(0.5);
+  background: rgba(10, 15, 12, 0.95); 
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 2px solid var(--green-primary);
+  padding: 40px 30px; 
+  border-radius: 30px; 
+  text-align: center; 
+  box-shadow: 0 0 50px rgba(76, 175, 80, 0.4), inset 0 0 20px rgba(76, 175, 80, 0.2);
+  z-index: 2000; 
+  width: 90%; 
+  max-width: 420px; 
+  opacity: 0; 
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.success-popup.show { 
+  display: block; 
+  opacity: 1; 
+  transform: translate(-50%, -50%) scale(1); 
+}
+
+/* Glowing Ring around the checkmark */
+.success-icon-ring {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 3px solid rgba(76, 175, 80, 0.3);
+  border-top-color: var(--green-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 25px;
+  position: relative;
+  animation: spinRing 2s linear infinite;
+}
+
+/* The Checkmark inside the ring */
+.success-icon {
+  width: 70px; 
+  height: 70px; 
+  background: var(--green-primary); 
+  color: white; 
+  border-radius: 50%;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  font-size: 35px;
+  box-shadow: 0 0 20px var(--green-glow); 
+  animation: bounceIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Creative Typography */
+.success-popup h2 { 
+  margin: 0 0 15px; 
+  color: #fff; 
+  font-size: 2rem; 
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  background: linear-gradient(to right, #fff, var(--green-primary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.success-popup p { 
+  color: var(--text-muted); 
+  margin: 0; 
+  font-size: 1.1rem; 
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* Animations */
+@keyframes bounceIn {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+@keyframes spinRing {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
