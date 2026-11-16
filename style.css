@@ -120,8 +120,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  
+  /* 🟢 THIS IS THE MAGIC LINE */
   scroll-snap-align: center; 
-  scroll-margin-top: 20px;
+  
+  /* Ensures the card isn't too tall for small screens */
+  max-height: 90vh; 
 }
 
 .trainer-card:hover { transform: translateY(-3px); }
