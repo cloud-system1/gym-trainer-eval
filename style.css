@@ -3,6 +3,7 @@
 :root { 
   --bg-gradient: linear-gradient(135deg, #050805 0%, #0a1c10 100%);
   --surface: rgba(20, 30, 22, 0.6); 
+  --surface-hover: rgba(30, 45, 33, 0.8);
   --text-main: #e8f5e9;
   --text-muted: #8bb393;
   --green-primary: #4caf50;
@@ -19,11 +20,44 @@
 body {
   margin: 0; 
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: var(--bg-gradient);
-  background-attachment: fixed;
+  background-color: #050805; /* Base dark color */
   color: var(--text-main);
   min-height: 100vh;
   padding-bottom: 80px;
+  overflow-x: hidden;
+}
+
+/* 🏋️‍♂️ ANIMATED BACKGROUND */
+.bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -2;
+  background: var(--bg-gradient);
+}
+
+.bg-icon {
+  position: absolute;
+  color: rgba(76, 175, 80, 0.08); /* Very faint green */
+  font-size: 5rem;
+  user-select: none;
+  pointer-events: none;
+  animation: floatUp 20s linear infinite;
+}
+
+/* Different speeds and positions for each icon */
+.icon-1 { top: 10%; left: 10%; animation-duration: 25s; font-size: 6rem; }
+.icon-2 { top: 40%; right: 15%; animation-duration: 18s; font-size: 4rem; animation-delay: -5s; }
+.icon-3 { top: 70%; left: 20%; animation-duration: 30s; font-size: 8rem; animation-delay: -10s; }
+.icon-4 { top: 85%; right: 30%; animation-duration: 22s; font-size: 5rem; animation-delay: -2s; }
+.icon-5 { top: 25%; left: 50%; animation-duration: 28s; font-size: 4.5rem; animation-delay: -15s; }
+
+@keyframes floatUp {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-40px) rotate(10deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
 }
 
 /* Header Layout */
@@ -45,15 +79,10 @@ body {
   transition: transform 0.4s ease-in-out;
 }
 
-/* Hide header on scroll */
-.app-header.header-hidden {
-  transform: translateY(-100%);
-}
-
+.app-header.header-hidden { transform: translateY(-100%); }
 .header-text h1 { margin: 0 0 5px; font-size: 1.5rem; font-weight: 700; color: #fff; }
 .header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 
-/* Logo Styling */
 .header-logo {
   max-width: 120px;
   height: auto;
@@ -64,6 +93,8 @@ body {
   max-width: 650px; 
   margin: 120px auto 30px auto; 
   padding: 0 16px; 
+  position: relative;
+  z-index: 1; /* Keeps form above background */
 }
 
 /* Trainer Cards */
@@ -112,7 +143,6 @@ body {
 .rating-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
 .rating-btn input[type="radio"] { display: none; }
 
-/* Active/Checked States */
 .rating-btn:has(input:checked) { 
   color: #fff; border-color: transparent; transform: scale(1.02); 
   box-shadow: 0 6px 20px rgba(0,0,0,0.4); backdrop-filter: none; font-weight: 700;
