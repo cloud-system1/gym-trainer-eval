@@ -40,6 +40,7 @@ body {
   background-image: url('bg.jpg');
   background-size: cover;
   background-position: center;
+}
   
   /* The Blur and Dark Overlay */
   filter: blur(8px) brightness(0.4);
