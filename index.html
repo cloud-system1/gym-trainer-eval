@@ -8,21 +8,15 @@
 </head>
 <body>
 
-   <header class="app-header">
-    <!-- 🟢 ADD LOGO HERE -->
-    <img src="logo.png" alt="High Impact Gym" class="brand-logo">
-    
-    <h1>Trainer Excellence Feedback</h1>
-    <p>Help us recognize excellence by rating your instructor's performance and professionalism.</p>
-    
-    <!-- Marking Matrix -->
-    <div style="margin-top: 15px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; font-size: 0.85rem; font-weight: bold;">
-      <span style="color: #4caf50;">Excellent = 3</span> | 
-      <span style="color: #2196f3;">Good = 2</span> | 
-      <span style="color: #ffc107;">Average = 1</span> | 
-      <span style="color: #e91e63;">Needs Improvement = 0</span> | 
-      <span style="color: #757575;">Poor = -1</span>
+  <!-- The header now has the hide animation class attached to it -->
+  <header class="app-header" id="main-header">
+    <div class="header-text">
+      <h1>Trainer Excellence Feedback</h1>
+      <p>Help us recognize excellence by rating your instructor's performance and professionalism.</p>
     </div>
+    
+    <!-- Logo on the right -->
+    <img src="logo.png" alt="High Impact Gym" class="header-logo">
   </header>
 
   <main class="survey-container">
@@ -35,7 +29,7 @@
     </form>
   </main>
 
-  <!-- 🎉 The Success Popup (Hidden by default) -->
+  <!-- 🎉 The Success Popup -->
   <div id="success-popup" class="success-popup">
     <div class="success-icon">✓</div>
     <h2>Thank You!</h2>
@@ -43,6 +37,24 @@
   </div>
 
   <script>
+    // 1. HIDE/SHOW HEADER ON SCROLL
+    let lastScrollTop = 0;
+    const header = document.getElementById('main-header');
+
+    window.addEventListener('scroll', function() {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      
+      if (scrollTop > lastScrollTop && scrollTop > 100) {
+        // Scrolling DOWN
+        header.classList.add('header-hidden');
+      } else {
+        // Scrolling UP
+        header.classList.remove('header-hidden');
+      }
+      lastScrollTop = scrollTop;
+    });
+
+    // 2. BUILD THE TRAINER CARDS
     const trainers = [
       { id: "1", name: "Sameera", img: "assets/trainers/Sameera.png" },
       { id: "2", name: "Chamindu", img: "assets/trainers/Chamindu.png" },
@@ -57,9 +69,8 @@
     ];
 
     const ratings = ["Excellent", "Good", "Average", "Needs Improvement", "Poor"];
-    
-    // Build UI
     const container = document.getElementById('trainer-cards');
+    
     trainers.forEach((t, index) => {
       const card = document.createElement('div');
       card.className = 'trainer-card';
@@ -88,10 +99,10 @@
       container.appendChild(card);
     });
 
+    // 3. SUBMIT FORM
     // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL HERE 🚨
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
+    const ENDPOINT = 'PASTE_YOUR_WEB_APP_URL_HERE'; 
 
-    // Handle Submit
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submit-btn');
@@ -107,13 +118,6 @@
         payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
       });
 
-      if (ENDPOINT === 'PASTE_YOUR_WEB_APP_URL_HERE' || !ENDPOINT.includes('/exec')) {
-        alert('Error: Please paste your correct Google Script URL into the code.');
-        btn.disabled = false;
-        btn.textContent = 'Submit All Feedback';
-        return;
-      }
-
       try {
         await fetch(ENDPOINT, { 
           method: 'POST', 
@@ -121,13 +125,11 @@
           body: JSON.stringify(payload) 
         });
         
-        // 🎉 Show the beautiful popup
         popup.classList.add('show');
         
-        // Wait 3 seconds, then reset the form and hide the popup
         setTimeout(() => {
           popup.classList.remove('show');
-          e.target.reset(); // Clears all radio buttons
+          e.target.reset(); 
           btn.disabled = false;
           btn.textContent = 'Submit All Feedback';
           window.scrollTo({ top: 0, behavior: 'smooth' });
