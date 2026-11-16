@@ -1,6 +1,5 @@
     const trainers = [
       { id: "1", name: "Sameera", img: "assets/trainers/Sameera.png" },
-      { id: "2", name: "Chamindu", img: "assets/trainers/Chamindu.png" }, 
       { id: "3", name: "Kavindu", img: "assets/trainers/Kavindu.png" },
       { id: "4", name: "Ravija", img: "assets/trainers/Navija.png" },
       { id: "5", name: "Bhagya", img: "assets/trainers/bhagya.png" },
