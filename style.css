@@ -149,7 +149,13 @@ body {
   transition: all 0.2s ease;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(5px);
-  color: #ccc;
+  color: #ccc; /* Ensures the text is visible */
+}
+
+/* Ensure the span inside the button is visible */
+.rating-btn span {
+  color: inherit;
+  pointer-events: none;
 }
 
 .rating-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
