@@ -12,7 +12,8 @@
     <div class="bg-icon icon-2">🏋️‍♀️</div>
     <div class="bg-icon icon-3">⚡</div>
     <div class="bg-icon icon-4">💪</div>
-    </div>
+  </div>
+  
   <header class="app-header" id="main-header">
       <div class="header-text">
       <h1>Trainer Excellence Feedback</h1>
@@ -30,15 +31,17 @@
     </form>
   </main>
 
-  <!-- 🎉 The Success Popup -->
+  <!-- 🎉 The Creative Success Popup (Corrected Location) -->
   <div id="success-popup" class="success-popup">
-    <div class="success-icon">✓</div>
-    <h2>Thank You!</h2>
-    <p>Your feedback has been successfully recorded.</p>
+    <div class="success-icon-ring">
+      <div class="success-icon">✓</div>
+    </div>
+    <h2>Feedback Sent!</h2>
+    <p>Your evaluation has been securely recorded.<br>Thank you for shaping the High Impact experience!</p>
   </div>
 
   <script>
-           // 1. COMBINED SCROLL EFFECTS (Header Hide + Continuous Background Zoom)
+    // 1. COMBINED SCROLL EFFECTS (Header Hide + Continuous Background Zoom)
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     const bgZoom = document.getElementById('bg-zoom');
@@ -56,23 +59,15 @@
 
       // B. Continuous Background Zoom Effect
       if (bgZoom) {
-        // Calculate how far down the page we are (from 0 to 1)
-        // document.documentElement.scrollHeight is the total height of the page
-        // window.innerHeight is the height of your screen
         let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        
-        // Prevent division by zero if the page is too short to scroll
         if (maxScroll > 0) {
-          let scrollPercent = scrollTop / maxScroll; // This goes from 0 to 1 as you reach the bottom
-          
-          // We want the background to zoom from 1x to 2.5x (or however big you want)
-          // Change the '1.5' below to make it zoom in more or less.
+          let scrollPercent = scrollTop / maxScroll; 
           let scale = 1 + (scrollPercent * 1.5); 
-          
           bgZoom.style.transform = `scale(${scale})`;
         }
       }
     });
+
     // 2. BUILD THE TRAINER CARDS
     const trainers = [
       { id: "1", name: "Sameera", img: "assets/trainers/Sameera.png" },
@@ -105,21 +100,21 @@
         `;
       });
 
+      // This now correctly generates the trainer card layout
       card.innerHTML = `
-        <div id="success-popup" class="success-popup">
-    <div class="success-icon-ring">
-      <div class="success-icon">✓</div>
-    </div>
-    <h2>Feedback Sent!</h2>
-    <p>Your evaluation has been securely recorded.<br>Thank you for shaping the High Impact experience!</p>
-  </div>
+        <div class="trainer-header">
+          <img src="${t.img}" alt="${t.name}" onerror="this.src='https://via.placeholder.com/80?text=No+Photo'">
+          <h2>${t.name}</h2>
+        </div>
+        <div class="rating-options">
+          ${buttonsHTML}
+        </div>
       `;
       
       container.appendChild(card);
     });
 
     // 3. SUBMIT FORM (INSTANT UI + BACKGROUND SEND)
-    // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL HERE 🚨
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
