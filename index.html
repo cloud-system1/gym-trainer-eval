@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css?v=3" />
 </head>
 <body>
 
@@ -25,6 +25,7 @@
     </form>
   </main>
 
+  <!-- 🎉 The Success Popup -->
   <div id="success-popup" class="success-popup">
     <div class="success-icon">✓</div>
     <h2>Thank You!</h2>
@@ -91,7 +92,7 @@
       container.appendChild(card);
     });
 
-    // 3. SUBMIT FORM
+    // 3. SUBMIT FORM (INSTANT UI + BACKGROUND SEND)
     // 🚨 PASTE YOUR GOOGLE APPS SCRIPT URL HERE 🚨
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
@@ -100,7 +101,6 @@
       const btn = document.getElementById('submit-btn');
       const popup = document.getElementById('success-popup');
       
-      btn.disabled = true;
       btn.textContent = 'Submitting...';
 
       const formData = new FormData(e.target);
@@ -110,27 +110,28 @@
         payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
       });
 
+      // 🟢 INSTANT SUCCESS: Show the popup immediately
+      popup.classList.add('show');
+      
+      // Reset the form instantly in the background
+      e.target.reset(); 
+      
+      // Wait 3 seconds while the popup is showing, then hide it and restore the button
+      setTimeout(() => {
+        popup.classList.remove('show');
+        btn.textContent = 'Submit All Feedback';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 3000);
+
+      // 🟢 SEND DATA IN BACKGROUND (User doesn't wait for this)
       try {
-        await fetch(ENDPOINT, { 
+        fetch(ENDPOINT, { 
           method: 'POST', 
           mode: 'no-cors', 
           body: JSON.stringify(payload) 
         });
-        
-        popup.classList.add('show');
-        
-        setTimeout(() => {
-          popup.classList.remove('show');
-          e.target.reset(); 
-          btn.disabled = false;
-          btn.textContent = 'Submit All Feedback';
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }, 3000);
-
       } catch (error) {
-        alert('Network error — please try again.');
-        btn.disabled = false;
-        btn.textContent = 'Submit All Feedback';
+        console.log("Background submission error:", error);
       }
     });
   </script>
