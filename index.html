@@ -38,7 +38,7 @@
   </div>
 
   <script>
-       // 1. COMBINED SCROLL EFFECTS (Header Hide + Background Zoom)
+           // 1. COMBINED SCROLL EFFECTS (Header Hide + Continuous Background Zoom)
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     const bgZoom = document.getElementById('bg-zoom');
@@ -54,15 +54,25 @@
       }
       lastScrollTop = scrollTop;
 
-      // B. Background Zoom Effect
+      // B. Continuous Background Zoom Effect
       if (bgZoom) {
-        // 0.001 is the speed of the zoom. Change to 0.002 for a faster zoom.
-        let scale = 1 + (scrollTop * 0.001); 
-        if (scale > 1.5) scale = 1.5; // Max zoom limit
-        bgZoom.style.transform = `scale(${scale})`;
+        // Calculate how far down the page we are (from 0 to 1)
+        // document.documentElement.scrollHeight is the total height of the page
+        // window.innerHeight is the height of your screen
+        let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        
+        // Prevent division by zero if the page is too short to scroll
+        if (maxScroll > 0) {
+          let scrollPercent = scrollTop / maxScroll; // This goes from 0 to 1 as you reach the bottom
+          
+          // We want the background to zoom from 1x to 2.5x (or however big you want)
+          // Change the '1.5' below to make it zoom in more or less.
+          let scale = 1 + (scrollPercent * 1.5); 
+          
+          bgZoom.style.transform = `scale(${scale})`;
+        }
       }
     });
-
     // 2. BUILD THE TRAINER CARDS
     const trainers = [
       { id: "1", name: "Sameera", img: "assets/trainers/Sameera.png" },
