@@ -25,16 +25,17 @@
   <main class="survey-container">
     <form id="survey-form">
       <div id="trainer-cards"></div>
-      <div class="submit-area">
+      
+      <!-- The button is hidden by default. It will slide up when all 10 are rated. -->
+      <div class="submit-area" id="submit-area">
         <button type="submit" id="submit-btn">Complete Evaluation</button>
       </div>
     </form>
   </main>
 
-  <!-- 🎉 The Creative Success Popup (Corrected Location) -->
+  <!-- 🎉 The Creative Success Popup -->
    <div id="success-popup" class="success-popup">
     <div class="success-icon-ring">
-      <!-- Custom Dumbbell SVG -->
       <div class="success-icon">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 36px; height: 36px;">
           <path d="M6.5 6.5h11M6.5 17.5h11M3 9v6M21 9v6"/>
@@ -106,7 +107,6 @@
         `;
       });
 
-      // This now correctly generates the trainer card layout
       card.innerHTML = `
         <div class="trainer-header">
           <img src="${t.img}" alt="${t.name}" onerror="this.src='https://via.placeholder.com/80?text=No+Photo'">
@@ -120,7 +120,30 @@
       container.appendChild(card);
     });
 
-    // 3. SUBMIT FORM (INSTANT UI + BACKGROUND SEND)
+    // 🟢 3. CHECK IF ALL TRAINERS ARE RATED BEFORE SHOWING BUTTON
+    const submitArea = document.getElementById('submit-area');
+    const formElement = document.getElementById('survey-form');
+
+    formElement.addEventListener('change', () => {
+      let answeredCount = 0;
+      
+      // Count how many trainers have a rating selected
+      trainers.forEach(t => {
+        const selected = document.querySelector(`input[name="trainer_${t.id}"]:checked`);
+        if (selected) {
+          answeredCount++;
+        }
+      });
+
+      // Show the button only when all trainers are rated
+      if (answeredCount === trainers.length) {
+        submitArea.classList.add('show-submit');
+      } else {
+        submitArea.classList.remove('show-submit');
+      }
+    });
+
+    // 4. SUBMIT FORM (INSTANT UI + BACKGROUND SEND)
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
@@ -137,19 +160,21 @@
         payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
       });
 
-      // 🟢 INSTANT SUCCESS: Show the popup immediately
+      // Show the popup immediately
       popup.classList.add('show');
       
       // Reset the form instantly in the background
       e.target.reset(); 
+      submitArea.classList.remove('show-submit'); // Hide the button again for the next customer
       
       // Wait 3 seconds while the popup is showing, then hide it and restore the button
       setTimeout(() => {
         popup.classList.remove('show');
-        btn.textContent = 'Complete Evaluation'; // <--- Change this too!
+        btn.textContent = 'Complete Evaluation';
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 3000);
-      // 🟢 SEND DATA IN BACKGROUND (User doesn't wait for this)
+
+      // Send data in background
       try {
         fetch(ENDPOINT, { 
           method: 'POST', 
