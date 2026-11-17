@@ -23,23 +23,22 @@ body {
   color: var(--text-main);
   
   /* 🟢 LOCKS THE BACKGROUND FROM SCROLLING */
-  height: 100vh;
+  height: 100dvh; /* Uses dynamic viewport height for mobile */
   overflow: hidden; 
   position: fixed; 
   width: 100%;
 }
 
-/* Let the header and survey container handle their own scrolling */
 .survey-container {
   position: relative;
   max-width: 850px; 
-  margin: 120px auto 0;
+  margin: 120px auto 0; /* Desktop margin */
   padding: 0 16px;
   width: 100%;
-  height: calc(100vh - 120px); /* Adjusts for the header */
-  overflow-y: auto; /* Allows scrolling inside the container if needed */
+  height: calc(100dvh - 120px); /* Uses dynamic viewport height */
+  overflow-y: auto; 
   -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; /* Hides scrollbar */
+  scrollbar-width: none; 
 }
 .survey-container::-webkit-scrollbar { display: none; }
 
@@ -243,13 +242,36 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
   .header-text h1 { font-size: 1.2rem; }
   .header-text p { display: none; }
   .header-logo { max-width: 80px; }
-  .survey-container { margin-top: 90px; }
+  
+  /* 🟢 MOBILE SPECIFIC HEIGHTS */
+  .survey-container { 
+    margin-top: 90px; 
+    height: calc(100dvh - 90px); 
+    padding-bottom: 120px; /* Room for the sticky button */
+  }
+  
   .trainer-card { 
     flex-direction: column;
     padding: 20px; 
-    gap: 20px; 
+    gap: 15px; 
     min-height: auto; 
+    margin-bottom: 20px;
   }
-  .trainer-header img { width: 150px; height: 150px; }
+  
+  .trainer-header img { 
+    width: 160px; 
+    height: 160px; 
+  }
+  
+  .trainer-name {
+    font-size: 1.5rem;
+  }
+
+  /* Make the neon buttons a bit smaller on mobile so they fit */
+  .rating-btn {
+    padding: 14px 20px;
+    font-size: 0.9rem;
+  }
+  
   button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 12px; }
 }
