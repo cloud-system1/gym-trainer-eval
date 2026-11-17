@@ -21,64 +21,27 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #050805;
   color: var(--text-main);
-  min-height: 100vh;
-  padding-bottom: 80px;
-  overflow-x: hidden;
-}
-
-.bg-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
+  
+  /* 🟢 LOCKS THE BACKGROUND FROM SCROLLING */
   height: 100vh;
-  z-index: -2;
-  background-image: url('bg.jpg');
-  background-size: cover;
-  background-position: center;
-  filter: blur(8px) brightness(0.4);
-  transition: transform 0.1s ease-out; 
-}
-
-.bg-container::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--bg-gradient);
-}
-
-.app-header {
-  background: rgba(5, 8, 5, 0.5);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  padding: 20px 30px;
-  box-shadow: 0 4px 30px rgba(0,0,0,0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
+  overflow: hidden; 
+  position: fixed; 
   width: 100%;
-  z-index: 100;
-  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: transform 0.4s ease-in-out;
 }
 
-.app-header.header-hidden { transform: translateY(-100%); }
-.header-text h1 { margin: 0 0 5px; font-size: 1.5rem; font-weight: 700; color: #fff; }
-.header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
-.header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
-
-/* 🟢 FIXED CONTAINER */
+/* Let the header and survey container handle their own scrolling */
 .survey-container {
   position: relative;
   max-width: 850px; 
   margin: 120px auto 0;
   padding: 0 16px;
   width: 100%;
-  overflow: hidden; 
+  height: calc(100vh - 120px); /* Adjusts for the header */
+  overflow-y: auto; /* Allows scrolling inside the container if needed */
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Hides scrollbar */
 }
+.survey-container::-webkit-scrollbar { display: none; }
 
 #trainer-cards {
   display: flex;
