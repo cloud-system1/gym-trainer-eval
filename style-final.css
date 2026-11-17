@@ -109,42 +109,56 @@ body {
   transform: translateZ(0); 
 }
 
+/* 🟢 BIGGER PHOTO & NAME */
 .trainer-header { 
-  flex: 1;
+  flex: 1.2; /* Gives the photo side slightly more room */
   display: flex; 
+  flex-direction: column; /* Stacks name under the photo */
   justify-content: center;
   align-items: center;
+  gap: 15px;
 }
 
 .trainer-header img { 
-  width: 220px; 
-  height: 220px; 
+  width: 260px;  /* 🟢 Made bigger (was 220px) */
+  height: 260px; /* 🟢 Made bigger (was 220px) */
   border-radius: 50%; 
   object-fit: cover; 
   border: 6px solid var(--green-primary); 
-  box-shadow: 0 0 25px var(--green-glow); 
+  box-shadow: 0 0 30px var(--green-glow); 
   background: #222;
   display: block; 
+}
+
+/* 🟢 NEW: Style for the name */
+.trainer-name {
+  margin: 0;
+  font-size: 2rem;
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+  text-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 .rating-options { 
   flex: 1;
   display: flex; 
   flex-direction: column; 
-  gap: 10px; 
+  gap: 12px; 
 }
 
+/* 🟢 SMALLER FONT FOR RATING BUTTONS */
 .rating-btn {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 16px 20px;
+  padding: 14px 20px;
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   font-weight: 600;
-  font-size: 1.05rem;
+  font-size: 0.9rem; /* 🟢 Made smaller (was 1.05rem) */
   transition: all 0.2s ease;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(5px);
