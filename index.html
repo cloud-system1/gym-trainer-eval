@@ -95,9 +95,10 @@
         `;
       });
 
-           card.innerHTML = `
+                 card.innerHTML = `
         <div class="trainer-header">
           <img src="${t.img}" alt="${t.name}" onerror="this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=150'">
+          <h2 class="trainer-name">${t.name}</h2> <!-- 🟢 Added the name here -->
         </div>
         <div class="rating-options">
           ${buttonsHTML}
