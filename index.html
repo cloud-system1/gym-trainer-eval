@@ -113,8 +113,12 @@
     const totalTrainers = trainers.length;
     const submitArea = document.getElementById('submit-area');
 
-    container.addEventListener('change', (e) => {
+  container.addEventListener('change', (e) => {
       if (e.target.type === 'radio') {
+        
+        // 🟢 HIDE THE HEADER IMMEDIATELY WHEN A RATING IS CLICKED
+        document.getElementById('main-header').classList.add('header-hidden');
+
         setTimeout(() => {
           if (currentIndex < totalTrainers - 1) {
             currentIndex++;
