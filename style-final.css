@@ -21,34 +21,79 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #050805;
   color: var(--text-main);
-  
-  /* 🟢 LOCKS THE BACKGROUND FROM SCROLLING */
-  height: 100dvh; /* Uses dynamic viewport height for mobile */
-  overflow: hidden; 
-  position: fixed; 
+  min-height: 100vh;
+  overflow-x: hidden; 
   width: 100%;
 }
 
+/* BACKGROUND */
+.bg-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -2;
+  background-image: url('bg.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(8px) brightness(0.4);
+  transition: transform 0.1s ease-out; 
+}
+
+.bg-container::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: var(--bg-gradient);
+}
+
+/* HEADER */
+.app-header {
+  background: rgba(5, 8, 5, 0.5);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 20px 30px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 100;
+  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.4s ease-in-out;
+}
+
+.app-header.header-hidden { transform: translateY(-100%); }
+.header-text h1 { margin: 0 0 5px; font-size: 1.5rem; font-weight: 700; color: #fff; }
+.header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+.header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
+
+/* SURVEY CONTAINER */
 .survey-container {
   position: relative;
   max-width: 850px; 
-  margin: 120px auto 0; /* Desktop margin */
+  margin: 120px auto 0; 
   padding: 0 16px;
   width: 100%;
-  height: calc(100dvh - 120px); /* Uses dynamic viewport height */
-  overflow-y: auto; 
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; 
+  min-height: calc(100vh - 120px); 
+  display: flex;
+  align-items: center;
+  overflow: hidden;
 }
-.survey-container::-webkit-scrollbar { display: none; }
 
 #trainer-cards {
   display: flex;
   width: 100%;
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
+  touch-action: pan-y;
 }
 
+/* TRAINER CARDS */
 .trainer-card {
   flex: 0 0 100%; 
   width: 100%;
@@ -71,7 +116,6 @@ body {
   transform: translateZ(0); 
 }
 
-/* 🟢 BIGGER PHOTO & NAME */
 .trainer-header { 
   flex: 1.2; 
   display: flex; 
@@ -84,13 +128,13 @@ body {
 .trainer-header img { 
   width: 260px;  
   height: 260px; 
-  border-radius: 50%; /* Fixed to 50% for a perfect circle */
+  border-radius: 50%; 
   object-fit: cover; 
   border: 6px solid var(--green-primary); 
   box-shadow: 0 0 30px var(--green-glow); 
   background: #222;
   display: block; 
-  transform: scale(1.15); /* Zoom effect */
+  transform: scale(1.15); 
 }
 
 .trainer-name {
@@ -106,17 +150,17 @@ body {
   flex: 1;
   display: flex; 
   flex-direction: column; 
-  gap: 15px; /* Slightly more gap for the glow */
+  gap: 15px; 
 }
 
-/* 🟢 NEON GLOW RATING BUTTONS */
+/* NEON BUTTONS */
 .rating-btn {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px 24px;
-  border-radius: 30px; /* Fully rounded edges */
+  border-radius: 30px; 
   cursor: pointer;
   font-weight: 600;
   font-size: 0.95rem;
@@ -128,7 +172,6 @@ body {
   border: none; 
 }
 
-/* The glowing spinning border effect */
 .rating-btn::before {
   content: "";
   position: absolute;
@@ -143,7 +186,6 @@ body {
   pointer-events: none;
 }
 
-/* Inner subtle glow */
 .rating-btn::after {
   content: "";
   position: absolute;
@@ -153,52 +195,21 @@ body {
   pointer-events: none;
 }
 
-.rating-btn input[type="radio"] { 
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+.rating-btn input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+.rating-btn span { position: relative; z-index: 1; pointer-events: none; }
+.rating-btn:hover { background: #222; transform: translateY(-2px); }
 
-.rating-btn span {
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
-}
-
-/* Hover State */
-.rating-btn:hover {
-  background: #222;
-  transform: translateY(-2px);
-}
-
-/* Checked State (Solid Color) */
-.rating-btn:has(input:checked) {
-  background: var(--green-primary);
-  box-shadow: 0 0 25px var(--green-primary);
-  color: #000; 
-  font-weight: 700;
-}
-
-/* Specific colors when checked */
+.rating-btn:has(input:checked) { background: var(--green-primary); box-shadow: 0 0 25px var(--green-primary); color: #000; font-weight: 700; }
 .rating-btn.btn-excellent:has(input:checked) { background: var(--green-primary); box-shadow: 0 0 25px var(--green-primary); color: #000; }
 .rating-btn.btn-good:has(input:checked) { background: var(--blue); box-shadow: 0 0 25px var(--blue); color: #fff; }
 .rating-btn.btn-average:has(input:checked) { background: var(--yellow); box-shadow: 0 0 25px var(--yellow); color: #000; }
 .rating-btn.btn-needs:has(input:checked) { background: var(--pink); box-shadow: 0 0 25px var(--pink); color: #fff; }
 .rating-btn.btn-poor:has(input:checked) { background: var(--gray); box-shadow: 0 0 25px var(--gray); color: #000; }
 
-/* Animation for the glowing border */
-@property --angle {
-  syntax: "<angle>";
-  initial-value: 0deg;
-  inherits: false;
-}
+@property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
+@keyframes spin { from { --angle: 0deg; } to { --angle: 360deg; } }
 
-@keyframes spin {
-  from { --angle: 0deg; }
-  to { --angle: 360deg; }
-}
-
+/* SUBMIT BUTTON */
 .submit-area {
   position: fixed; bottom: 0; left: 0; width: 100%;
   background: rgba(5, 8, 5, 0.95); backdrop-filter: blur(16px); 
@@ -217,6 +228,7 @@ button[type="submit"] {
 }
 button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(76, 175, 80, 0.5); }
 
+/* SUCCESS POPUP */
 .success-popup {
   display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
   background: rgba(10, 15, 12, 0.95); backdrop-filter: blur(25px); border: 2px solid var(--green-primary);
@@ -237,17 +249,18 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
 @keyframes popRing { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes dropIn { 0% { transform: translateY(-40px) scale(1.5); opacity: 0; } 60% { transform: translateY(5px) scale(0.9); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
 
+/* MOBILE */
 @media (max-width: 768px) {
   .app-header { padding: 15px; }
   .header-text h1 { font-size: 1.2rem; }
   .header-text p { display: none; }
   .header-logo { max-width: 80px; }
   
-  /* 🟢 MOBILE SPECIFIC HEIGHTS */
   .survey-container { 
     margin-top: 90px; 
-    height: calc(100dvh - 90px); 
-    padding-bottom: 120px; /* Room for the sticky button */
+    min-height: calc(100vh - 90px); 
+    padding-bottom: 100px; 
+    align-items: flex-start; 
   }
   
   .trainer-card { 
@@ -256,22 +269,11 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
     gap: 15px; 
     min-height: auto; 
     margin-bottom: 20px;
+    width: 100%;
   }
   
-  .trainer-header img { 
-    width: 160px; 
-    height: 160px; 
-  }
-  
-  .trainer-name {
-    font-size: 1.5rem;
-  }
-
-  /* Make the neon buttons a bit smaller on mobile so they fit */
-  .rating-btn {
-    padding: 14px 20px;
-    font-size: 0.9rem;
-  }
-  
+  .trainer-header img { width: 160px; height: 160px; }
+  .trainer-name { font-size: 1.5rem; }
+  .rating-btn { padding: 14px 20px; font-size: 0.9rem; }
   button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 12px; }
 }
