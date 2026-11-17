@@ -122,13 +122,16 @@ body {
 .trainer-header img { 
   width: 260px;  /* 🟢 Made bigger (was 220px) */
   height: 260px; /* 🟢 Made bigger (was 220px) */
-  border-radius: 50%; 
+  border-radius: 60%; 
   object-fit: cover; 
   border: 6px solid var(--green-primary); 
   box-shadow: 0 0 30px var(--green-glow); 
   background: #222;
   display: block; 
+ /* 🟢 ZOOM THE PHOTO */
+  transform: scale(1.15); /* Change this number to zoom more or less. 1.15 means 15% zoom. */
 }
+  
 
 /* 🟢 NEW: Style for the name */
 .trainer-name {
