@@ -4,58 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style.css?v=20" /> 
-  <style>
-    /* 🔒 LOGIN GATE STYLES */
-    #login-gate {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: var(--bg-gradient);
-      z-index: 9999;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 0.5s ease;
-    }
-    .login-box {
-      background: var(--surface);
-      backdrop-filter: blur(12px);
-      padding: 40px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.1);
-      text-align: center;
-      width: 90%;
-      max-width: 400px;
-      box-shadow: var(--shadow-md);
-    }
-    .login-box h2 { color: #fff; margin-top: 0; }
-    .login-box input {
-      width: 100%; padding: 15px; margin: 15px 0;
-      background: rgba(0,0,0,0.3); border: 1px solid var(--green-primary);
-      border-radius: 10px; color: #fff; font-size: 1.1rem; text-align: center;
-      outline: none;
-    }
-    .login-box button {
-      width: 100%; padding: 15px; background: var(--green-primary);
-      color: #fff; border: none; border-radius: 10px; font-size: 1.1rem;
-      font-weight: bold; cursor: pointer; transition: 0.2s;
-    }
-    .login-box button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px var(--green-glow); }
-    .error { color: #ff5252; margin-top: 10px; display: none; font-weight: bold; }
-  </style>
+  <link rel="stylesheet" href="style.css?v=21" /> 
 </head>
 <body>
-
-  <div id="login-gate">
-    <div class="login-box">
-      <img src="logo.png" alt="Logo" style="max-width: 100px; margin-bottom: 20px;">
-      <h2>Welcome</h2>
-      <p style="color: #8bb393; font-size: 0.9rem;">Please enter the access code to start the survey.</p>
-      <input type="password" id="password-input" placeholder="Enter Code">
-      <button onclick="checkPassword()">Start Survey</button>
-      <p class="error" id="error-msg">Incorrect code. Try again.</p>
-    </div>
-  </div>
 
   <div class="bg-container" id="bg-zoom"></div>
   
@@ -90,33 +41,7 @@
   </div>
 
   <script>
-    const SECRET_PASSWORD = "Ranga1"; 
-
-    function checkPassword() {
-      const input = document.getElementById('password-input').value;
-      const gate = document.getElementById('login-gate');
-      const error = document.getElementById('error-msg');
-
-      if (input === SECRET_PASSWORD) {
-        gate.style.opacity = '0';
-        setTimeout(() => {
-          gate.style.display = 'none';
-          sessionStorage.setItem('surveyUnlocked', 'true');
-        }, 500);
-      } else {
-        error.style.display = 'block';
-        document.getElementById('password-input').value = '';
-      }
-    }
-
-    if (sessionStorage.getItem('surveyUnlocked') === 'true') {
-      document.getElementById('login-gate').style.display = 'none';
-    }
-
-    document.getElementById('password-input').addEventListener('keypress', function (e) {
-      if (e.key === 'Enter') checkPassword();
-    });
-
+    // 1. HEADER HIDE ON SCROLL & BACKGROUND ZOOM
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     const bgZoom = document.getElementById('bg-zoom');
@@ -137,6 +62,7 @@
       }
     });
 
+    // 2. BUILD THE TRAINER CARDS
     const trainers = [
       { id: "1", name: "Sameera", img: "assets/trainers/Sameera.jpg" },
       { id: "2", name: "Kavindu", img: "assets/trainers/Kavindu.jpg" },
@@ -181,10 +107,10 @@
       container.appendChild(card);
     });
 
+    // 3. AUTO-ADVANCE LOGIC
     let currentIndex = 0;
     const totalTrainers = trainers.length;
     const submitArea = document.getElementById('submit-area');
-    const cards = document.querySelectorAll('.trainer-card');
 
     container.addEventListener('change', (e) => {
       if (e.target.type === 'radio') {
@@ -199,6 +125,7 @@
       }
     });
 
+    // 4. SUBMIT FORM
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
