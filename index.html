@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style-final.css?v=9" /> 
+  <link rel="stylesheet" href="style-final.css?v=11" /> 
 </head>
 <body>
 
@@ -41,7 +41,6 @@
   </div>
 
   <script>
-    // 1. HEADER HIDE ON SCROLL & BACKGROUND ZOOM
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     const bgZoom = document.getElementById('bg-zoom');
@@ -62,7 +61,6 @@
       }
     });
 
-    // 2. BUILD THE TRAINER CARDS
     const trainers = [
       { id: "1", name: "Sameera", img: "assets/trainers/Sameera.jpg" },
       { id: "2", name: "Kavindu", img: "assets/trainers/Kavindu.jpg" },
@@ -108,15 +106,12 @@
       container.appendChild(card);
     });
 
-    // 3. AUTO-ADVANCE LOGIC & HIDE HEADER ON FIRST CLICK
     let currentIndex = 0;
     const totalTrainers = trainers.length;
     const submitArea = document.getElementById('submit-area');
 
     container.addEventListener('change', (e) => {
       if (e.target.type === 'radio') {
-        
-        // 🟢 Hide the header immediately when a rating is clicked
         document.getElementById('main-header').classList.add('header-hidden');
 
         setTimeout(() => {
@@ -130,7 +125,6 @@
       }
     });
 
-    // 4. SUBMIT FORM
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
 
     document.getElementById('survey-form').addEventListener('submit', async (e) => {
@@ -154,7 +148,6 @@
       currentIndex = 0;
       container.style.transform = `translateX(0%)`;
 
-      // 🟢 Show the header again after 5 seconds (when the popup disappears)
       setTimeout(() => {
         popup.classList.remove('show');
         btn.textContent = 'Complete Evaluation';
