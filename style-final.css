@@ -129,7 +129,7 @@ body {
   background: #222;
   display: block; 
  /* 🟢 ZOOM THE PHOTO */
-  transform: scale(1.15); /* Change this number to zoom more or less. 1.15 means 15% zoom. */
+  transform: scale(2.15); /* Change this number to zoom more or less. 1.15 means 15% zoom. */
 }
   
 
