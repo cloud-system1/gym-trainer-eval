@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style-final.css?v=7" /> 
+  <link rel="stylesheet" href="style-final.css?v=8" /> 
 </head>
 <body>
 
@@ -95,10 +95,10 @@
         `;
       });
 
-                 card.innerHTML = `
+      card.innerHTML = `
         <div class="trainer-header">
           <img src="${t.img}" alt="${t.name}" onerror="this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=150'">
-          <h2 class="trainer-name">${t.name}</h2> <!-- 🟢 Added the name here -->
+          <h2 class="trainer-name">${t.name}</h2>
         </div>
         <div class="rating-options">
           ${buttonsHTML}
@@ -108,26 +108,27 @@
       container.appendChild(card);
     });
 
-    // 3. AUTO-ADVANCE LOGIC
+    // 3. AUTO-ADVANCE LOGIC & HIDE HEADER ON FIRST CLICK
     let currentIndex = 0;
     const totalTrainers = trainers.length;
     const submitArea = document.getElementById('submit-area');
 
-  container.addEventListener('change', (e) => {
+    container.addEventListener('change', (e) => {
       if (e.target.type === 'radio') {
         
-        // 🟢 HIDE THE HEADER IMMEDIATELY WHEN A RATING IS CLICKED
+        // 🟢 Hide the header immediately when a rating is clicked
         document.getElementById('main-header').classList.add('header-hidden');
 
-       setTimeout(() => {
-        popup.classList.remove('show');
-        btn.textContent = 'Complete Evaluation';
-        
-        // 🟢 SHOW THE HEADER AGAIN FOR THE NEXT CUSTOMER
-        document.getElementById('main-header').classList.remove('header-hidden');
-        
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 4000); 
+        setTimeout(() => {
+          if (currentIndex < totalTrainers - 1) {
+            currentIndex++;
+            container.style.transform = `translateX(-${currentIndex * 100}%)`;
+          } else {
+            submitArea.classList.add('show-submit');
+          }
+        }, 450); 
+      }
+    });
 
     // 4. SUBMIT FORM
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
@@ -153,9 +154,11 @@
       currentIndex = 0;
       container.style.transform = `translateX(0%)`;
 
+      // 🟢 Show the header again after 5 seconds (when the popup disappears)
       setTimeout(() => {
         popup.classList.remove('show');
         btn.textContent = 'Complete Evaluation';
+        document.getElementById('main-header').classList.remove('header-hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 5000); 
 
