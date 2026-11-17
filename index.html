@@ -119,16 +119,15 @@
         // 🟢 HIDE THE HEADER IMMEDIATELY WHEN A RATING IS CLICKED
         document.getElementById('main-header').classList.add('header-hidden');
 
-        setTimeout(() => {
-          if (currentIndex < totalTrainers - 1) {
-            currentIndex++;
-            container.style.transform = `translateX(-${currentIndex * 100}%)`;
-          } else {
-            submitArea.classList.add('show-submit');
-          }
-        }, 450); 
-      }
-    });
+       setTimeout(() => {
+        popup.classList.remove('show');
+        btn.textContent = 'Complete Evaluation';
+        
+        // 🟢 SHOW THE HEADER AGAIN FOR THE NEXT CUSTOMER
+        document.getElementById('main-header').classList.remove('header-hidden');
+        
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 4000); 
 
     // 4. SUBMIT FORM
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
