@@ -1,238 +1,243 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trainer Excellence Feedback</title>
+  <link rel="stylesheet" href="style.css?v=20" /> 
+  <style>
+    /* 🔒 LOGIN GATE STYLES */
+    #login-gate {
+      position: fixed;
+      top: 0; left: 0; width: 100vw; height: 100vh;
+      background: var(--bg-gradient);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease;
+    }
+    .login-box {
+      background: var(--surface);
+      backdrop-filter: blur(12px);
+      padding: 40px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: var(--shadow-md);
+    }
+    .login-box h2 { color: #fff; margin-top: 0; }
+    .login-box input {
+      width: 100%; padding: 15px; margin: 15px 0;
+      background: rgba(0,0,0,0.3); border: 1px solid var(--green-primary);
+      border-radius: 10px; color: #fff; font-size: 1.1rem; text-align: center;
+      outline: none;
+    }
+    .login-box button {
+      width: 100%; padding: 15px; background: var(--green-primary);
+      color: #fff; border: none; border-radius: 10px; font-size: 1.1rem;
+      font-weight: bold; cursor: pointer; transition: 0.2s;
+    }
+    .login-box button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px var(--green-glow); }
+    .error { color: #ff5252; margin-top: 10px; display: none; font-weight: bold; }
+  </style>
+</head>
+<body>
 
-:root { 
-  --bg-gradient: linear-gradient(135deg, rgba(5, 8, 5, 0.85) 0%, rgba(10, 28, 16, 0.9) 100%);
-  --surface: rgba(20, 30, 22, 0.6); 
-  --text-main: #e8f5e9;
-  --text-muted: #8bb393;
-  --green-primary: #4caf50;
-  --green-glow: rgba(76, 175, 80, 0.3);
-  --blue: #2196f3;
-  --yellow: #ffc107;
-  --pink: #e91e63;
-  --gray: #9e9e9e;
-  --shadow-md: 0 10px 30px rgba(0,0,0,0.5);
-}
+  <div id="login-gate">
+    <div class="login-box">
+      <img src="logo.png" alt="Logo" style="max-width: 100px; margin-bottom: 20px;">
+      <h2>Welcome</h2>
+      <p style="color: #8bb393; font-size: 0.9rem;">Please enter the access code to start the survey.</p>
+      <input type="password" id="password-input" placeholder="Enter Code">
+      <button onclick="checkPassword()">Start Survey</button>
+      <p class="error" id="error-msg">Incorrect code. Try again.</p>
+    </div>
+  </div>
 
-* { box-sizing: border-box; }
-
-body {
-  margin: 0; 
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background-color: #050805;
-  color: var(--text-main);
-  min-height: 100vh;
-  padding-bottom: 80px;
-  overflow-x: hidden;
-}
-
-/* BACKGROUND */
-.bg-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -2;
-  background-image: url('bg.jpg');
-  background-size: cover;
-  background-position: center;
-  filter: blur(8px) brightness(0.4);
-  transition: transform 0.1s ease-out; 
-}
-
-.bg-container::after {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: var(--bg-gradient);
-}
-
-.app-header {
-  background: rgba(5, 8, 5, 0.5);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  padding: 20px 30px;
-  box-shadow: 0 4px 30px rgba(0,0,0,0.5);
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 100;
-  border-bottom: 1px solid rgba(76, 175, 80, 0.2);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: transform 0.4s ease-in-out;
-}
-
-.app-header.header-hidden { transform: translateY(-100%); }
-.header-text h1 { margin: 0 0 5px; font-size: 1.5rem; font-weight: 700; color: #fff; }
-.header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
-.header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
-
-.survey-container {
-  overflow: hidden; 
-  height: calc(100vh - 120px);
-  display: flex;
-  align-items: center; 
-  position: relative;
-  max-width: 650px;
-  margin: 120px auto 0;
-  padding: 0 16px;
-  width: 100%;
-}
-
-#trainer-cards {
-  display: flex;
-  width: 100%;
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: transform;
-}
-
-/* 🟢 THE EXACT LAYOUT FROM YOUR SCREENSHOT */
-.trainer-card {
-  flex: 0 0 100%; 
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  background: var(--surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  padding: 30px;
-  box-shadow: var(--shadow-md);
+  <div class="bg-container" id="bg-zoom"></div>
   
-  /* Side-by-side layout */
-  display: flex;
-  flex-direction: row; 
-  align-items: center;
-  gap: 40px;
-  
-  transform: translateZ(0); 
-}
+  <header class="app-header" id="main-header">
+    <div class="header-text">
+      <h1>Trainer Excellence Feedback</h1>
+      <p>Tap a rating. The next trainer will glide in automatically.</p>
+    </div>
+    <img src="logo.png" alt="High Impact Gym" class="header-logo">
+  </header>
 
-/* Left Side: Big Photo */
-.trainer-header { 
-  flex: 1;
-  display: flex; 
-  justify-content: center;
-  align-items: center;
-  transform: translateZ(0); 
-}
+  <main class="survey-container" id="scroll-container">
+    <form id="survey-form">
+      <div id="trainer-cards"></div>
+      <div class="submit-area" id="submit-area">
+        <button type="submit" id="submit-btn">Complete Evaluation</button>
+      </div>
+    </form>
+  </main>
 
-.trainer-header img { 
-  width: 220px; 
-  height: 220px; 
-  border-radius: 50%; 
-  object-fit: cover; 
-  border: 6px solid var(--green-primary); 
-  box-shadow: 0 0 25px var(--green-glow); 
-  background: #222;
-  display: block; 
-}
+  <div id="success-popup" class="success-popup">
+    <div class="success-icon-ring">
+      <div class="success-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 36px; height: 36px;">
+          <path d="M6.5 6.5h11M6.5 17.5h11M3 9v6M21 9v6"/>
+          <rect x="6.5" y="8.5" width="11" height="7" rx="1.5"/>
+        </svg>
+      </div>
+    </div>
+    <h2>Feedback Sent!</h2>
+    <p>Your evaluation has been securely recorded.<br>Thank you for shaping the High Impact experience!</p>
+  </div>
 
-/* Right Side: Buttons */
-.rating-options { 
-  flex: 1;
-  display: flex; 
-  flex-direction: column; 
-  gap: 10px; 
-}
+  <script>
+    const SECRET_PASSWORD = "Ranga1"; 
 
-/* Rating Buttons */
-.rating-btn {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  font-weight: 600;
-  font-size: 1.05rem;
-  transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(5px);
-  color: #ccc; 
-  user-select: none; 
-  -webkit-user-select: none;
-}
+    function checkPassword() {
+      const input = document.getElementById('password-input').value;
+      const gate = document.getElementById('login-gate');
+      const error = document.getElementById('error-msg');
 
-.rating-btn input[type="radio"] { 
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+      if (input === SECRET_PASSWORD) {
+        gate.style.opacity = '0';
+        setTimeout(() => {
+          gate.style.display = 'none';
+          sessionStorage.setItem('surveyUnlocked', 'true');
+        }, 500);
+      } else {
+        error.style.display = 'block';
+        document.getElementById('password-input').value = '';
+      }
+    }
 
-.rating-btn span {
-  position: relative;
-  z-index: 1;
-  pointer-events: none;
-}
+    if (sessionStorage.getItem('surveyUnlocked') === 'true') {
+      document.getElementById('login-gate').style.display = 'none';
+    }
 
-.rating-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
-.rating-btn:has(input:checked) { color: #fff; border-color: transparent; transform: scale(1.02); box-shadow: 0 6px 20px rgba(0,0,0,0.4); backdrop-filter: none; font-weight: 700; }
-.rating-btn.btn-excellent:has(input:checked) { background: var(--green-primary); box-shadow: 0 0 15px var(--green-glow); }
-.rating-btn.btn-good:has(input:checked) { background: var(--blue); }
-.rating-btn.btn-average:has(input:checked) { background: var(--yellow); color: #000; }
-.rating-btn.btn-needs:has(input:checked) { background: var(--pink); }
-.rating-btn.btn-poor:has(input:checked) { background: var(--gray); }
+    document.getElementById('password-input').addEventListener('keypress', function (e) {
+      if (e.key === 'Enter') checkPassword();
+    });
 
-.submit-area {
-  position: fixed; bottom: 0; left: 0; width: 100%;
-  background: rgba(5, 8, 5, 0.95); backdrop-filter: blur(16px); 
-  padding: 15px; box-shadow: 0 -10px 30px rgba(0,0,0,0.8); 
-  margin: 0; z-index: 1000; opacity: 0; pointer-events: none; 
-  transform: translateY(100%); transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
+    let lastScrollTop = 0;
+    const header = document.getElementById('main-header');
+    const bgZoom = document.getElementById('bg-zoom');
 
-.submit-area.show-submit { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    window.addEventListener('scroll', function() {
+      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      if (scrollTop > lastScrollTop && scrollTop > 50) header.classList.add('header-hidden');
+      else header.classList.remove('header-hidden');
+      lastScrollTop = scrollTop;
 
-button[type="submit"] {
-  background: var(--green-primary); color: #fff; border: none;
-  padding: 18px 32px; font-size: 1.1rem; font-weight: 700; border-radius: 16px;
-  width: 100%; cursor: pointer; box-shadow: 0 10px 20px var(--green-glow);
-  transition: all 0.2s ease;
-}
-button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(76, 175, 80, 0.5); }
+      if (bgZoom) {
+        let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        if (maxScroll > 0) {
+          let scrollPercent = scrollTop / maxScroll; 
+          let scale = 1 + (scrollPercent * 1.5); 
+          bgZoom.style.transform = `scale(${scale})`;
+        }
+      }
+    });
 
-.success-popup {
-  display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
-  background: rgba(10, 15, 12, 0.95); backdrop-filter: blur(25px); border: 2px solid var(--green-primary);
-  padding: 40px 30px; border-radius: 30px; text-align: center; 
-  box-shadow: 0 0 50px rgba(76, 175, 80, 0.4), inset 0 0 20px rgba(76, 175, 80, 0.2);
-  z-index: 2000; width: 90%; max-width: 420px; opacity: 0; transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.success-popup.show { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
-.success-icon-ring {
-  width: 100px; height: 100px; border-radius: 50%; border: 3px solid var(--green-primary);
-  background: rgba(76, 175, 80, 0.1); display: flex; align-items: center; justify-content: center;
-  margin: 0 auto 25px; position: relative; box-shadow: 0 0 20px var(--green-glow), inset 0 0 15px var(--green-glow);
-  animation: popRing 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.success-icon { color: var(--green-primary); display: flex; align-items: center; justify-content: center; animation: dropIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.2s both; }
-.success-popup h2 { margin: 0 0 10px; color: #fff; font-size: 1.5rem; }
-.success-popup p { color: var(--text-muted); margin: 0; font-size: 1rem; }
-@keyframes popRing { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-@keyframes dropIn { 0% { transform: translateY(-40px) scale(1.5); opacity: 0; } 60% { transform: translateY(5px) scale(0.9); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
+    const trainers = [
+      { id: "1", name: "Sameera", img: "assets/trainers/Sameera.jpg" },
+      { id: "2", name: "Kavindu", img: "assets/trainers/Kavindu.jpg" },
+      { id: "3", name: "Dilshan", img: "assets/trainers/Dilshan.jpg" },
+      { id: "4", name: "Ravija", img: "assets/trainers/Ravija.jpg" },
+      { id: "5", name: "Bhagya", img: "assets/trainers/bhagya.jpg" },
+      { id: "6", name: "Hiruka", img: "assets/trainers/Hiruka.jpg" },
+      { id: "7", name: "Shalani", img: "assets/trainers/Shalani.jpg" },
+      { id: "8", name: "Thilini", img: "assets/trainers/Thilini.jpg" },
+      { id: "9", name: "Pavani", img: "assets/trainers/pavani.jpg" },
+      { id: "10", name: "Sasanka", img: "assets/trainers/Sasanka.jpg" },
+      { id: "11", name: "Methum", img: "assets/trainers/Methum.jpg" }
+    ];
 
-/* Mobile: Stack them back on top of each other */
-@media (max-width: 768px) {
-  .app-header { padding: 15px; }
-  .header-text h1 { font-size: 1.2rem; }
-  .header-text p { display: none; }
-  .header-logo { max-width: 80px; }
-  .survey-container { margin-top: 90px; height: calc(100vh - 90px); }
-  
-  .trainer-card { 
-    flex-direction: column; /* Stacks vertically on phones */
-    padding: 20px; 
-    gap: 20px; 
-  }
-  .trainer-header img { width: 150px; height: 150px; }
-  button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 12px; }
-}
+    const ratings = ["Excellent", "Good", "Average", "Needs Improvement", "Poor"];
+    const container = document.getElementById('trainer-cards');
+    
+    trainers.forEach((t, index) => {
+      const card = document.createElement('div');
+      card.className = 'trainer-card';
+      
+      let buttonsHTML = '';
+      ratings.forEach((r, i) => {
+        const colorClass = ['btn-excellent', 'btn-good', 'btn-average', 'btn-needs', 'btn-poor'][i];
+        buttonsHTML += `
+          <label class="rating-btn ${colorClass}">
+            <input type="radio" name="trainer_${t.id}" value="${r}" required>
+            <span>${r}</span> 
+          </label>
+        `;
+      });
+
+      card.innerHTML = `
+        <div class="trainer-header">
+          <img src="${t.img}" alt="${t.name}" onerror="this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=150'">
+        </div>
+        <div class="rating-options">
+          ${buttonsHTML}
+        </div>
+      `;
+      
+      container.appendChild(card);
+    });
+
+    let currentIndex = 0;
+    const totalTrainers = trainers.length;
+    const submitArea = document.getElementById('submit-area');
+    const cards = document.querySelectorAll('.trainer-card');
+
+    container.addEventListener('change', (e) => {
+      if (e.target.type === 'radio') {
+        setTimeout(() => {
+          if (currentIndex < totalTrainers - 1) {
+            currentIndex++;
+            container.style.transform = `translateX(-${currentIndex * 100}%)`;
+          } else {
+            submitArea.classList.add('show-submit');
+          }
+        }, 450); 
+      }
+    });
+
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
+
+    document.getElementById('survey-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = document.getElementById('submit-btn');
+      const popup = document.getElementById('success-popup');
+      
+      btn.textContent = 'Submitting...';
+
+      const formData = new FormData(e.target);
+      const payload = { timestamp: new Date().toISOString(), ratings: {} };
+      
+      trainers.forEach(t => {
+        payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
+      });
+
+      popup.classList.add('show');
+      e.target.reset(); 
+      submitArea.classList.remove('show-submit'); 
+      
+      currentIndex = 0;
+      container.style.transform = `translateX(0%)`;
+
+      setTimeout(() => {
+        popup.classList.remove('show');
+        btn.textContent = 'Complete Evaluation';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 5000); 
+
+      try {
+        fetch(ENDPOINT, { 
+          method: 'POST', 
+          mode: 'no-cors', 
+          body: JSON.stringify(payload) 
+        });
+      } catch (error) {
+        console.log("Background submission error:", error);
+      }
+    });
+  </script>
+</body>
+</html>
