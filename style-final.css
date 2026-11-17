@@ -73,11 +73,11 @@ body {
 /* 🟢 FIXED CONTAINER */
 .survey-container {
   position: relative;
-  max-width: 800px; 
+  max-width: 850px; 
   margin: 120px auto 0;
   padding: 0 16px;
   width: 100%;
-  overflow: hidden; /* Stops horizontal scrolling */
+  overflow: hidden; 
 }
 
 #trainer-cards {
@@ -90,7 +90,7 @@ body {
 .trainer-card {
   flex: 0 0 100%; 
   width: 100%;
-  min-height: 400px; /* 🟢 Forces the card to have height */
+  min-height: 420px; 
   box-sizing: border-box;
   background: var(--surface);
   backdrop-filter: blur(12px);
@@ -111,29 +111,26 @@ body {
 
 /* 🟢 BIGGER PHOTO & NAME */
 .trainer-header { 
-  flex: 1.2; /* Gives the photo side slightly more room */
+  flex: 1.2; 
   display: flex; 
-  flex-direction: column; /* Stacks name under the photo */
+  flex-direction: column; 
   justify-content: center;
   align-items: center;
   gap: 15px;
 }
 
 .trainer-header img { 
-  width: 260px;  /* 🟢 Made bigger (was 220px) */
-  height: 260px; /* 🟢 Made bigger (was 220px) */
-  border-radius: 60%; 
+  width: 260px;  
+  height: 260px; 
+  border-radius: 50%; /* Fixed to 50% for a perfect circle */
   object-fit: cover; 
   border: 6px solid var(--green-primary); 
   box-shadow: 0 0 30px var(--green-glow); 
   background: #222;
   display: block; 
- /* 🟢 ZOOM THE PHOTO */
-  transform: scale(1.15); /* Change this number to zoom more or less. 1.15 means 15% zoom. */
+  transform: scale(1.15); /* Zoom effect */
 }
-  
 
-/* 🟢 NEW: Style for the name */
 .trainer-name {
   margin: 0;
   font-size: 2rem;
@@ -147,27 +144,51 @@ body {
   flex: 1;
   display: flex; 
   flex-direction: column; 
-  gap: 12px; 
+  gap: 15px; /* Slightly more gap for the glow */
 }
 
-/* 🟢 SMALLER FONT FOR RATING BUTTONS */
+/* 🟢 NEON GLOW RATING BUTTONS */
 .rating-btn {
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 20px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px 24px;
+  border-radius: 30px; /* Fully rounded edges */
   cursor: pointer;
   font-weight: 600;
-  font-size: 0.9rem; /* 🟢 Made smaller (was 1.05rem) */
-  transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(5px);
-  color: #ccc; 
+  font-size: 0.95rem;
+  color: #fff; 
+  background: #1a1a1a; 
   user-select: none; 
   -webkit-user-select: none;
+  transition: all 0.3s ease;
+  border: none; 
+}
+
+/* The glowing spinning border effect */
+.rating-btn::before {
+  content: "";
+  position: absolute;
+  inset: -2px; 
+  border-radius: 30px;
+  padding: 2px;
+  background: conic-gradient(from var(--angle), transparent 70%, var(--green-primary) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: spin 3s linear infinite;
+  pointer-events: none;
+}
+
+/* Inner subtle glow */
+.rating-btn::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 30px;
+  box-shadow: inset 0 0 15px rgba(76, 175, 80, 0.2);
+  pointer-events: none;
 }
 
 .rating-btn input[type="radio"] { 
@@ -183,13 +204,38 @@ body {
   pointer-events: none;
 }
 
-.rating-btn:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
-.rating-btn:has(input:checked) { color: #fff; border-color: transparent; transform: scale(1.02); box-shadow: 0 6px 20px rgba(0,0,0,0.4); backdrop-filter: none; font-weight: 700; }
-.rating-btn.btn-excellent:has(input:checked) { background: var(--green-primary); box-shadow: 0 0 15px var(--green-glow); }
-.rating-btn.btn-good:has(input:checked) { background: var(--blue); }
-.rating-btn.btn-average:has(input:checked) { background: var(--yellow); color: #000; }
-.rating-btn.btn-needs:has(input:checked) { background: var(--pink); }
-.rating-btn.btn-poor:has(input:checked) { background: var(--gray); }
+/* Hover State */
+.rating-btn:hover {
+  background: #222;
+  transform: translateY(-2px);
+}
+
+/* Checked State (Solid Color) */
+.rating-btn:has(input:checked) {
+  background: var(--green-primary);
+  box-shadow: 0 0 25px var(--green-primary);
+  color: #000; 
+  font-weight: 700;
+}
+
+/* Specific colors when checked */
+.rating-btn.btn-excellent:has(input:checked) { background: var(--green-primary); box-shadow: 0 0 25px var(--green-primary); color: #000; }
+.rating-btn.btn-good:has(input:checked) { background: var(--blue); box-shadow: 0 0 25px var(--blue); color: #fff; }
+.rating-btn.btn-average:has(input:checked) { background: var(--yellow); box-shadow: 0 0 25px var(--yellow); color: #000; }
+.rating-btn.btn-needs:has(input:checked) { background: var(--pink); box-shadow: 0 0 25px var(--pink); color: #fff; }
+.rating-btn.btn-poor:has(input:checked) { background: var(--gray); box-shadow: 0 0 25px var(--gray); color: #000; }
+
+/* Animation for the glowing border */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes spin {
+  from { --angle: 0deg; }
+  to { --angle: 360deg; }
+}
 
 .submit-area {
   position: fixed; bottom: 0; left: 0; width: 100%;
