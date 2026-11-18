@@ -21,8 +21,12 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #050805;
   color: var(--text-main);
-  min-height: 100vh;
-  overflow-x: hidden; 
+  
+  /* 🟢 BULLETPROOF MOBILE FIX: Lock the body */
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden; 
+  position: fixed; 
   width: 100%;
 }
 
@@ -70,19 +74,20 @@ body {
 .header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 .header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
 
-/* 🟢 FIXED CONTAINER */
+/* 🟢 SCROLLABLE AREA */
 .survey-container {
   position: relative;
   max-width: 850px; 
   margin: 120px auto 0; 
   padding: 0 16px;
   width: 100%;
-  min-height: calc(100vh - 120px); 
-  display: flex;
-  align-items: flex-start; /* Forces cards to the top so they don't collapse */
-  padding-top: 40px;
-  overflow: hidden;
+  height: calc(100vh - 120px); 
+  height: calc(100dvh - 120px);
+  overflow-y: auto; 
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; 
 }
+.survey-container::-webkit-scrollbar { display: none; }
 
 #trainer-cards {
   display: flex;
@@ -95,7 +100,7 @@ body {
 .trainer-card {
   flex: 0 0 100%; 
   width: 100%;
-  min-height: 420px; 
+  min-height: 420px; /* Forces the card to have height */
   box-sizing: border-box;
   background: var(--surface);
   backdrop-filter: blur(12px);
@@ -151,6 +156,7 @@ body {
   gap: 15px; 
 }
 
+/* NEON BUTTONS */
 .rating-btn {
   position: relative;
   display: flex;
@@ -206,6 +212,7 @@ body {
 @property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
 @keyframes spin { from { --angle: 0deg; } to { --angle: 360deg; } }
 
+/* SUBMIT BUTTON */
 .submit-area {
   position: fixed; bottom: 0; left: 0; width: 100%;
   background: rgba(5, 8, 5, 0.95); backdrop-filter: blur(16px); 
@@ -224,6 +231,7 @@ button[type="submit"] {
 }
 button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(76, 175, 80, 0.5); }
 
+/* POPUP */
 .success-popup {
   display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
   background: rgba(10, 15, 12, 0.95); backdrop-filter: blur(25px); border: 2px solid var(--green-primary);
@@ -253,9 +261,9 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
   
   .survey-container { 
     margin-top: 90px; 
-    min-height: calc(100vh - 90px); 
-    padding-bottom: 100px; 
-    padding-top: 20px;
+    height: calc(100vh - 90px); 
+    height: calc(100dvh - 90px); 
+    padding-bottom: 120px; 
   }
   
   .trainer-card { 
@@ -267,7 +275,7 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
     width: 100%;
   }
   
-  .trainer-header img { width: 160px; height: 160px; }
+  .trainer-header img { width: 150px; height: 150px; }
   .trainer-name { font-size: 1.5rem; }
   .rating-btn { padding: 14px 20px; font-size: 0.9rem; }
   button[type="submit"] { padding: 16px; font-size: 1rem; border-radius: 12px; }
