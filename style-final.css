@@ -22,7 +22,7 @@ body {
   background-color: #050805;
   color: var(--text-main);
   
-  /* 🟢 BULLETPROOF MOBILE FIX: Lock the body */
+  /* 🟢 LOCK THE BODY ON MOBILE */
   height: 100vh;
   height: 100dvh;
   overflow: hidden; 
@@ -41,7 +41,6 @@ body {
   background-size: cover;
   background-position: center;
   filter: blur(8px) brightness(0.4);
-  transition: transform 0.1s ease-out; 
 }
 
 .bg-container::after {
@@ -61,7 +60,7 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 9999; 
   border-bottom: 1px solid rgba(76, 175, 80, 0.2);
   display: flex;
   justify-content: space-between;
@@ -74,33 +73,31 @@ body {
 .header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 .header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
 
-/* 🟢 SCROLLABLE AREA */
+/* 🟢 SCROLLABLE CONTAINER */
 .survey-container {
-  position: relative;
+  position: fixed; 
+  top: 120px; 
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   max-width: 850px; 
-  margin: 120px auto 0; 
   padding: 0 16px;
-  width: 100%;
-  height: calc(100vh - 120px); 
-  height: calc(100dvh - 120px);
-  overflow-y: auto; 
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; 
+  display: flex;
+  align-items: center; 
+  overflow: hidden;
 }
-.survey-container::-webkit-scrollbar { display: none; }
 
 #trainer-cards {
   display: flex;
   width: 100%;
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
-  touch-action: pan-y;
 }
 
 .trainer-card {
   flex: 0 0 100%; 
   width: 100%;
-  min-height: 420px; /* Forces the card to have height */
   box-sizing: border-box;
   background: var(--surface);
   backdrop-filter: blur(12px);
@@ -252,27 +249,29 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
 @keyframes popRing { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes dropIn { 0% { transform: translateY(-40px) scale(1.5); opacity: 0; } 60% { transform: translateY(5px) scale(0.9); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
 
-/* MOBILE */
+/* 📱 MOBILE SPECIFIC FIXES */
 @media (max-width: 768px) {
-  .app-header { padding: 15px; }
+  .app-header { 
+    padding: 15px; 
+    z-index: 9999; 
+  }
   .header-text h1 { font-size: 1.2rem; }
   .header-text p { display: none; }
   .header-logo { max-width: 80px; }
   
+  /* 🟢 LOCK THE CONTAINER IN THE CENTER OF THE MOBILE SCREEN */
   .survey-container { 
-    margin-top: 90px; 
-    height: calc(100vh - 90px); 
-    height: calc(100dvh - 90px); 
-    padding-bottom: 120px; 
+    top: 90px; 
+    bottom: 0;
+    align-items: center; /* Centers the card vertically */
   }
   
   .trainer-card { 
     flex-direction: column;
     padding: 20px; 
     gap: 15px; 
-    min-height: auto; 
-    margin-bottom: 20px;
     width: 100%;
+    max-height: 80vh; /* Prevents the card from overflowing on very small screens */
   }
   
   .trainer-header img { width: 150px; height: 150px; }
