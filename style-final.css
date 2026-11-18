@@ -26,7 +26,6 @@ body {
   width: 100%;
 }
 
-/* BACKGROUND */
 .bg-container {
   position: fixed;
   top: 0;
@@ -48,7 +47,6 @@ body {
   background: var(--bg-gradient);
 }
 
-/* HEADER */
 .app-header {
   background: rgba(5, 8, 5, 0.5);
   backdrop-filter: blur(16px);
@@ -72,7 +70,7 @@ body {
 .header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 .header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
 
-/* SURVEY CONTAINER */
+/* 🟢 FIXED CONTAINER */
 .survey-container {
   position: relative;
   max-width: 850px; 
@@ -81,7 +79,8 @@ body {
   width: 100%;
   min-height: calc(100vh - 120px); 
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* Forces cards to the top so they don't collapse */
+  padding-top: 40px;
   overflow: hidden;
 }
 
@@ -93,7 +92,6 @@ body {
   touch-action: pan-y;
 }
 
-/* TRAINER CARDS */
 .trainer-card {
   flex: 0 0 100%; 
   width: 100%;
@@ -153,7 +151,6 @@ body {
   gap: 15px; 
 }
 
-/* NEON BUTTONS */
 .rating-btn {
   position: relative;
   display: flex;
@@ -209,7 +206,6 @@ body {
 @property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
 @keyframes spin { from { --angle: 0deg; } to { --angle: 360deg; } }
 
-/* SUBMIT BUTTON */
 .submit-area {
   position: fixed; bottom: 0; left: 0; width: 100%;
   background: rgba(5, 8, 5, 0.95); backdrop-filter: blur(16px); 
@@ -228,7 +224,6 @@ button[type="submit"] {
 }
 button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(76, 175, 80, 0.5); }
 
-/* SUCCESS POPUP */
 .success-popup {
   display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
   background: rgba(10, 15, 12, 0.95); backdrop-filter: blur(25px); border: 2px solid var(--green-primary);
@@ -260,7 +255,7 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
     margin-top: 90px; 
     min-height: calc(100vh - 90px); 
     padding-bottom: 100px; 
-    align-items: flex-start; 
+    padding-top: 20px;
   }
   
   .trainer-card { 
