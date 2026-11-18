@@ -21,9 +21,14 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #050805;
   color: var(--text-main);
-  min-height: 100vh;
-  overflow-x: hidden; 
+  
+  /* 🟢 LOCKS THE MOBILE SCROLL BOUNCE */
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden; 
+  position: fixed; 
   width: 100%;
+  overscroll-behavior: none; /* Prevents page pull-to-refresh */
 }
 
 .bg-container {
@@ -69,15 +74,21 @@ body {
 .header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 .header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
 
-/* 🟢 SIMPLE, RELIABLE CONTAINER */
+/* 🟢 LOCKED CONTAINER */
 .survey-container {
-  margin: 120px auto 0; 
-  padding: 0 16px 100px 16px;
+  position: fixed; 
+  top: 100px; 
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
   max-width: 850px; 
-  width: 100%;
+  padding: 0 16px;
   display: flex;
   align-items: center; 
   justify-content: center;
+  overflow: hidden;
+  touch-action: pan-y; /* Stops horizontal swipe from moving the page */
 }
 
 #trainer-cards {
@@ -90,7 +101,6 @@ body {
 .trainer-card {
   flex: 0 0 100%; 
   width: 100%;
-  min-height: 450px; /* 🟢 Forces the height so it NEVER collapses */
   box-sizing: border-box;
   background: var(--surface);
   backdrop-filter: blur(12px);
@@ -105,6 +115,8 @@ body {
   align-items: center;
   justify-content: center;
   gap: 40px;
+  
+  transform: translateZ(0); 
 }
 
 .trainer-header { 
@@ -144,6 +156,7 @@ body {
   gap: 15px; 
 }
 
+/* 🟢 NEON BUTTONS WITHOUT ROTATING ANIMATION */
 .rating-btn {
   position: relative;
   display: flex;
@@ -159,45 +172,20 @@ body {
   user-select: none; 
   -webkit-user-select: none;
   transition: all 0.3s ease;
-  border: none; 
-}
-
-.rating-btn::before {
-  content: "";
-  position: absolute;
-  inset: -2px; 
-  border-radius: 30px;
-  padding: 2px;
-  background: conic-gradient(from var(--angle), transparent 70%, var(--green-primary) 100%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  animation: spin 3s linear infinite;
-  pointer-events: none;
-}
-
-.rating-btn::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: 30px;
-  box-shadow: inset 0 0 15px rgba(76, 175, 80, 0.2);
-  pointer-events: none;
+  border: 2px solid var(--green-primary); /* Solid Neon Border */
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.2), inset 0 0 10px rgba(76, 175, 80, 0.1);
 }
 
 .rating-btn input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
 .rating-btn span { position: relative; z-index: 1; pointer-events: none; }
-.rating-btn:hover { background: #222; transform: translateY(-2px); }
+.rating-btn:hover { background: #222; transform: translateY(-2px); box-shadow: 0 0 15px rgba(76, 175, 80, 0.4); }
 
-.rating-btn:has(input:checked) { background: var(--green-primary); box-shadow: 0 0 25px var(--green-primary); color: #000; font-weight: 700; }
+.rating-btn:has(input:checked) { background: var(--green-primary); box-shadow: 0 0 25px var(--green-primary); color: #000; font-weight: 700; border-color: transparent; }
 .rating-btn.btn-excellent:has(input:checked) { background: var(--green-primary); box-shadow: 0 0 25px var(--green-primary); color: #000; }
-.rating-btn.btn-good:has(input:checked) { background: var(--blue); box-shadow: 0 0 25px var(--blue); color: #fff; }
-.rating-btn.btn-average:has(input:checked) { background: var(--yellow); box-shadow: 0 0 25px var(--yellow); color: #000; }
-.rating-btn.btn-needs:has(input:checked) { background: var(--pink); box-shadow: 0 0 25px var(--pink); color: #fff; }
-.rating-btn.btn-poor:has(input:checked) { background: var(--gray); box-shadow: 0 0 25px var(--gray); color: #000; }
-
-@property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
-@keyframes spin { from { --angle: 0deg; } to { --angle: 360deg; } }
+.rating-btn.btn-good:has(input:checked) { background: var(--blue); box-shadow: 0 0 25px var(--blue); color: #fff; border-color: var(--blue); }
+.rating-btn.btn-average:has(input:checked) { background: var(--yellow); box-shadow: 0 0 25px var(--yellow); color: #000; border-color: var(--yellow); }
+.rating-btn.btn-needs:has(input:checked) { background: var(--pink); box-shadow: 0 0 25px var(--pink); color: #fff; border-color: var(--pink); }
+.rating-btn.btn-poor:has(input:checked) { background: var(--gray); box-shadow: 0 0 25px var(--gray); color: #000; border-color: var(--gray); }
 
 .submit-area {
   position: fixed; bottom: 0; left: 0; width: 100%;
@@ -238,18 +226,18 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
 @keyframes dropIn { 0% { transform: translateY(-40px) scale(1.5); opacity: 0; } 60% { transform: translateY(5px) scale(0.9); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
 
 @media (max-width: 768px) {
-  .app-header { padding: 15px; }
+  .app-header { padding: 15px; z-index: 9999; }
   .header-text h1 { font-size: 1.2rem; }
   .header-text p { display: none; }
   .header-logo { max-width: 80px; }
   
-  .survey-container { margin-top: 90px; padding-bottom: 120px; }
+  .survey-container { top: 80px; }
   
   .trainer-card { 
     flex-direction: column;
     padding: 20px; 
     gap: 15px; 
-    min-height: auto; 
+    width: 100%;
   }
   
   .trainer-header img { width: 150px; height: 150px; }
