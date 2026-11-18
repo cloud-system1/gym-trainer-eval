@@ -21,8 +21,6 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #050805;
   color: var(--text-main);
-  
-  /* 🟢 LOCK THE BODY ON MOBILE */
   height: 100vh;
   height: 100dvh;
   overflow: hidden; 
@@ -73,10 +71,9 @@ body {
 .header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 .header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
 
-/* 🟢 SCROLLABLE CONTAINER */
 .survey-container {
   position: fixed; 
-  top: 120px; 
+  top: 100px; 
   bottom: 0;
   left: 0;
   right: 0;
@@ -153,7 +150,6 @@ body {
   gap: 15px; 
 }
 
-/* NEON BUTTONS */
 .rating-btn {
   position: relative;
   display: flex;
@@ -209,7 +205,6 @@ body {
 @property --angle { syntax: "<angle>"; initial-value: 0deg; inherits: false; }
 @keyframes spin { from { --angle: 0deg; } to { --angle: 360deg; } }
 
-/* SUBMIT BUTTON */
 .submit-area {
   position: fixed; bottom: 0; left: 0; width: 100%;
   background: rgba(5, 8, 5, 0.95); backdrop-filter: blur(16px); 
@@ -228,7 +223,6 @@ button[type="submit"] {
 }
 button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 15px 30px rgba(76, 175, 80, 0.5); }
 
-/* POPUP */
 .success-popup {
   display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5);
   background: rgba(10, 15, 12, 0.95); backdrop-filter: blur(25px); border: 2px solid var(--green-primary);
@@ -249,21 +243,16 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
 @keyframes popRing { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes dropIn { 0% { transform: translateY(-40px) scale(1.5); opacity: 0; } 60% { transform: translateY(5px) scale(0.9); opacity: 1; } 100% { transform: translateY(0) scale(1); opacity: 1; } }
 
-/* 📱 MOBILE SPECIFIC FIXES */
 @media (max-width: 768px) {
-  .app-header { 
-    padding: 15px; 
-    z-index: 9999; 
-  }
+  .app-header { padding: 15px; z-index: 9999; }
   .header-text h1 { font-size: 1.2rem; }
   .header-text p { display: none; }
   .header-logo { max-width: 80px; }
   
-  /* 🟢 LOCK THE CONTAINER IN THE CENTER OF THE MOBILE SCREEN */
   .survey-container { 
     top: 90px; 
     bottom: 0;
-    align-items: center; /* Centers the card vertically */
+    align-items: center; 
   }
   
   .trainer-card { 
@@ -271,7 +260,6 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
     padding: 20px; 
     gap: 15px; 
     width: 100%;
-    max-height: 80vh; /* Prevents the card from overflowing on very small screens */
   }
   
   .trainer-header img { width: 150px; height: 150px; }
