@@ -94,8 +94,10 @@ body {
 #trainer-cards {
   display: flex;
   width: 100%;
-  /* This creates the smooth glide to the next card */
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Example using your "ease-in-out" values: */
+  transition: transform 0.8s cubic-bezier(0.42, 0, 0.58, 1); 
+  
   will-change: transform;
 }
 
