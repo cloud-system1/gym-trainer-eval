@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style-final.css?v=26" /> 
+  <link rel="stylesheet" href="style-final.css?v=30" /> 
 </head>
 <body>
 
@@ -41,21 +41,6 @@
   </div>
 
   <script>
-    const header = document.getElementById('main-header');
-    const bgZoom = document.getElementById('bg-zoom');
-
-    window.addEventListener('scroll', function() {
-      let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (bgZoom) {
-        let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-        if (maxScroll > 0) {
-          let scrollPercent = scrollTop / maxScroll; 
-          let scale = 1 + (scrollPercent * 1.5); 
-          bgZoom.style.transform = `scale(${scale})`;
-        }
-      }
-    });
-
     const trainers = [
       { id: "1", name: "Sameera", img: "assets/trainers/Sameera.jpg" },
       { id: "2", name: "Kavindu", img: "assets/trainers/Kavindu.jpg" },
@@ -75,7 +60,8 @@
     
     trainers.forEach((t, index) => {
       const card = document.createElement('div');
-      card.className = 'trainer-card';
+      // 🟢 Add 'active' class only to the first card
+      card.className = index === 0 ? 'trainer-card active' : 'trainer-card';
       
       let buttonsHTML = '';
       ratings.forEach((r, i) => {
@@ -104,17 +90,18 @@
     let currentIndex = 0;
     const totalTrainers = trainers.length;
     const submitArea = document.getElementById('submit-area');
+    const cards = document.querySelectorAll('.trainer-card');
 
     container.addEventListener('change', (e) => {
       if (e.target.type === 'radio') {
-        // Hide the header
         document.getElementById('main-header').classList.add('header-hidden');
 
-        // 🟢 SLIDE SMOOTHLY TO THE NEXT CARD
         setTimeout(() => {
           if (currentIndex < totalTrainers - 1) {
+            // 🟢 Remove active class from current, add to next
+            cards[currentIndex].classList.remove('active');
             currentIndex++;
-            container.style.transform = `translateX(-${currentIndex * 100}%)`;
+            cards[currentIndex].classList.add('active');
           } else {
             submitArea.classList.add('show-submit');
           }
@@ -142,8 +129,12 @@
       e.target.reset(); 
       submitArea.classList.remove('show-submit'); 
       
+      // 🟢 Reset to the first card
       currentIndex = 0;
-      container.style.transform = `translateX(0%)`;
+      cards.forEach((card, i) => {
+        if (i === 0) card.classList.add('active');
+        else card.classList.remove('active');
+      });
 
       setTimeout(() => {
         popup.classList.remove('show');
