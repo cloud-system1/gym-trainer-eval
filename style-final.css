@@ -22,13 +22,13 @@ body {
   background-color: #050805;
   color: var(--text-main);
   
-  /* 🟢 LOCKS THE MOBILE SCROLL BOUNCE */
+  /* 🟢 LOCKS THE MOBILE SCREEN */
   height: 100vh;
   height: 100dvh;
   overflow: hidden; 
   position: fixed; 
   width: 100%;
-  overscroll-behavior: none; /* Prevents page pull-to-refresh */
+  overscroll-behavior: none; 
 }
 
 .bg-container {
@@ -74,7 +74,7 @@ body {
 .header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 .header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
 
-/* 🟢 LOCKED CONTAINER */
+/* 🟢 SMOOTH SLIDING CONTAINER */
 .survey-container {
   position: fixed; 
   top: 100px; 
@@ -88,12 +88,13 @@ body {
   align-items: center; 
   justify-content: center;
   overflow: hidden;
-  touch-action: pan-y; /* Stops horizontal swipe from moving the page */
+  touch-action: pan-y;
 }
 
 #trainer-cards {
   display: flex;
   width: 100%;
+  /* This creates the smooth glide to the next card */
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform;
 }
@@ -101,6 +102,7 @@ body {
 .trainer-card {
   flex: 0 0 100%; 
   width: 100%;
+  min-height: 450px; /* Prevents collapse */
   box-sizing: border-box;
   background: var(--surface);
   backdrop-filter: blur(12px);
@@ -115,8 +117,6 @@ body {
   align-items: center;
   justify-content: center;
   gap: 40px;
-  
-  transform: translateZ(0); 
 }
 
 .trainer-header { 
@@ -156,7 +156,7 @@ body {
   gap: 15px; 
 }
 
-/* 🟢 NEON BUTTONS WITHOUT ROTATING ANIMATION */
+/* 🟢 SOLID NEON BUTTONS */
 .rating-btn {
   position: relative;
   display: flex;
@@ -172,7 +172,7 @@ body {
   user-select: none; 
   -webkit-user-select: none;
   transition: all 0.3s ease;
-  border: 2px solid var(--green-primary); /* Solid Neon Border */
+  border: 2px solid var(--green-primary); 
   box-shadow: 0 0 10px rgba(76, 175, 80, 0.2), inset 0 0 10px rgba(76, 175, 80, 0.1);
 }
 
@@ -238,6 +238,7 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
     padding: 20px; 
     gap: 15px; 
     width: 100%;
+    min-height: auto;
   }
   
   .trainer-header img { width: 150px; height: 150px; }
