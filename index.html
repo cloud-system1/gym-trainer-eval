@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style-final.css?v=25" />
+  <link rel="stylesheet" href="style-final.css?v=26" /> 
 </head>
 <body>
 
@@ -41,16 +41,11 @@
   </div>
 
   <script>
-    let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     const bgZoom = document.getElementById('bg-zoom');
 
     window.addEventListener('scroll', function() {
       let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      if (scrollTop > lastScrollTop && scrollTop > 50) header.classList.add('header-hidden');
-      else header.classList.remove('header-hidden');
-      lastScrollTop = scrollTop;
-
       if (bgZoom) {
         let maxScroll = document.documentElement.scrollHeight - window.innerHeight;
         if (maxScroll > 0) {
@@ -112,8 +107,10 @@
 
     container.addEventListener('change', (e) => {
       if (e.target.type === 'radio') {
+        // Hide the header
         document.getElementById('main-header').classList.add('header-hidden');
 
+        // 🟢 SLIDE SMOOTHLY TO THE NEXT CARD
         setTimeout(() => {
           if (currentIndex < totalTrainers - 1) {
             currentIndex++;
@@ -152,7 +149,6 @@
         popup.classList.remove('show');
         btn.textContent = 'Complete Evaluation';
         document.getElementById('main-header').classList.remove('header-hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 5000); 
 
       try {
