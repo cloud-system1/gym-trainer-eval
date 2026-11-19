@@ -21,8 +21,6 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: #050805;
   color: var(--text-main);
-  
-  /* 🟢 LOCKS THE MOBILE SCREEN */
   height: 100vh;
   height: 100dvh;
   overflow: hidden; 
@@ -74,7 +72,7 @@ body {
 .header-text p { margin: 0; font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
 .header-logo { max-width: 120px; height: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
 
-/* 🟢 SMOOTH SLIDING CONTAINER */
+/* 🟢 PREMIUM ANIMATION CONTAINER */
 .survey-container {
   position: fixed; 
   top: 100px; 
@@ -88,23 +86,21 @@ body {
   align-items: center; 
   justify-content: center;
   overflow: hidden;
-  touch-action: pan-y;
 }
 
+/* The cards will stack on top of each other */
 #trainer-cards {
-  display: flex;
+  position: relative;
   width: 100%;
-  
-  /* Example using your "ease-in-out" values: */
-  transition: transform 0.8s cubic-bezier(0.42, 0, 0.58, 1); 
-  
-  will-change: transform;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .trainer-card {
-  flex: 0 0 100%; 
+  position: absolute;
   width: 100%;
-  min-height: 450px; /* Prevents collapse */
   box-sizing: border-box;
   background: var(--surface);
   backdrop-filter: blur(12px);
@@ -119,6 +115,46 @@ body {
   align-items: center;
   justify-content: center;
   gap: 40px;
+  
+  /* Hide by default */
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* 🟢 THE PREMIUM ACTIVE STATE */
+.trainer-card.active {
+  opacity: 1;
+  pointer-events: auto;
+  visibility: visible;
+}
+
+/* Trigger the animations on all children when active */
+.trainer-card.active .trainer-header {
+  animation: slideUpFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.trainer-card.active .rating-btn {
+  opacity: 0;
+  animation: slideLeftFadeIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Stagger the button animations for the premium effect */
+.trainer-card.active .rating-btn:nth-child(1) { animation-delay: 0.1s; }
+.trainer-card.active .rating-btn:nth-child(2) { animation-delay: 0.15s; }
+.trainer-card.active .rating-btn:nth-child(3) { animation-delay: 0.2s; }
+.trainer-card.active .rating-btn:nth-child(4) { animation-delay: 0.25s; }
+.trainer-card.active .rating-btn:nth-child(5) { animation-delay: 0.3s; }
+
+/* The Keyframes */
+@keyframes slideUpFadeIn {
+  0% { transform: translateY(30px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideLeftFadeIn {
+  0% { transform: translateX(30px); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
 }
 
 .trainer-header { 
@@ -240,7 +276,6 @@ button[type="submit"]:hover:not(:disabled) { transform: translateY(-2px); box-sh
     padding: 20px; 
     gap: 15px; 
     width: 100%;
-    min-height: auto;
   }
   
   .trainer-header img { width: 150px; height: 150px; }
