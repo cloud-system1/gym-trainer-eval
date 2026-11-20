@@ -192,6 +192,30 @@
       .tool-btn { min-width: 100%; }
     }
     @media (max-width: 400px) { .chart-name { width: 58px; font-size: .82rem; } .chart-avatar { width: 30px; height: 30px; } }
+
+    /* Readable, high-contrast typography throughout the dashboard */
+    body, body p, body h1, body h2, body h3, body h4, body h5,
+    body span, body label, .metric-card h3, .metric-card .value,
+    .stat-box h5, .stat-box .count, .total-score .label,
+    .total-score .clients-count, .share-head p, .share-foot,
+    .chart-actions, .confirm-box p, .login-box p,
+    .chart-name, .bar-fill { color: #fff; }
+    body { color: #fff; line-height: 1.55; }
+    .metric-card h3, .stat-box h5 { font-size: .95rem; letter-spacing: .02em; }
+    .metric-card .value { font-size: clamp(1.5rem, 4vw, 2rem); overflow-wrap: anywhere; text-shadow: none; }
+    .stat-box .count { font-size: 1.6rem; }
+    .dashboard-card { border-color: rgba(255,255,255,.18); }
+    .stat-box { border-color: rgba(255,255,255,.12); }
+    .score-explanation { margin: 12px 0 0; padding: 12px 14px; background: rgba(255,255,255,.07); border-radius: 10px; color: #fff; font-size: .95rem; }
+    .score-explanation strong { color: #fff; }
+    .score-details { font-size: .86rem; color: #fff; margin-top: 5px; }
+    .chart-note { color: #fff; font-size: .82rem; margin: 0 0 12px; }
+    .bar-fill { color: #fff; text-shadow: 0 1px 3px #000, 0 0 4px #000; }
+    .btn-chart, .btn-clear, .login-box button { color: #fff; }
+    .rank-1, .rank-2 { color: #fff; text-shadow: 0 1px 3px #000; }
+    .chart-rank.r1, .chart-rank.r2 { color: #fff; text-shadow: 0 1px 3px #000; }
+    .header-text p { color: #fff; }
+    @media (max-width: 768px) { .dashboard-card { padding: 17px; } .score-explanation { font-size: .9rem; } }
   </style>
 </head>
 <body>
@@ -200,7 +224,7 @@
     <div class="login-box">
       <img src="logo.png" alt="Logo" style="max-width: 100px; margin-bottom: 20px;">
       <h2>Manager Access Only</h2>
-      <p style="color: #8bb393; font-size: 0.9rem;">Please enter the password to view the dashboard.</p>
+      <p style="color: #fff; font-size: 0.9rem;">Please enter the password to view the dashboard.</p>
       <input type="password" id="password-input" placeholder="Enter Password">
       <button onclick="checkPassword()">Unlock Dashboard</button>
       <p class="error" id="error-msg">Incorrect password. Try again.</p>
@@ -210,16 +234,16 @@
   <header class="app-header" id="main-header">
     <div class="header-text">
       <h1>Instructor Performance</h1>
-      <p><strong>Marking Criteria:</strong> Excellent = 3 | Good = 2 | Average = 1 | Needs Improvement = 0 | Poor = -1</p>
+      <p><strong>Marking Criteria:</strong> Excellent: +3 | Good: +2 | Average: +1 | Needs Improvement: 0 | Poor: −1</p>
     </div>
     <img src="logo.png" alt="High Impact Gym" class="header-logo">
   </header>
 
   <main class="dashboard-container">
     <div class="metrics-grid" id="top-metrics">
-      <div class="metric-card"><h3>Top Performer</h3><div class="value" id="top-trainer">Loading...</div></div>
-      <div class="metric-card"><h3>Total Evaluations</h3><div class="value" id="total-evals">0</div></div>
-      <div class="metric-card"><h3>Highest Score</h3><div class="value" id="highest-score">0</div></div>
+      <div class="metric-card"><h3>Highest Total Score</h3><div class="value" id="top-trainer">Loading...</div></div>
+      <div class="metric-card"><h3>Client Evaluations Received</h3><div class="value" id="total-evals">0</div></div>
+      <div class="metric-card"><h3>Highest Total Marks</h3><div class="value" id="highest-score">0</div></div>
     </div>
 
     <div class="toolbar">
@@ -254,8 +278,9 @@
           </div>
           <img src="logo.png" alt="High Impact Gym">
         </div>
+        <p class="chart-note">Longer bars mean higher total marks. Check the number of evaluations when comparing trainers.</p>
         <div class="chart-rows" id="chart-rows"></div>
-        <div class="share-foot">Score = total marks from client evaluations</div>
+        <div class="share-foot">Total marks = (Excellent × 3) + (Good × 2) + (Average × 1) − (Poor × 1). Trainers are ranked by total marks.</div>
       </div>
       <div class="chart-actions">
         <span>Take a screenshot of the card, then close.</span>
@@ -332,6 +357,17 @@
       toast._t = setTimeout(() => t.classList.remove('show'), 3800);
     }
 
+    function ratingSummary(t) {
+      const n = Number(t.clients) || 0;
+      if (!n) return 'No client evaluations yet';
+      const avg = Number(t.marks) / n;
+      if (avg >= 2.5) return 'Mostly excellent feedback';
+      if (avg >= 1.5) return 'Generally good feedback';
+      if (avg >= 0.5) return 'Mixed or average feedback';
+      if (avg >= 0) return 'Feedback suggests improvement is needed';
+      return 'More attention is needed';
+    }
+
     function renderDashboard(data) {
       const leaderboardDiv = $('leaderboard');
 
@@ -353,6 +389,8 @@
       $('total-evals').textContent = totalEvals;
 
       data.forEach(t => {
+        const clients = Number(t.clients) || 0;
+        const average = clients ? (Number(t.marks) / clients).toFixed(2) : '—';
         let rankClass = t.rank === 1 ? "rank-1" : (t.rank === 2 ? "rank-2" : (t.rank === 3 ? "rank-3" : ""));
 
         leaderboardDiv.insertAdjacentHTML('beforeend', `
@@ -364,10 +402,11 @@
                 <h4>${t.name}</h4>
               </div>
               <div class="total-score">
-                <div class="clients-count">${t.clients} Total Clients</div>
+                <div class="clients-count">${t.clients} client evaluations</div>
                 <div class="score-box">
                   <div class="score">${t.marks}</div>
-                  <div class="label">Total Marks</div>
+                  <div class="label">Total marks</div>
+                  <div class="score-details">Average per evaluation: ${average} / 3</div>
                 </div>
               </div>
             </div>
@@ -375,9 +414,10 @@
               <div class="stat-box stat-excellent"><h5>Excellent</h5><div class="count">${t.Excellent}</div></div>
               <div class="stat-box stat-good"><h5>Good</h5><div class="count">${t.Good}</div></div>
               <div class="stat-box stat-average"><h5>Average</h5><div class="count">${t.Average}</div></div>
-              <div class="stat-box stat-needs"><h5>Needs Improve</h5><div class="count">${t['Needs Improvement']}</div></div>
+              <div class="stat-box stat-needs"><h5>Needs Improvement</h5><div class="count">${t['Needs Improvement']}</div></div>
               <div class="stat-box stat-poor"><h5>Poor</h5><div class="count">${t.Poor}</div></div>
             </div>
+            <p class="score-explanation"><strong>Result:</strong> ${ratingSummary(t)}. Based on ${clients} client evaluation${clients === 1 ? '' : 's'}; average score ${average} out of 3.</p>
           </div>
         `);
       });
@@ -422,8 +462,8 @@
         row.innerHTML = `
           <div class="chart-rank ${pos <= 3 ? 'r' + pos : ''}">${pos}</div>
           <img class="chart-avatar" src="${trainerImages[t.name] || ''}" alt="" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=60'">
-          <div class="chart-name">${t.name}</div>
-          <div class="bar-track"><div class="bar-fill" data-w="${width}">${t.marks}</div></div>
+          <div class="chart-name" title="${t.name} — ${t.clients} evaluations">${t.name}</div>
+          <div class="bar-track" title="${t.marks} total marks from ${t.clients} evaluations"><div class="bar-fill" data-w="${width}">${t.marks}</div></div>
         `;
         wrap.appendChild(row);
       });
