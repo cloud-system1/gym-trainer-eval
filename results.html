@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Performance Dashboard</title>
-  <link rel="stylesheet" href="style-final.css?v=35" />
+  <link rel="stylesheet" href="style-final.css?v=36" />
   <style>
     /* Login Gate Styles */
     #login-gate {
@@ -14,7 +14,7 @@
       z-index: 9999;
       display: flex;
       justify-content: center;
-      align-items: center; /* 🟢 Fixed the typo 'f' here */
+      align-items: center;
       transition: opacity 0.5s ease;
     }
     .login-box {
@@ -65,7 +65,9 @@
     .tool-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
     .leaderboard { display: flex; flex-direction: column; gap: 20px; }
-    .trainer-card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-md); }
+    
+    /* 🟢 FIXED: Changed to dashboard-card to avoid slider CSS conflict */
+    .dashboard-card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-md); }
     .card-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
     .trainer-info { display: flex; align-items: center; gap: 15px; }
     .rank-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; font-weight: bold; color: #fff; }
@@ -278,8 +280,8 @@
       lastScrollTop = scrollTop;
     });
 
-    // 🟢 Added ?v=100 to break the browser cache!
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwiafaHcPG-WgypZ1_9EgqZ-nLb34p9U3uV-g3w7ukrRlbJLR1Y_hK87mdJMoPiDyU/exec?v=100';
+    // 🟢 Added ?v=101 to break the browser cache!
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwiafaHcPG-WgypZ1_9EgqZ-nLb34p9U3uV-g3w7ukrRlbJLR1Y_hK87mdJMoPiDyU/exec?v=101';
 
     const trainerImages = {
       "Sameera": "assets/trainers/Sameera.jpg",
@@ -330,8 +332,9 @@
       data.forEach(t => {
         let rankClass = t.rank === 1 ? "rank-1" : (t.rank === 2 ? "rank-2" : (t.rank === 3 ? "rank-3" : ""));
 
+        // 🟢 Changed class to 'dashboard-card' to avoid CSS conflict
         leaderboardDiv.insertAdjacentHTML('beforeend', `
-          <div class="trainer-card">
+          <div class="dashboard-card">
             <div class="card-header">
               <div class="trainer-info">
                 <div class="rank-circle ${rankClass}">${t.rank}</div>
