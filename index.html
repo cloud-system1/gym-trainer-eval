@@ -358,23 +358,6 @@ body.is-done .submit-area { opacity: 0; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
 }
 
-/* ---- Premium palette: emerald buttons + champagne-gold accents ---- */
-.trainer-card { --rc: #e8c776; }
-.progress i::after { background: var(--sc, #e8c776); }
-.progress i.done::after { box-shadow: 0 0 10px rgba(232,199,118,.6); }
-.ring-fg { filter: drop-shadow(0 0 6px rgba(232,199,118,.55)); }
-.trainer-card .rating-btn { --c: #3fd98a; }
-.trainer-card .rating-btn:has(input:checked) {
-  background: linear-gradient(135deg, #5be9a4 0%, #2fb677 100%);
-  border-color: rgba(255,255,255,.35);
-  color: #04140b;
-  box-shadow: 0 0 0 4px rgba(63,217,138,.18), 0 12px 30px rgba(47,182,119,.45), inset 0 1px 0 rgba(255,255,255,.4);
-}
-.trainer-card .rating-btn:has(input:checked) .dot { background: #04140b; box-shadow: none; }
-.trainer-card .rating-btn .dot { background: #3fd98a; box-shadow: 0 0 8px rgba(63,217,138,.6); }
-.trainer-card .rating-btn:hover { border-color: rgba(232,199,118,.7); }
-.trainer-card .rating-btn:hover::before { background: #e8c776; opacity: .08; }
-
   </style>
 </head>
 <body>
@@ -417,23 +400,22 @@ body.is-done .submit-area { opacity: 0; }
 
   <script>
     const trainers = [
-      { id: "5", name: "Bhagya", img: "assets/trainers/bhagya.jpg", },
-      { id: "1", name: "Sameera", img: "assets/trainers/Sameera.jpg", },
+      { id: "1", name: "Sameera", img: "assets/trainers/Sameera.jpg", zoom: 1.5 },
       { id: "2", name: "Kavindu", img: "assets/trainers/Kavindu.jpg" },
       { id: "3", name: "Dilshan", img: "assets/trainers/Dilshan.jpg" },
       { id: "4", name: "Ravija", img: "assets/trainers/Ravija.jpg" },
+      { id: "5", name: "Bhagya", img: "assets/trainers/bhagya.jpg", zoom: 1.5 },
       { id: "6", name: "Hiruka", img: "assets/trainers/Hiruka.jpg" },
       { id: "7", name: "Shalani", img: "assets/trainers/Shalani.jpg" },
       { id: "8", name: "Thilini", img: "assets/trainers/Thilini.jpg" },
-      { id: "9", name: "Pavani", img: "assets/trainers/pavani.jpg", },
+      { id: "9", name: "Pavani", img: "assets/trainers/pavani.jpg", zoom: 1.5 },
       { id: "10", name: "Sasanka", img: "assets/trainers/Sasanka.jpg" },
       { id: "11", name: "Methum", img: "assets/trainers/Methum.jpg" }
     ];
 
     const ratings = ["Excellent", "Good", "Average", "Needs Improvement", "Poor"];
     const ratingClasses = ['btn-excellent', 'btn-good', 'btn-average', 'btn-needs', 'btn-poor'];
-    const ratingColors = ['#3fd98a', '#3fd98a', '#3fd98a', '#3fd98a', '#3fd98a'];
-    const ACCENT = '#e8c776'; // ring + progress colour
+    const ratingColors = ['#4caf50', '#2196f3', '#ffc107', '#e91e63', '#9e9e9e'];
 
     const container = document.getElementById('trainer-cards');
     const progress = document.getElementById('progress');
@@ -517,9 +499,9 @@ body.is-done .submit-area { opacity: 0; }
     function selectRating(card, input) {
       const idx = Number(card.dataset.index);
       const rIdx = ratings.indexOf(input.value);
-      card.style.setProperty('--rc', ACCENT);
+      card.style.setProperty('--rc', ratingColors[rIdx]);
       card.classList.add('rated');
-      segments[idx].style.setProperty('--sc', ACCENT);
+      segments[idx].style.setProperty('--sc', ratingColors[rIdx]);
       segments[idx].classList.add('done');
       if (navigator.vibrate) navigator.vibrate(12);
 
