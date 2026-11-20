@@ -2,24 +2,32 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050805" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style-final.css?v=30" /> 
+  <link rel="stylesheet" href="style-final.css?v=31" />
 </head>
 <body>
 
   <div class="bg-container" id="bg-zoom"></div>
-  
+  <div class="bg-glow" aria-hidden="true"></div>
+
   <header class="app-header" id="main-header">
-    <div class="header-text">
-      <h1>Trainer Excellence Feedback</h1>
-      <p>Tap a rating. The next trainer will glide in automatically.</p>
+    <div class="bar">
+      <button type="button" class="back-btn" id="back-btn" aria-label="Previous trainer">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <div class="header-text">
+        <h1>Trainer Excellence Feedback</h1>
+        <p id="step-label">Trainer 1 of 11</p>
+      </div>
+      <img src="logo.png" alt="High Impact Gym" class="header-logo">
     </div>
-    <img src="logo.png" alt="High Impact Gym" class="header-logo">
+    <div class="progress" id="progress" aria-hidden="true"></div>
   </header>
 
   <main class="survey-container" id="scroll-container">
-    <form id="survey-form">
+    <form id="survey-form" novalidate>
       <div id="trainer-cards"></div>
       <div class="submit-area" id="submit-area">
         <button type="submit" id="submit-btn">Complete Evaluation</button>
@@ -27,14 +35,11 @@
     </form>
   </main>
 
-  <div id="success-popup" class="success-popup">
+  <div id="success-popup" class="success-popup" role="status">
     <div class="success-icon-ring">
-      <div class="success-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 36px; height: 36px;">
-          <path d="M6.5 6.5h11M6.5 17.5h11M3 9v6M21 9v6"/>
-          <rect x="6.5" y="8.5" width="11" height="7" rx="1.5"/>
-        </svg>
-      </div>
+      <svg class="check" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M14 27l8 8 16-17"/>
+      </svg>
     </div>
     <h2>Feedback Sent!</h2>
     <p>Your evaluation has been securely recorded.<br>Thank you for shaping the High Impact experience!</p>
@@ -56,102 +61,172 @@
     ];
 
     const ratings = ["Excellent", "Good", "Average", "Needs Improvement", "Poor"];
+    const ratingClasses = ['btn-excellent', 'btn-good', 'btn-average', 'btn-needs', 'btn-poor'];
+    const ratingColors = ['#4caf50', '#2196f3', '#ffc107', '#e91e63', '#9e9e9e'];
+
     const container = document.getElementById('trainer-cards');
-    
+    const progress = document.getElementById('progress');
+    const stepLabel = document.getElementById('step-label');
+    const backBtn = document.getElementById('back-btn');
+    const header = document.getElementById('main-header');
+    const submitArea = document.getElementById('submit-area');
+    const form = document.getElementById('survey-form');
+
+    const totalTrainers = trainers.length;
+    let currentIndex = 0;
+    let advanceTimer = null;
+
+    // Build progress segments
+    trainers.forEach(() => {
+      const s = document.createElement('i');
+      progress.appendChild(s);
+    });
+    const segments = progress.querySelectorAll('i');
+
+    // Build cards
     trainers.forEach((t, index) => {
-      const card = document.createElement('div');
-      // 🟢 Add 'active' class only to the first card
-      card.className = index === 0 ? 'trainer-card active' : 'trainer-card';
-      
+      const card = document.createElement('section');
+      card.className = 'trainer-card upcoming';
+      card.dataset.index = index;
+
       let buttonsHTML = '';
       ratings.forEach((r, i) => {
-        const colorClass = ['btn-excellent', 'btn-good', 'btn-average', 'btn-needs', 'btn-poor'][i];
         buttonsHTML += `
-          <label class="rating-btn ${colorClass}">
-            <input type="radio" name="trainer_${t.id}" value="${r}" required>
-            <span>${r}</span> 
+          <label class="rating-btn ${ratingClasses[i]}" style="--i:${i}; --c:${ratingColors[i]}">
+            <input type="radio" name="trainer_${t.id}" value="${r}">
+            <span class="dot"></span>
+            <span class="label">${r}</span>
+            <kbd>${i + 1}</kbd>
           </label>
         `;
       });
 
       card.innerHTML = `
         <div class="trainer-header">
-          <img src="${t.img}" alt="${t.name}" onerror="this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=150'">
+          <div class="photo-wrap">
+            <svg class="ring" viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-track" cx="60" cy="60" r="55"/>
+              <circle class="ring-fg" cx="60" cy="60" r="55"/>
+            </svg>
+            <img src="${t.img}" alt="${t.name}" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=300'">
+          </div>
           <h2 class="trainer-name">${t.name}</h2>
+          <p class="trainer-sub">How was your experience?</p>
         </div>
-        <div class="rating-options">
+        <div class="rating-options" role="radiogroup" aria-label="Rate ${t.name}">
           ${buttonsHTML}
         </div>
       `;
-      
       container.appendChild(card);
     });
 
-    let currentIndex = 0;
-    const totalTrainers = trainers.length;
-    const submitArea = document.getElementById('submit-area');
-    const cards = document.querySelectorAll('.trainer-card');
+    const cards = container.querySelectorAll('.trainer-card');
+
+    function allAnswered() {
+      return trainers.every(t => form.querySelector(`input[name="trainer_${t.id}"]:checked`));
+    }
+
+    function go(i) {
+      currentIndex = i;
+      cards.forEach((c, k) => {
+        c.classList.toggle('active', k === i);
+        c.classList.toggle('past', k < i);
+        c.classList.toggle('upcoming', k > i);
+        c.inert = k !== i;
+      });
+      stepLabel.textContent = `Trainer ${i + 1} of ${totalTrainers}`;
+      backBtn.classList.toggle('visible', i > 0);
+      segments.forEach((s, k) => s.classList.toggle('current', k === i));
+      submitArea.classList.toggle('show-submit', i === totalTrainers - 1 && allAnswered());
+      container.classList.toggle('on-last', i === totalTrainers - 1);
+    }
+
+    function selectRating(card, input) {
+      const idx = Number(card.dataset.index);
+      const rIdx = ratings.indexOf(input.value);
+      card.style.setProperty('--rc', ratingColors[rIdx]);
+      card.classList.add('rated');
+      segments[idx].style.setProperty('--sc', ratingColors[rIdx]);
+      segments[idx].classList.add('done');
+      if (navigator.vibrate) navigator.vibrate(12);
+
+      clearTimeout(advanceTimer);
+      advanceTimer = setTimeout(() => {
+        if (idx < totalTrainers - 1) go(idx + 1);
+        else submitArea.classList.add('show-submit');
+      }, 520);
+    }
 
     container.addEventListener('change', (e) => {
-      if (e.target.type === 'radio') {
-        document.getElementById('main-header').classList.add('header-hidden');
+      if (e.target.type !== 'radio') return;
+      header.classList.add('compact');
+      selectRating(e.target.closest('.trainer-card'), e.target);
+    });
 
-        setTimeout(() => {
-          if (currentIndex < totalTrainers - 1) {
-            // 🟢 Remove active class from current, add to next
-            cards[currentIndex].classList.remove('active');
-            currentIndex++;
-            cards[currentIndex].classList.add('active');
-          } else {
-            submitArea.classList.add('show-submit');
-          }
-        }, 450); 
+    backBtn.addEventListener('click', () => {
+      clearTimeout(advanceTimer);
+      if (currentIndex > 0) go(currentIndex - 1);
+    });
+
+    // Keyboard: 1-5 to rate, arrows to navigate
+    document.addEventListener('keydown', (e) => {
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const n = Number(e.key);
+      if (n >= 1 && n <= 5) {
+        const input = cards[currentIndex].querySelectorAll('input')[n - 1];
+        if (input) { input.checked = true; input.dispatchEvent(new Event('change', { bubbles: true })); }
+      } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+        clearTimeout(advanceTimer); go(currentIndex - 1);
+      } else if (e.key === 'ArrowRight' && form.querySelector(`input[name="trainer_${trainers[currentIndex].id}"]:checked`) && currentIndex < totalTrainers - 1) {
+        clearTimeout(advanceTimer); go(currentIndex + 1);
       }
     });
 
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec'; 
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec';
 
-    document.getElementById('survey-form').addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submit-btn');
       const popup = document.getElementById('success-popup');
-      
+
+      // If anything was skipped (e.g. after going back), jump to it
+      const missing = trainers.findIndex(t => !form.querySelector(`input[name="trainer_${t.id}"]:checked`));
+      if (missing !== -1) { go(missing); return; }
+
       btn.textContent = 'Submitting...';
 
       const formData = new FormData(e.target);
       const payload = { timestamp: new Date().toISOString(), ratings: {} };
-      
       trainers.forEach(t => {
         payload.ratings[t.name] = formData.get(`trainer_${t.id}`);
       });
 
       popup.classList.add('show');
-      e.target.reset(); 
-      submitArea.classList.remove('show-submit'); 
-      
-      // 🟢 Reset to the first card
-      currentIndex = 0;
-      cards.forEach((card, i) => {
-        if (i === 0) card.classList.add('active');
-        else card.classList.remove('active');
-      });
-
-      setTimeout(() => {
-        popup.classList.remove('show');
-        btn.textContent = 'Complete Evaluation';
-        document.getElementById('main-header').classList.remove('header-hidden');
-      }, 5000); 
+      document.body.classList.add('is-done');
 
       try {
-        fetch(ENDPOINT, { 
-          method: 'POST', 
-          mode: 'no-cors', 
-          body: JSON.stringify(payload) 
+        fetch(ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify(payload)
         });
       } catch (error) {
         console.log("Background submission error:", error);
       }
+
+      setTimeout(() => {
+        popup.classList.remove('show');
+        document.body.classList.remove('is-done');
+        e.target.reset();
+        cards.forEach(c => { c.classList.remove('rated'); c.style.removeProperty('--rc'); });
+        segments.forEach(s => { s.classList.remove('done'); s.style.removeProperty('--sc'); });
+        btn.textContent = 'Complete Evaluation';
+        header.classList.remove('compact');
+        go(0);
+      }, 4500);
     });
+
+    go(0);
   </script>
 </body>
 </html>
