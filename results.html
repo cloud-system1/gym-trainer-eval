@@ -45,10 +45,25 @@
 
     /* Dashboard Styles */
     .dashboard-container { max-width: 1000px; margin: 0 auto; padding: 20px; margin-top: 100px; }
-    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
     .metric-card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 16px; box-shadow: var(--shadow-md); text-align: center; }
     .metric-card h3 { margin: 0; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
     .metric-card .value { font-size: 2rem; font-weight: bold; color: var(--green-primary); margin-top: 10px; text-shadow: 0 0 10px var(--green-glow); }
+
+    /* Action buttons */
+    .toolbar { display: flex; gap: 12px; margin-bottom: 26px; flex-wrap: wrap; }
+    .tool-btn {
+      flex: 1; min-width: 180px; padding: 15px 20px; border-radius: 14px; cursor: pointer;
+      font: 700 1rem 'Inter', system-ui, sans-serif; transition: transform .2s ease, box-shadow .2s ease, background .2s ease;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .tool-btn:active { transform: scale(.97); }
+    .btn-chart { background: var(--green-primary); color: #04110a; border: none; box-shadow: 0 8px 24px var(--green-glow); }
+    .btn-chart:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(76,175,80,.5); }
+    .btn-clear { background: rgba(255,82,82,.08); color: #ff6b6b; border: 1.5px solid rgba(255,82,82,.55); }
+    .btn-clear:hover { background: rgba(255,82,82,.18); transform: translateY(-2px); }
+    .tool-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
     .leaderboard { display: flex; flex-direction: column; gap: 20px; }
     .trainer-card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-md); }
     .card-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
@@ -73,11 +88,85 @@
     .stat-average .count { color: #ffc107; }
     .stat-needs .count { color: #e91e63; }
     .stat-poor .count { color: #9e9e9e; }
+
+    /* Overlays (confirm + chart) */
+    .overlay {
+      position: fixed; inset: 0; z-index: 10000; display: flex; justify-content: center;
+      background: rgba(3, 6, 4, .82); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      opacity: 0; pointer-events: none; transition: opacity .35s ease;
+    }
+    .overlay.open { opacity: 1; pointer-events: auto; }
+    #confirm-overlay { align-items: center; padding: 20px; }
+    #chart-overlay { align-items: flex-start; overflow-y: auto; padding: 24px 14px 40px; }
+
+    .confirm-box {
+      width: 100%; max-width: 400px; padding: 34px 28px 28px; border-radius: 26px; text-align: center;
+      background: rgba(14, 20, 16, .95); border: 1px solid rgba(255, 82, 82, .45);
+      box-shadow: 0 0 60px rgba(255, 82, 82, .18);
+      transform: scale(.9) translateY(10px); transition: transform .45s cubic-bezier(.34,1.56,.64,1);
+    }
+    .overlay.open .confirm-box { transform: none; }
+    .confirm-icon { width: 64px; height: 64px; margin: 0 auto 16px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,82,82,.12); color: #ff6b6b; font-size: 1.9rem; }
+    .confirm-box h3 { margin: 0 0 8px; color: #fff; font-size: 1.35rem; }
+    .confirm-box p { margin: 0 0 24px; color: var(--text-muted); line-height: 1.5; font-size: .95rem; }
+    .confirm-actions { display: flex; gap: 12px; }
+    .confirm-actions button { flex: 1; padding: 14px; border-radius: 13px; font: 700 1rem 'Inter', system-ui, sans-serif; cursor: pointer; border: none; transition: transform .2s ease; }
+    .confirm-actions button:active { transform: scale(.96); }
+    .btn-no { background: rgba(255,255,255,.1); color: #fff; }
+    .btn-yes { background: #e53935; color: #fff; box-shadow: 0 8px 22px rgba(229,57,53,.4); }
+
+    /* Shareable chart card */
+    .chart-wrap { width: 100%; max-width: 520px; }
+    .share-card {
+      padding: 26px 22px 22px; border-radius: 28px; position: relative; overflow: hidden;
+      background: linear-gradient(160deg, #0b140e 0%, #0a1f12 100%);
+      border: 1px solid rgba(76,175,80,.35);
+      box-shadow: 0 30px 70px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .share-card::before { content: ''; position: absolute; width: 320px; height: 320px; top: -140px; right: -120px; background: radial-gradient(circle, rgba(76,175,80,.25), transparent 70%); pointer-events: none; }
+    .share-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 20px; position: relative; }
+    .share-head h2 { margin: 0; font-size: 1.35rem; color: #fff; letter-spacing: -.01em; line-height: 1.2; }
+    .share-head p { margin: 4px 0 0; color: var(--text-muted); font-size: .85rem; }
+    .share-head img { height: 54px; width: auto; filter: drop-shadow(0 0 10px var(--green-glow)); }
+
+    .chart-rows { display: flex; flex-direction: column; gap: 9px; position: relative; }
+    .chart-row { display: flex; align-items: center; gap: 10px; }
+    .chart-rank { width: 24px; height: 24px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: .75rem; font-weight: 700; background: rgba(255,255,255,.1); color: #fff; }
+    .chart-rank.r1 { background: #ffd700; color: #000; }
+    .chart-rank.r2 { background: #c0c0c0; color: #000; }
+    .chart-rank.r3 { background: #cd7f32; color: #fff; }
+    .chart-avatar { width: 34px; height: 34px; border-radius: 50%; object-fit: cover; flex: none; border: 2px solid var(--c, var(--green-primary)); background: #1b241d; }
+    .chart-name { width: 70px; flex: none; color: #fff; font-weight: 600; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .bar-track { flex: 1; height: 28px; border-radius: 14px; background: rgba(255,255,255,.07); overflow: hidden; }
+    .bar-fill {
+      height: 100%; width: 0; border-radius: 14px; background: var(--c, var(--green-primary));
+      display: flex; align-items: center; justify-content: flex-end; padding-right: 10px;
+      font-weight: 800; font-size: .85rem; color: #04110a;
+      box-shadow: 0 0 14px color-mix(in srgb, var(--c, #4caf50) 50%, transparent);
+      transition: width 1.1s cubic-bezier(.16,1,.3,1);
+    }
+    .share-foot { margin-top: 18px; text-align: center; color: var(--text-muted); font-size: .75rem; position: relative; }
+
+    .chart-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 16px; color: var(--text-muted); font-size: .85rem; }
+    .chart-actions button { padding: 11px 22px; border-radius: 12px; border: none; background: rgba(255,255,255,.12); color: #fff; font: 700 .95rem 'Inter', system-ui, sans-serif; cursor: pointer; }
+
+    /* Toast */
+    #toast {
+      position: fixed; left: 50%; bottom: 28px; transform: translate(-50%, 30px); opacity: 0; z-index: 11000;
+      padding: 14px 22px; border-radius: 14px; font-weight: 600; font-size: .95rem; color: #fff;
+      background: rgba(14, 20, 16, .96); border: 1px solid var(--green-primary); box-shadow: 0 10px 30px rgba(0,0,0,.5);
+      transition: opacity .35s ease, transform .5s cubic-bezier(.16,1,.3,1); pointer-events: none; max-width: 90vw; text-align: center;
+    }
+    #toast.show { opacity: 1; transform: translate(-50%, 0); }
+    #toast.bad { border-color: #ff5252; }
+
     @media (max-width: 768px) {
       .card-header { flex-direction: column; align-items: flex-start; gap: 15px; }
       .total-score { text-align: left; width: 100%; justify-content: space-between; }
       .breakdown-grid { grid-template-columns: repeat(2, 1fr); }
+      .tool-btn { min-width: 100%; }
     }
+    @media (max-width: 400px) { .chart-name { width: 58px; font-size: .82rem; } .chart-avatar { width: 30px; height: 30px; } }
   </style>
 </head>
 <body>
@@ -109,15 +198,56 @@
       <div class="metric-card"><h3>Total Evaluations</h3><div class="value" id="total-evals">0</div></div>
       <div class="metric-card"><h3>Highest Score</h3><div class="value" id="highest-score">0</div></div>
     </div>
+
+    <div class="toolbar">
+      <button class="tool-btn btn-chart" id="chart-btn" type="button">📊 Final Evaluation Chart</button>
+      <button class="tool-btn btn-clear" id="clear-btn" type="button">🗑️ Clear All Data</button>
+    </div>
+
     <div class="leaderboard" id="leaderboard">
       <p style="text-align:center;">Loading data...</p>
     </div>
   </main>
 
+  <!-- ⚠️ CONFIRM CLEAR -->
+  <div class="overlay" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="confirm-box">
+      <div class="confirm-icon">⚠️</div>
+      <h3 id="confirm-title">Clear all data?</h3>
+      <p>This permanently deletes every evaluation in the Google Sheet. This cannot be undone.</p>
+      <div class="confirm-actions">
+        <button type="button" class="btn-no" id="confirm-no">No</button>
+        <button type="button" class="btn-yes" id="confirm-yes">Yes, clear all</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 📈 SHAREABLE CHART -->
+  <div class="overlay" id="chart-overlay" role="dialog" aria-modal="true" aria-label="Final evaluation chart">
+    <div class="chart-wrap">
+      <div class="share-card" id="share-card">
+        <div class="share-head">
+          <div>
+            <h2>Final Trainer Evaluation</h2>
+            <p id="share-sub"></p>
+          </div>
+          <img src="logo.png" alt="High Impact Gym">
+        </div>
+        <div class="chart-rows" id="chart-rows"></div>
+        <div class="share-foot">Score = total marks from client evaluations</div>
+      </div>
+      <div class="chart-actions">
+        <span>Take a screenshot of the card, then close.</span>
+        <button type="button" id="chart-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" role="status"></div>
+
   <script>
     // 🔒 PASSWORD LOGIC
-    // Change 'highimpact123' to whatever password you want!
-    const SECRET_PASSWORD = "Ranga1"; 
+    const SECRET_PASSWORD = "Ranga1";
 
     function checkPassword() {
       const input = document.getElementById('password-input').value;
@@ -125,11 +255,9 @@
       const error = document.getElementById('error-msg');
 
       if (input === SECRET_PASSWORD) {
-        // Hide the gate smoothly
         gate.style.opacity = '0';
         setTimeout(() => {
           gate.style.display = 'none';
-          // Save login to browser so they don't have to type it again today
           sessionStorage.setItem('isLoggedIn', 'true');
         }, 500);
       } else {
@@ -138,18 +266,16 @@
       }
     }
 
-    // Check if they already logged in during this session
     if (sessionStorage.getItem('isLoggedIn') === 'true') {
       document.getElementById('login-gate').style.display = 'none';
     }
 
-    // Allow pressing "Enter" to submit password
     document.getElementById('password-input').addEventListener('keypress', function (e) {
       if (e.key === 'Enter') checkPassword();
     });
 
     // ----------------------------------------------------
-    // THE REST OF YOUR DASHBOARD LOGIC
+    // DASHBOARD LOGIC
     // ----------------------------------------------------
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
@@ -160,9 +286,9 @@
       lastScrollTop = scrollTop;
     });
 
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwbKqZy4tFHBlVZpSUHDtsejeTTPPLGgrzsuuNL5cbNKB3xBxHK9BM5MHfzMYcaloM/exec';
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwiafaHcPG-WgypZ1_9EgqZ-nLb34p9U3uV-g3w7ukrRlbJLR1Y_hK87mdJMoPiDyU/exec';
 
-        const trainerImages = {
+    const trainerImages = {
       "Sameera": "assets/trainers/Sameera.jpg",
       "Kavindu": "assets/trainers/Kavindu.jpg",
       "Dilshan": "assets/trainers/Dilshan.jpg",
@@ -176,59 +302,178 @@
       "Methum": "assets/trainers/Methum.jpg"
     };
 
-    fetch(ENDPOINT)
-      .then(res => res.json())
-      .then(response => {
-        if (!response.ok || response.data.length === 0) {
-          document.getElementById('leaderboard').innerHTML = '<p style="text-align:center;">No evaluations submitted yet.</p>';
-          return;
-        }
+    let allData = [];
+    const $ = (id) => document.getElementById(id);
 
-        const data = response.data;
-        const leaderboardDiv = document.getElementById('leaderboard');
-        leaderboardDiv.innerHTML = ''; 
+    function toast(msg, bad) {
+      const t = $('toast');
+      t.textContent = msg;
+      t.classList.toggle('bad', !!bad);
+      t.classList.add('show');
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => t.classList.remove('show'), 3800);
+    }
 
-        const topTrainer = data[0]; 
-        document.getElementById('top-trainer').textContent = topTrainer.name;
-        document.getElementById('highest-score').textContent = topTrainer.marks;
-        
-        let totalEvals = 0;
-        data.forEach(t => totalEvals += t.clients);
-        document.getElementById('total-evals').textContent = totalEvals;
+    function renderDashboard(data) {
+      const leaderboardDiv = $('leaderboard');
 
-        data.forEach(t => {
-          let rankClass = t.rank === 1 ? "rank-1" : (t.rank === 2 ? "rank-2" : (t.rank === 3 ? "rank-3" : ""));
+      if (!data.length) {
+        leaderboardDiv.innerHTML = '<p style="text-align:center;">No evaluations submitted yet.</p>';
+        $('top-trainer').textContent = '—';
+        $('highest-score').textContent = '0';
+        $('total-evals').textContent = '0';
+        return;
+      }
 
-          leaderboardDiv.insertAdjacentHTML('beforeend', `
-            <div class="trainer-card">
-              <div class="card-header">
-                <div class="trainer-info">
-                  <div class="rank-circle ${rankClass}">${t.rank}</div>
-                  <img src="${trainerImages[t.name] || ''}" alt="${t.name}" onerror="this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=60'">
-                  <h4>${t.name}</h4>
-                </div>
-                <div class="total-score">
-                  <div class="clients-count">${t.clients} Total Clients</div>
-                  <div class="score-box">
-                    <div class="score">${t.marks}</div>
-                    <div class="label">Total Marks</div>
-                  </div>
-                </div>
+      leaderboardDiv.innerHTML = '';
+      const topTrainer = data[0];
+      $('top-trainer').textContent = topTrainer.name;
+      $('highest-score').textContent = topTrainer.marks;
+
+      let totalEvals = 0;
+      data.forEach(t => totalEvals += t.clients);
+      $('total-evals').textContent = totalEvals;
+
+      data.forEach(t => {
+        let rankClass = t.rank === 1 ? "rank-1" : (t.rank === 2 ? "rank-2" : (t.rank === 3 ? "rank-3" : ""));
+
+        leaderboardDiv.insertAdjacentHTML('beforeend', `
+          <div class="trainer-card">
+            <div class="card-header">
+              <div class="trainer-info">
+                <div class="rank-circle ${rankClass}">${t.rank}</div>
+                <img src="${trainerImages[t.name] || ''}" alt="${t.name}" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=60'">
+                <h4>${t.name}</h4>
               </div>
-              <div class="breakdown-grid">
-                <div class="stat-box stat-excellent"><h5>Excellent</h5><div class="count">${t.Excellent}</div></div>
-                <div class="stat-box stat-good"><h5>Good</h5><div class="count">${t.Good}</div></div>
-                <div class="stat-box stat-average"><h5>Average</h5><div class="count">${t.Average}</div></div>
-                <div class="stat-box stat-needs"><h5>Needs Improve</h5><div class="count">${t['Needs Improvement']}</div></div>
-                <div class="stat-box stat-poor"><h5>Poor</h5><div class="count">${t.Poor}</div></div>
+              <div class="total-score">
+                <div class="clients-count">${t.clients} Total Clients</div>
+                <div class="score-box">
+                  <div class="score">${t.marks}</div>
+                  <div class="label">Total Marks</div>
+                </div>
               </div>
             </div>
-          `);
-        });
-      })
-      .catch(err => {
-        document.getElementById('leaderboard').innerHTML = '<p style="text-align:center; color:red;">Error loading data. Check your URL.</p>';
+            <div class="breakdown-grid">
+              <div class="stat-box stat-excellent"><h5>Excellent</h5><div class="count">${t.Excellent}</div></div>
+              <div class="stat-box stat-good"><h5>Good</h5><div class="count">${t.Good}</div></div>
+              <div class="stat-box stat-average"><h5>Average</h5><div class="count">${t.Average}</div></div>
+              <div class="stat-box stat-needs"><h5>Needs Improve</h5><div class="count">${t['Needs Improvement']}</div></div>
+              <div class="stat-box stat-poor"><h5>Poor</h5><div class="count">${t.Poor}</div></div>
+            </div>
+          </div>
+        `);
       });
+    }
+
+    // Loads data from the sheet. Resolves with the number of trainers returned.
+    function loadData() {
+      return fetch(ENDPOINT + '?t=' + Date.now())
+        .then(res => res.json())
+        .then(response => {
+          allData = (response && response.ok && Array.isArray(response.data)) ? response.data : [];
+          renderDashboard(allData);
+          return allData.length;
+        })
+        .catch(err => {
+          $('leaderboard').innerHTML = '<p style="text-align:center; color:red;">Error loading data. Check your URL.</p>';
+          return -1;
+        });
+    }
+
+    loadData();
+
+    // ----------------------------------------------------
+    // 📈 FINAL EVALUATION CHART
+    // ----------------------------------------------------
+    const chartOverlay = $('chart-overlay');
+
+    function buildChart() {
+      const rows = [...allData].sort((a, b) => b.marks - a.marks);
+      const max = Math.max(...rows.map(r => r.marks), 1);
+      const wrap = $('chart-rows');
+      wrap.innerHTML = '';
+
+      rows.forEach((t, i) => {
+        const pos = i + 1;
+        const colour = t.marks <= 0 ? '#e91e63'
+          : pos === 1 ? '#ffd700'
+          : pos === 2 ? '#c0c0c0'
+          : pos === 3 ? '#cd7f32'
+          : '#4caf50';
+        const width = Math.max(14, Math.round((Math.max(t.marks, 0) / max) * 100));
+        const row = document.createElement('div');
+        row.className = 'chart-row';
+        row.style.setProperty('--c', colour);
+        row.innerHTML = `
+          <div class="chart-rank ${pos <= 3 ? 'r' + pos : ''}">${pos}</div>
+          <img class="chart-avatar" src="${trainerImages[t.name] || ''}" alt="" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=60'">
+          <div class="chart-name">${t.name}</div>
+          <div class="bar-track"><div class="bar-fill" data-w="${width}">${t.marks}</div></div>
+        `;
+        wrap.appendChild(row);
+      });
+
+      const month = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+      $('share-sub').textContent = `High Impact Gym · ${month}`;
+    }
+
+    $('chart-btn').addEventListener('click', () => {
+      if (!allData.length) { toast('No evaluations yet — nothing to chart.', true); return; }
+      buildChart();
+      chartOverlay.scrollTop = 0;
+      chartOverlay.classList.add('open');
+      // animate bars in one by one
+      document.querySelectorAll('.bar-fill').forEach((el, i) => {
+        el.style.width = '0';
+        setTimeout(() => { el.style.width = el.dataset.w + '%'; }, 250 + i * 70);
+      });
+    });
+
+    function closeChart() { chartOverlay.classList.remove('open'); }
+    $('chart-close').addEventListener('click', closeChart);
+
+    // ----------------------------------------------------
+    // 🗑️ CLEAR ALL DATA (with Yes / No confirmation)
+    // ----------------------------------------------------
+    const confirmOverlay = $('confirm-overlay');
+    const clearBtn = $('clear-btn');
+
+    clearBtn.addEventListener('click', () => confirmOverlay.classList.add('open'));
+    $('confirm-no').addEventListener('click', () => confirmOverlay.classList.remove('open'));
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      confirmOverlay.classList.remove('open');
+      closeChart();
+    });
+
+    $('confirm-yes').addEventListener('click', async () => {
+      confirmOverlay.classList.remove('open');
+      clearBtn.disabled = true;
+      clearBtn.textContent = 'Clearing…';
+
+      try {
+        // no-cors: we can't read the reply, so we re-load the sheet afterwards to verify
+        await fetch(ENDPOINT, {
+          method: 'POST',
+          mode: 'no-cors',
+          body: JSON.stringify({ action: 'clear', password: SECRET_PASSWORD })
+        });
+      } catch (err) {
+        console.log('Clear request error:', err);
+      }
+
+      // give Google a moment to finish, then verify
+      await new Promise(r => setTimeout(r, 2000));
+      const remaining = await loadData();
+
+      if (remaining === 0) toast('All data cleared ✓');
+      else if (remaining > 0) toast('Data was not cleared. Update the Apps Script (see setup note) and redeploy.', true);
+      else toast('Could not reach the sheet. Try again.', true);
+
+      clearBtn.disabled = false;
+      clearBtn.textContent = '🗑️ Clear All Data';
+    });
   </script>
 </body>
 </html>
