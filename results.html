@@ -216,6 +216,32 @@
     .chart-rank.r1, .chart-rank.r2 { color: #fff; text-shadow: 0 1px 3px #000; }
     .header-text p { color: #fff; }
     @media (max-width: 768px) { .dashboard-card { padding: 17px; } .score-explanation { font-size: .9rem; } }
+
+    /* Compact leaderboard: only photo, name, rank and earned marks */
+    .dashboard-container { max-width: 760px; margin-top: 96px; padding: 12px 14px 35px; }
+    .metrics-grid { display: none; }
+    .leaderboard { gap: 8px; }
+    .dashboard-card.compact-trainer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-radius: 13px; min-height: 72px; }
+    .compact-trainer .trainer-info { gap: 10px; min-width: 0; }
+    .compact-trainer .rank-circle { width: 27px; height: 27px; font-size: .8rem; }
+    .compact-trainer .trainer-info img { width: 46px; height: 46px; border-width: 2px; }
+    .compact-trainer .trainer-info h4 { font-size: 1rem; overflow-wrap: anywhere; }
+    .compact-marks { text-align: right; flex: none; color: #fff; min-width: 58px; }
+    .compact-marks strong { display: block; font-size: 1.45rem; line-height: 1.1; color: #fff; }
+    .compact-marks span { display: block; font-size: .72rem; color: #fff; }
+    @media (max-width: 768px) {
+      .app-header { padding: 10px 14px; }
+      .header-text h1 { font-size: 1.05rem; }
+      .header-text p { display: none; }
+      .header-logo { height: 36px; }
+      .dashboard-container { margin-top: 76px; padding: 8px 10px 25px; }
+      .toolbar { gap: 8px; margin-bottom: 12px; }
+      .tool-btn { min-width: 0; flex: 1; padding: 10px 6px; font-size: .78rem; border-radius: 9px; }
+      .dashboard-card.compact-trainer { padding: 8px 10px; min-height: 60px; }
+      .compact-trainer .trainer-info img { width: 40px; height: 40px; }
+      .compact-trainer .trainer-info h4 { font-size: .93rem; }
+      .compact-marks strong { font-size: 1.3rem; }
+    }
   </style>
 </head>
 <body>
@@ -389,35 +415,16 @@
       $('total-evals').textContent = totalEvals;
 
       data.forEach(t => {
-        const clients = Number(t.clients) || 0;
-        const average = clients ? (Number(t.marks) / clients).toFixed(2) : '—';
-        let rankClass = t.rank === 1 ? "rank-1" : (t.rank === 2 ? "rank-2" : (t.rank === 3 ? "rank-3" : ""));
-
+        const rankClass = t.rank === 1 ? 'rank-1' : t.rank === 2 ? 'rank-2' : t.rank === 3 ? 'rank-3' : '';
+        const photo = trainerImages[t.name] || '';
         leaderboardDiv.insertAdjacentHTML('beforeend', `
-          <div class="dashboard-card">
-            <div class="card-header">
-              <div class="trainer-info">
-                <div class="rank-circle ${rankClass}">${t.rank}</div>
-                <img src="${trainerImages[t.name] || ''}" alt="${t.name}" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${t.name}&background=4caf50&color=fff&size=60'">
-                <h4>${t.name}</h4>
-              </div>
-              <div class="total-score">
-                <div class="clients-count">${t.clients} client evaluations</div>
-                <div class="score-box">
-                  <div class="score">${t.marks}</div>
-                  <div class="label">Total marks</div>
-                  <div class="score-details">Average per evaluation: ${average} / 3</div>
-                </div>
-              </div>
+          <div class="dashboard-card compact-trainer">
+            <div class="trainer-info">
+              <div class="rank-circle ${rankClass}">${t.rank}</div>
+              <img src="${photo}" alt="${t.name}" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=4caf50&color=fff&size=60'">
+              <h4>${t.name}</h4>
             </div>
-            <div class="breakdown-grid">
-              <div class="stat-box stat-excellent"><h5>Excellent</h5><div class="count">${t.Excellent}</div></div>
-              <div class="stat-box stat-good"><h5>Good</h5><div class="count">${t.Good}</div></div>
-              <div class="stat-box stat-average"><h5>Average</h5><div class="count">${t.Average}</div></div>
-              <div class="stat-box stat-needs"><h5>Needs Improvement</h5><div class="count">${t['Needs Improvement']}</div></div>
-              <div class="stat-box stat-poor"><h5>Poor</h5><div class="count">${t.Poor}</div></div>
-            </div>
-            <p class="score-explanation"><strong>Result:</strong> ${ratingSummary(t)}. Based on ${clients} client evaluation${clients === 1 ? '' : 's'}; average score ${average} out of 3.</p>
+            <div class="compact-marks"><strong>${t.marks}</strong><span>Marks</span></div>
           </div>
         `);
       });
