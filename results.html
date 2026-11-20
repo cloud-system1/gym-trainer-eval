@@ -2,10 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#050805" />
   <title>Trainer Performance Dashboard</title>
-  <link rel="stylesheet" href="style-final.css?v=36" />
+  <link rel="stylesheet" href="style-final.css?v=37" />
   <style>
+    /* ---- Dashboard fixes: page must scroll (survey CSS locks the body) ---- */
+    :root {
+      --bg-gradient: linear-gradient(135deg, rgba(5,8,5,.97), rgba(10,28,16,.97));
+      --shadow-md: 0 10px 30px rgba(0,0,0,.5);
+    }
+    html, body { height: auto; min-height: 100%; }
+    body {
+      position: static; width: 100%;
+      overflow-x: hidden; overflow-y: auto;
+      background: radial-gradient(80% 50% at 50% 0%, rgba(76,175,80,.14), transparent 70%), #050805;
+      background-attachment: fixed;
+    }
+    .app-header {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      padding: calc(12px + env(safe-area-inset-top, 0px)) 20px 12px;
+    }
+    .app-header.header-hidden { transform: translateY(-100%); }
+    .header-logo { height: 52px; flex: none; }
+
     /* Login Gate Styles */
     #login-gate {
       position: fixed;
@@ -44,7 +64,7 @@
     .error { color: #ff5252; margin-top: 10px; display: none; font-weight: bold; }
 
     /* Dashboard Styles */
-    .dashboard-container { max-width: 1000px; margin: 0 auto; padding: 20px; margin-top: 100px; }
+    .dashboard-container { max-width: 1000px; margin: 110px auto 0; padding: 20px 20px 60px; }
     .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
     .metric-card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); padding: 20px; border-radius: 16px; box-shadow: var(--shadow-md); text-align: center; }
     .metric-card h3 { margin: 0; color: var(--text-muted); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
@@ -65,12 +85,11 @@
     .tool-btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
 
     .leaderboard { display: flex; flex-direction: column; gap: 20px; }
-    
-    /* 🟢 FIXED: Changed to dashboard-card to avoid slider CSS conflict */
+
     .dashboard-card { background: var(--surface); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-md); }
     .card-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 20px; }
     .trainer-info { display: flex; align-items: center; gap: 15px; }
-    .rank-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; font-weight: bold; color: #fff; }
+    .rank-circle { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,0.1); display: flex; justify-content: center; align-items: center; font-weight: bold; color: #fff; flex: none; }
     .rank-1 { background: #ffd700; color: #000; box-shadow: 0 0 15px rgba(255, 215, 0, 0.4); }
     .rank-2 { background: #c0c0c0; color: #000; }
     .rank-3 { background: #cd7f32; color: #fff; }
@@ -163,12 +182,63 @@
     #toast.bad { border-color: #ff5252; }
 
     @media (max-width: 768px) {
+      .header-text h1 { font-size: 1.05rem; }
+      .header-text p { font-size: .72rem; line-height: 1.4; }
+      .header-logo { height: 44px; }
+      .dashboard-container { margin-top: 125px; }
       .card-header { flex-direction: column; align-items: flex-start; gap: 15px; }
       .total-score { text-align: left; width: 100%; justify-content: space-between; }
       .breakdown-grid { grid-template-columns: repeat(2, 1fr); }
       .tool-btn { min-width: 100%; }
     }
     @media (max-width: 400px) { .chart-name { width: 58px; font-size: .82rem; } .chart-avatar { width: 30px; height: 30px; } }
+
+    /* ---- All dashboard text white (chart card keeps its own colours) ---- */
+    .header-text h1, .header-text p, .header-text p strong,
+    .login-box h2, .login-box p, .login-box input,
+    .metric-card h3, .metric-card .value,
+    .dashboard-card, .dashboard-card h4,
+    .total-score .clients-count, .total-score .score, .total-score .label,
+    .confirm-box h3, .confirm-box p,
+    .leaderboard p { color: #fff !important; }
+    .metric-card .value, .total-score .score { text-shadow: 0 0 12px rgba(255,255,255,.25); }
+    .total-score .label { opacity: .85; }
+    .total-score .clients-count { opacity: .9; font-size: 1rem; }
+    .login-box input::placeholder { color: rgba(255,255,255,.6); }
+
+    /* ---- Easier score panel: big full-width rows instead of small boxes ---- */
+    .trainer-info img { width: 72px; height: 72px; }
+    .trainer-info h4 { font-size: 1.5rem; }
+    .total-score .score { font-size: 2.8rem; }
+    .total-score .label { font-size: .85rem; }
+
+    .breakdown-list { display: flex; flex-direction: column; gap: 10px; }
+    .rate-row {
+      --c: #4caf50;
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 16px; border-radius: 14px;
+      background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+      color: #fff;
+    }
+    .rate-excellent { --c: #4caf50; }
+    .rate-good      { --c: #2196f3; }
+    .rate-average   { --c: #ffc107; }
+    .rate-needs     { --c: #e91e63; }
+    .rate-poor      { --c: #9e9e9e; }
+    .rate-dot { width: 14px; height: 14px; border-radius: 50%; flex: none; background: var(--c); box-shadow: 0 0 10px var(--c); }
+    .rate-name { flex: none; width: 150px; font-size: 1.05rem; font-weight: 600; color: #fff; }
+    .rate-bar { flex: 1; height: 10px; border-radius: 10px; background: rgba(255,255,255,.1); overflow: hidden; }
+    .rate-bar i { display: block; height: 100%; border-radius: 10px; background: var(--c); min-width: 0; transition: width .8s ease; }
+    .rate-count { flex: none; min-width: 36px; text-align: right; font-size: 1.6rem; font-weight: 800; color: #fff; }
+
+    @media (max-width: 768px) {
+      .trainer-info img { width: 64px; height: 64px; }
+      .trainer-info h4 { font-size: 1.35rem; }
+      .rate-row { padding: 14px; gap: 10px; }
+      .rate-name { width: auto; flex: 1; font-size: 1rem; }
+      .rate-bar { display: none; }
+      .rate-count { font-size: 1.7rem; }
+    }
   </style>
 </head>
 <body>
@@ -271,6 +341,7 @@
       if (e.key === 'Enter') checkPassword();
     });
 
+    // Hide header while scrolling down, show when scrolling up
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     window.addEventListener('scroll', function() {
@@ -280,7 +351,6 @@
       lastScrollTop = scrollTop;
     });
 
-    // 🟢 Added ?v=101 to break the browser cache!
     const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwiafaHcPG-WgypZ1_9EgqZ-nLb34p9U3uV-g3w7ukrRlbJLR1Y_hK87mdJMoPiDyU/exec?v=101';
 
     const trainerImages = {
@@ -309,6 +379,17 @@
       toast._t = setTimeout(() => t.classList.remove('show'), 3800);
     }
 
+    function rateRow(cls, label, count, total) {
+      const pct = total ? Math.round((count / total) * 100) : 0;
+      return `
+        <div class="rate-row rate-${cls}">
+          <span class="rate-dot"></span>
+          <span class="rate-name">${label}</span>
+          <div class="rate-bar"><i style="width:${pct}%"></i></div>
+          <span class="rate-count">${count}</span>
+        </div>`;
+    }
+
     function renderDashboard(data) {
       const leaderboardDiv = $('leaderboard');
 
@@ -332,7 +413,6 @@
       data.forEach(t => {
         let rankClass = t.rank === 1 ? "rank-1" : (t.rank === 2 ? "rank-2" : (t.rank === 3 ? "rank-3" : ""));
 
-        // 🟢 Changed class to 'dashboard-card' to avoid CSS conflict
         leaderboardDiv.insertAdjacentHTML('beforeend', `
           <div class="dashboard-card">
             <div class="card-header">
@@ -349,12 +429,12 @@
                 </div>
               </div>
             </div>
-            <div class="breakdown-grid">
-              <div class="stat-box stat-excellent"><h5>Excellent</h5><div class="count">${t.Excellent}</div></div>
-              <div class="stat-box stat-good"><h5>Good</h5><div class="count">${t.Good}</div></div>
-              <div class="stat-box stat-average"><h5>Average</h5><div class="count">${t.Average}</div></div>
-              <div class="stat-box stat-needs"><h5>Needs Improve</h5><div class="count">${t['Needs Improvement']}</div></div>
-              <div class="stat-box stat-poor"><h5>Poor</h5><div class="count">${t.Poor}</div></div>
+            <div class="breakdown-list">
+              ${rateRow('excellent', 'Excellent', t.Excellent, t.clients)}
+              ${rateRow('good', 'Good', t.Good, t.clients)}
+              ${rateRow('average', 'Average', t.Average, t.clients)}
+              ${rateRow('needs', 'Needs Improvement', t['Needs Improvement'], t.clients)}
+              ${rateRow('poor', 'Poor', t.Poor, t.clients)}
             </div>
           </div>
         `);
@@ -377,6 +457,7 @@
 
     loadData();
 
+    // ---- Final evaluation chart ----
     const chartOverlay = $('chart-overlay');
 
     function buildChart() {
@@ -423,6 +504,7 @@
     function closeChart() { chartOverlay.classList.remove('open'); }
     $('chart-close').addEventListener('click', closeChart);
 
+    // ---- Clear all data (Yes / No confirmation) ----
     const confirmOverlay = $('confirm-overlay');
     const clearBtn = $('clear-btn');
 
