@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Trainer Performance Dashboard</title>
-  <link rel="stylesheet" href="style-final.css?v=21" />
+  <link rel="stylesheet" href="style-final.css?v=31" />
   <style>
     /* Login Gate Styles */
     #login-gate {
@@ -14,7 +14,7 @@
       z-index: 9999;
       display: flex;
       justify-content: center;
-      align-items: center;f
+      align-items: center; /* 🟢 Fixed the typo 'f' here */
       transition: opacity 0.5s ease;
     }
     .login-box {
@@ -171,7 +171,6 @@
 </head>
 <body>
 
-  <!-- 🔒 THE LOGIN GATE -->
   <div id="login-gate">
     <div class="login-box">
       <img src="logo.png" alt="Logo" style="max-width: 100px; margin-bottom: 20px;">
@@ -183,7 +182,6 @@
     </div>
   </div>
 
-  <!-- 📊 THE DASHBOARD (Hidden behind the login gate) -->
   <header class="app-header" id="main-header">
     <div class="header-text">
       <h1>Instructor Performance</h1>
@@ -209,7 +207,6 @@
     </div>
   </main>
 
-  <!-- ⚠️ CONFIRM CLEAR -->
   <div class="overlay" id="confirm-overlay" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
     <div class="confirm-box">
       <div class="confirm-icon">⚠️</div>
@@ -222,7 +219,6 @@
     </div>
   </div>
 
-  <!-- 📈 SHAREABLE CHART -->
   <div class="overlay" id="chart-overlay" role="dialog" aria-modal="true" aria-label="Final evaluation chart">
     <div class="chart-wrap">
       <div class="share-card" id="share-card">
@@ -246,7 +242,6 @@
   <div id="toast" role="status"></div>
 
   <script>
-    // 🔒 PASSWORD LOGIC
     const SECRET_PASSWORD = "Ranga1";
 
     function checkPassword() {
@@ -274,9 +269,6 @@
       if (e.key === 'Enter') checkPassword();
     });
 
-    // ----------------------------------------------------
-    // DASHBOARD LOGIC
-    // ----------------------------------------------------
     let lastScrollTop = 0;
     const header = document.getElementById('main-header');
     window.addEventListener('scroll', function() {
@@ -286,7 +278,8 @@
       lastScrollTop = scrollTop;
     });
 
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwiafaHcPG-WgypZ1_9EgqZ-nLb34p9U3uV-g3w7ukrRlbJLR1Y_hK87mdJMoPiDyU/exec?v=99';
+    // 🟢 Added ?v=100 to break the browser cache!
+    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwiafaHcPG-WgypZ1_9EgqZ-nLb34p9U3uV-g3w7ukrRlbJLR1Y_hK87mdJMoPiDyU/exec?v=100';
 
     const trainerImages = {
       "Sameera": "assets/trainers/Sameera.jpg",
@@ -365,9 +358,8 @@
       });
     }
 
-    // Loads data from the sheet. Resolves with the number of trainers returned.
     function loadData() {
-      return fetch(ENDPOINT + '?t=' + Date.now())
+      return fetch(ENDPOINT + '&t=' + Date.now())
         .then(res => res.json())
         .then(response => {
           allData = (response && response.ok && Array.isArray(response.data)) ? response.data : [];
@@ -382,9 +374,6 @@
 
     loadData();
 
-    // ----------------------------------------------------
-    // 📈 FINAL EVALUATION CHART
-    // ----------------------------------------------------
     const chartOverlay = $('chart-overlay');
 
     function buildChart() {
@@ -422,7 +411,6 @@
       buildChart();
       chartOverlay.scrollTop = 0;
       chartOverlay.classList.add('open');
-      // animate bars in one by one
       document.querySelectorAll('.bar-fill').forEach((el, i) => {
         el.style.width = '0';
         setTimeout(() => { el.style.width = el.dataset.w + '%'; }, 250 + i * 70);
@@ -432,9 +420,6 @@
     function closeChart() { chartOverlay.classList.remove('open'); }
     $('chart-close').addEventListener('click', closeChart);
 
-    // ----------------------------------------------------
-    // 🗑️ CLEAR ALL DATA (with Yes / No confirmation)
-    // ----------------------------------------------------
     const confirmOverlay = $('confirm-overlay');
     const clearBtn = $('clear-btn');
 
@@ -453,7 +438,6 @@
       clearBtn.textContent = 'Clearing…';
 
       try {
-        // no-cors: we can't read the reply, so we re-load the sheet afterwards to verify
         await fetch(ENDPOINT, {
           method: 'POST',
           mode: 'no-cors',
@@ -463,12 +447,11 @@
         console.log('Clear request error:', err);
       }
 
-      // give Google a moment to finish, then verify
       await new Promise(r => setTimeout(r, 2000));
       const remaining = await loadData();
 
       if (remaining === 0) toast('All data cleared ✓');
-      else if (remaining > 0) toast('Data was not cleared. Update the Apps Script (see setup note) and redeploy.', true);
+      else if (remaining > 0) toast('Data was not cleared. Update the Apps Script and redeploy.', true);
       else toast('Could not reach the sheet. Try again.', true);
 
       clearBtn.disabled = false;
