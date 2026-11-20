@@ -219,7 +219,18 @@
 
     /* Compact leaderboard: only photo, name, rank and earned marks */
     .dashboard-container { max-width: 760px; margin-top: 96px; padding: 12px 14px 35px; }
-    .metrics-grid { display: none; }
+    .metrics-grid { display: block; margin-bottom: 10px; }
+    .metrics-grid .metric-card:not(:first-child) { display: none; }
+    .metrics-grid .metric-card { display: flex; align-items: center; justify-content: space-between; text-align: left; padding: 12px 16px; border: 1px solid rgba(255,215,0,.45); background: linear-gradient(110deg,#1c2414,#102116); }
+    .metrics-grid .metric-card h3 { color: #fff; font-size: .85rem; letter-spacing: .02em; }
+    .metrics-grid .metric-card .value { color: #fff; font-size: 1.15rem; margin: 0; text-shadow: none; }
+    .top-performer-detail { display: flex; align-items: center; gap: 10px; }
+    .top-performer-detail img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #ffd700; }
+    .top-performer-score { color: #fff; font-weight: 800; font-size: 1.2rem; white-space: nowrap; }
+    .criteria-strip { display: flex; flex-wrap: wrap; gap: 5px; margin: 0 0 10px; }
+    .criteria-strip span { color: #fff; background: rgba(255,255,255,.09); border: 1px solid rgba(255,255,255,.15); border-radius: 7px; padding: 6px 8px; font-size: .73rem; white-space: nowrap; }
+    .criteria-title { color: #fff; font-size: .78rem; font-weight: 700; margin: 8px 0 6px; }
+
     .leaderboard { gap: 8px; }
     .dashboard-card.compact-trainer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; border-radius: 13px; min-height: 72px; }
     .compact-trainer .trainer-info { gap: 10px; min-width: 0; }
@@ -235,7 +246,13 @@
       .header-text p { display: none; }
       .header-logo { height: 36px; }
       .dashboard-container { margin-top: 76px; padding: 8px 10px 25px; }
-      .toolbar { gap: 8px; margin-bottom: 12px; }
+      .toolbar { gap: 8px; margin-bottom: 10px; }
+      .metrics-grid .metric-card { padding: 9px 11px; }
+      .metrics-grid .metric-card .value { font-size: 1rem; }
+      .top-performer-detail img { width: 38px; height: 38px; }
+      .top-performer-score { font-size: 1rem; }
+      .criteria-strip span { font-size: .69rem; padding: 5px 7px; }
+
       .tool-btn { min-width: 0; flex: 1; padding: 10px 6px; font-size: .78rem; border-radius: 9px; }
       .dashboard-card.compact-trainer { padding: 8px 10px; min-height: 60px; }
       .compact-trainer .trainer-info img { width: 40px; height: 40px; }
@@ -267,9 +284,14 @@
 
   <main class="dashboard-container">
     <div class="metrics-grid" id="top-metrics">
-      <div class="metric-card"><h3>Highest Total Score</h3><div class="value" id="top-trainer">Loading...</div></div>
+      <div class="metric-card"><div><h3>🏆 Highest Performer</h3><div class="top-performer-detail"><img id="top-photo" src="logo.png" alt="Top trainer photo"><div class="value" id="top-trainer">Loading...</div></div></div><div class="top-performer-score" id="top-marks">— Marks</div></div>
       <div class="metric-card"><h3>Client Evaluations Received</h3><div class="value" id="total-evals">0</div></div>
       <div class="metric-card"><h3>Highest Total Marks</h3><div class="value" id="highest-score">0</div></div>
+    </div>
+
+    <div class="criteria-title">Marks for each client rating</div>
+    <div class="criteria-strip" aria-label="Marking criteria">
+      <span>Excellent +3</span><span>Good +2</span><span>Average +1</span><span>Needs Improvement 0</span><span>Poor −1</span>
     </div>
 
     <div class="toolbar">
@@ -400,14 +422,19 @@
       if (!data.length) {
         leaderboardDiv.innerHTML = '<p style="text-align:center;">No evaluations submitted yet.</p>';
         $('top-trainer').textContent = '—';
+        $('top-marks').textContent = '— Marks';
+        $('top-photo').src = 'logo.png';
         $('highest-score').textContent = '0';
         $('total-evals').textContent = '0';
         return;
       }
 
       leaderboardDiv.innerHTML = '';
-      const topTrainer = data[0];
+      const topTrainer = [...data].sort((a,b) => Number(b.marks) - Number(a.marks))[0];
       $('top-trainer').textContent = topTrainer.name;
+      $('top-marks').textContent = topTrainer.marks + ' Marks';
+      $('top-photo').src = trainerImages[topTrainer.name] || 'logo.png';
+      $('top-photo').onerror = function () { this.onerror = null; this.src = 'logo.png'; };
       $('highest-score').textContent = topTrainer.marks;
 
       let totalEvals = 0;
