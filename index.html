@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <meta name="theme-color" content="#050805" />
   <title>Trainer Excellence Feedback</title>
-  <link rel="stylesheet" href="style-final.css?v=31" />
+  <link rel="stylesheet" href="style-final.css?v=32" />
 </head>
 <body>
 
@@ -47,15 +47,15 @@
 
   <script>
     const trainers = [
-      { id: "1", name: "Sameera", img: "assets/trainers/Sameera.jpg", zoom: 1.5 },
+      { id: "1", name: "Sameera", img: "assets/trainers/Sameera.jpg", zoom: 1.0 },
       { id: "2", name: "Kavindu", img: "assets/trainers/Kavindu.jpg" },
       { id: "3", name: "Dilshan", img: "assets/trainers/Dilshan.jpg" },
       { id: "4", name: "Ravija", img: "assets/trainers/Ravija.jpg" },
-      { id: "5", name: "Bhagya", img: "assets/trainers/bhagya.jpg", zoom: 1.5 },
+      { id: "5", name: "Bhagya", img: "assets/trainers/bhagya.jpg", zoom: 1.0 },
       { id: "6", name: "Hiruka", img: "assets/trainers/Hiruka.jpg" },
       { id: "7", name: "Shalani", img: "assets/trainers/Shalani.jpg" },
       { id: "8", name: "Thilini", img: "assets/trainers/Thilini.jpg" },
-      { id: "9", name: "Pavani", img: "assets/trainers/pavani.jpg", zoom: 1.5 },
+      { id: "9", name: "Pavani", img: "assets/trainers/pavani.jpg", zoom: 1.0 },
       { id: "10", name: "Sasanka", img: "assets/trainers/Sasanka.jpg" },
       { id: "11", name: "Methum", img: "assets/trainers/Methum.jpg" }
     ];
@@ -227,80 +227,6 @@
         go(0);
       }, 4500);
     });
-
-    // ---------------------------------------------------------------
-    // 🎯 PHOTO TUNER — open the page with  ?tune  at the end of the URL
-    // e.g. https://your-site/index.html?tune
-    // Adjust each trainer until the face size matches Kavindu, then Copy.
-    // ---------------------------------------------------------------
-    if (new URLSearchParams(location.search).has('tune')) {
-      trainers.forEach(t => {
-        const o = (t.origin || '50% 30%').split(' ').map(parseFloat);
-        t.zoom = t.zoom || 1; t.ox = o[0]; t.oy = o[1];
-      });
-
-      const panel = document.createElement('div');
-      panel.style.cssText = 'position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:5000;background:rgba(10,16,12,.96);border:1px solid #4caf50;border-radius:16px;padding:10px;color:#fff;font:600 13px Inter,system-ui,sans-serif;max-width:520px;margin:0 auto;box-shadow:0 10px 30px rgba(0,0,0,.6)';
-      panel.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-          <span><b id="tp-name"></b> &nbsp;<span id="tp-vals" style="opacity:.8"></span></span>
-          <span style="opacity:.7">Tune mode</span>
-        </div>
-        <div class="tp-row"><button data-a="z-">Zoom −</button><button data-a="z+">Zoom +</button><button data-a="u">↑</button><button data-a="d">↓</button><button data-a="l">←</button><button data-a="r">→</button></div>
-        <div class="tp-row"><button data-a="prev">◀ Prev</button><button data-a="next">Next ▶</button><button data-a="reset">Reset</button><button data-a="copy" style="background:#4caf50;color:#04110a">Copy all</button></div>`;
-      const st = document.createElement('style');
-      st.textContent = '.tp-row{display:flex;gap:6px;margin-top:6px}.tp-row button{flex:1;padding:11px 4px;border:none;border-radius:10px;background:rgba(255,255,255,.14);color:#fff;font:700 14px Inter,system-ui,sans-serif;cursor:pointer}.tp-row button:active{transform:scale(.94)}';
-      document.head.appendChild(st);
-      document.body.appendChild(panel);
-
-      const baseline = trainers.map(t => ({ zoom: t.zoom, ox: t.ox, oy: t.oy }));
-      const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
-
-      function applyPhoto(i) {
-        const t = trainers[i], img = cards[i].querySelector('img');
-        img.style.setProperty('--zoom', t.zoom);
-        img.style.setProperty('--origin', t.ox + '% ' + t.oy + '%');
-      }
-      function updatePanel() {
-        const t = trainers[currentIndex];
-        panel.querySelector('#tp-name').textContent = t.name;
-        panel.querySelector('#tp-vals').textContent = 'zoom ' + t.zoom.toFixed(2) + ' · ' + t.ox + '% ' + t.oy + '%';
-      }
-
-      const _go = go;
-      go = function (i) { _go(i); updatePanel(); };
-
-      panel.addEventListener('click', (e) => {
-        const a = e.target.dataset && e.target.dataset.a;
-        if (!a) return;
-        const t = trainers[currentIndex];
-        if (a === 'z+') t.zoom = clamp(+(t.zoom + 0.1).toFixed(2), 1, 4);
-        if (a === 'z-') t.zoom = clamp(+(t.zoom - 0.1).toFixed(2), 1, 4);
-        if (a === 'u') t.oy = clamp(t.oy + 5, 0, 100);   // moves the photo up
-        if (a === 'd') t.oy = clamp(t.oy - 5, 0, 100);   // moves the photo down
-        if (a === 'l') t.ox = clamp(t.ox + 5, 0, 100);   // moves the photo left
-        if (a === 'r') t.ox = clamp(t.ox - 5, 0, 100);   // moves the photo right
-        if (a === 'reset') Object.assign(t, baseline[currentIndex]);
-        if (a === 'prev' && currentIndex > 0) { go(currentIndex - 1); return; }
-        if (a === 'next' && currentIndex < totalTrainers - 1) { go(currentIndex + 1); return; }
-        if (a === 'copy') {
-          const lines = trainers.map(t => {
-            const extra = (t.zoom !== 1 ? ', zoom: ' + t.zoom : '') + ((t.ox !== 50 || t.oy !== 30) ? ', origin: "' + t.ox + '% ' + t.oy + '%"' : '');
-            return '      { id: "' + t.id + '", name: "' + t.name + '", img: "' + t.img + '"' + extra + ' }';
-          });
-          const text = 'const trainers = [\n' + lines.join(',\n') + '\n    ];';
-          (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject()).then(
-            () => alert('Copied! Paste it here in the chat.'),
-            () => prompt('Copy this text and paste it in the chat:', text)
-          );
-          return;
-        }
-        applyPhoto(currentIndex);
-        updatePanel();
-      });
-
-      updatePanel();
-    }
 
     go(0);
   </script>
