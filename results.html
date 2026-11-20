@@ -240,6 +240,14 @@
     .compact-marks { text-align: right; flex: none; color: #fff; min-width: 58px; }
     .compact-marks strong { display: block; font-size: 1.45rem; line-height: 1.1; color: #fff; }
     .compact-marks span { display: block; font-size: .72rem; color: #fff; }
+    /* Compact rating breakdown visible for every trainer */
+    .dashboard-card.compact-trainer { display: block; }
+    .compact-trainer .trainer-summary { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .compact-trainer .rating-breakdown { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; margin-top:9px; }
+    .compact-trainer .rating-item { background:rgba(255,255,255,.07); border-radius:7px; padding:5px 2px; text-align:center; min-width:0; }
+    .compact-trainer .rating-item .rating-label { display:block; font-size:.65rem; color:#fff; line-height:1.15; }
+    .compact-trainer .rating-item .rating-count { display:block; font-size:.94rem; font-weight:800; color:#fff; margin-top:3px; }
+    @media(max-width:400px) { .compact-trainer .rating-item .rating-label {font-size:.59rem;} }
     @media (max-width: 768px) {
       .app-header { padding: 10px 14px; }
       .header-text h1 { font-size: 1.05rem; }
@@ -446,12 +454,21 @@
         const photo = trainerImages[t.name] || '';
         leaderboardDiv.insertAdjacentHTML('beforeend', `
           <div class="dashboard-card compact-trainer">
-            <div class="trainer-info">
-              <div class="rank-circle ${rankClass}">${t.rank}</div>
-              <img src="${photo}" alt="${t.name}" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=4caf50&color=fff&size=60'">
-              <h4>${t.name}</h4>
+            <div class="trainer-summary">
+              <div class="trainer-info">
+                <div class="rank-circle ${rankClass}">${t.rank}</div>
+                <img src="${photo}" alt="${t.name}" onerror="this.onerror=null;this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(t.name)}&background=4caf50&color=fff&size=60'">
+                <h4>${t.name}</h4>
+              </div>
+              <div class="compact-marks"><strong>${t.marks}</strong><span>Total Marks</span></div>
             </div>
-            <div class="compact-marks"><strong>${t.marks}</strong><span>Marks</span></div>
+            <div class="rating-breakdown" aria-label="Rating counts for ${t.name}">
+              <div class="rating-item"><span class="rating-label">Excellent<br>(+3)</span><span class="rating-count">${t.Excellent ?? 0}</span></div>
+              <div class="rating-item"><span class="rating-label">Good<br>(+2)</span><span class="rating-count">${t.Good ?? 0}</span></div>
+              <div class="rating-item"><span class="rating-label">Average<br>(+1)</span><span class="rating-count">${t.Average ?? 0}</span></div>
+              <div class="rating-item"><span class="rating-label">Needs Improve<br>(0)</span><span class="rating-count">${t['Needs Improvement'] ?? 0}</span></div>
+              <div class="rating-item"><span class="rating-label">Poor<br>(−1)</span><span class="rating-count">${t.Poor ?? 0}</span></div>
+            </div>
           </div>
         `);
       });
