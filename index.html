@@ -548,6 +548,7 @@ body.is-done .submit-area { opacity: 0; }
       e.preventDefault();
       const btn = document.getElementById('submit-btn');
       const popup = document.getElementById('success-popup');
+      if (btn.disabled) return;
 
       // If anything was skipped (e.g. after going back), jump to it
       const missing = trainers.findIndex(t => !form.querySelector(`input[name="trainer_${t.id}"]:checked`));
@@ -563,7 +564,6 @@ body.is-done .submit-area { opacity: 0; }
 
       btn.disabled = true;
       try {
-        await window.gymHealth();
         const result = await window.gymRequest(null, payload);
         if (!result.ok) throw new Error(result.error || 'Submission failed');
       } catch (error) {
@@ -585,7 +585,7 @@ body.is-done .submit-area { opacity: 0; }
         btn.textContent = 'Complete Evaluation';
         header.classList.remove('compact');
         go(0);
-      }, 4500);
+      }, 800);
     });
 
     // ---------------------------------------------------------------
