@@ -347,7 +347,7 @@
 
   <div id="toast" role="status"></div>
 
-  <script src="config.js"></script>
+  <script src="config.js?v=4"></script>
   <script>
     const SECRET_PASSWORD = "Ranga1";
 
@@ -478,8 +478,7 @@
     }
 
     function loadData() {
-      return fetch(ENDPOINT + '?t=' + Date.now())
-        .then(res => res.json())
+      return window.gymHealth().then(() => window.gymRequest())
         .then(response => {
           if (!response || !response.ok || !Array.isArray(response.data)) throw new Error(response?.error || "Invalid response");
           allData = response.data;
@@ -487,7 +486,12 @@
           return allData.length;
         })
         .catch(err => {
-          $('leaderboard').innerHTML = '<p style="text-align:center; color:red;">Error loading data. Check your URL.</p>';
+          allData = [];
+          $('leaderboard').textContent = 'Error loading data: ' + err.message;
+          $('top-trainer').textContent = 'Unavailable';
+          $('top-marks').textContent = '—';
+          $('highest-score').textContent = '—';
+          $('total-evals').textContent = '—';
           return -1;
         });
     }
@@ -498,7 +502,7 @@
     const chartOverlay = $('chart-overlay');
 
     function buildChart() {
-      const rows = [...allData].sort((a, b) => b.marks - a.marks);
+      const rows = allData.filter(t => t.clients > 0).sort((a, b) => b.marks - a.marks);
       const max = Math.max(...rows.map(r => r.marks), 1);
       const wrap = $('chart-rows');
       wrap.innerHTML = '';
@@ -560,8 +564,8 @@
       clearBtn.textContent = 'Clearing…';
 
       try {
-        const res = await fetch(ENDPOINT, {method:'POST', body:JSON.stringify({action:'backupAndClear', password:SECRET_PASSWORD})});
-        const result = await res.json();
+        await window.gymHealth();
+        const result = await window.gymRequest(null, {action:'backupAndClear', password:SECRET_PASSWORD});
         if (!result.ok || !result.backupUrl) throw new Error(result.error || 'Backup not confirmed');
         await loadData();
         toast('Backup saved and data cleared ✓');

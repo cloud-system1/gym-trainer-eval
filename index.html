@@ -401,7 +401,7 @@ body.is-done .submit-area { opacity: 0; }
     <p>Your evaluation has been securely recorded.<br>Thank you for shaping the High Impact experience!</p>
   </div>
 
-  <script src="config.js"></script>
+  <script src="config.js?v=4"></script>
   <script>
     const trainers = [
       { id: "5", name: "Bhagya", img: "assets/trainers/bhagya.jpg", },
@@ -563,8 +563,8 @@ body.is-done .submit-area { opacity: 0; }
 
       btn.disabled = true;
       try {
-        const res = await fetch(ENDPOINT, { method:'POST', body:JSON.stringify(payload) });
-        const result = await res.json();
+        await window.gymHealth();
+        const result = await window.gymRequest(null, payload);
         if (!result.ok) throw new Error(result.error || 'Submission failed');
       } catch (error) {
         alert('Could not confirm submission: ' + error.message);
