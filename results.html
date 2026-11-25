@@ -243,7 +243,7 @@
     /* Compact rating breakdown visible for every trainer */
     .dashboard-card.compact-trainer { display: block; }
     .compact-trainer .trainer-summary { display:flex; align-items:center; justify-content:space-between; gap:10px; }
-    .compact-trainer .rating-breakdown { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:4px; margin-top:9px; }
+    .compact-trainer .rating-breakdown { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:4px; margin-top:9px; }
     .compact-trainer .rating-item { background:rgba(255,255,255,.07); border-radius:7px; padding:5px 2px; text-align:center; min-width:0; }
     .compact-trainer .rating-item .rating-label { display:block; font-size:.65rem; color:#fff; line-height:1.15; }
     .compact-trainer .rating-item .rating-count { display:block; font-size:.94rem; font-weight:800; color:#fff; margin-top:3px; }
@@ -285,7 +285,7 @@
   <header class="app-header" id="main-header">
     <div class="header-text">
       <h1>Instructor Performance</h1>
-      <p><strong>Marking Criteria:</strong> Excellent: +3 | Good: +2 | Average: +1 | Needs Improvement: 0 | Poor: −1</p>
+      <p><strong>Marking Criteria:</strong> Excellent: +3 | Good: +2 | Average: +1 | Needs Improvement: 0 | Poor: −1 | Not Familiar: excluded</p>
     </div>
     <img src="logo.png" alt="High Impact Gym" class="header-logo">
   </header>
@@ -299,7 +299,7 @@
 
     <div class="criteria-title">Marks for each client rating</div>
     <div class="criteria-strip" aria-label="Marking criteria">
-      <span>Excellent +3</span><span>Good +2</span><span>Average +1</span><span>Needs Improvement 0</span><span>Poor −1</span>
+      <span>Excellent +3</span><span>Good +2</span><span>Average +1</span><span>Needs Improvement 0</span><span>Poor −1</span><span>Not Familiar: Not Rated</span>
     </div>
 
     <div class="toolbar">
@@ -316,10 +316,10 @@
     <div class="confirm-box">
       <div class="confirm-icon">⚠️</div>
       <h3 id="confirm-title">Clear all data?</h3>
-      <p>This permanently deletes every evaluation in the Google Sheet. This cannot be undone.</p>
+      <p>A dated backup spreadsheet will be created and verified before existing evaluations are cleared.</p>
       <div class="confirm-actions">
         <button type="button" class="btn-no" id="confirm-no">No</button>
-        <button type="button" class="btn-yes" id="confirm-yes">Yes, clear all</button>
+        <button type="button" class="btn-yes" id="confirm-yes">Back up & clear</button>
       </div>
     </div>
   </div>
@@ -347,6 +347,7 @@
 
   <div id="toast" role="status"></div>
 
+  <script src="config.js"></script>
   <script>
     const SECRET_PASSWORD = "Ranga1";
 
@@ -385,7 +386,7 @@
       lastScrollTop = scrollTop;
     });
 
-    const ENDPOINT = 'https://script.google.com/macros/s/AKfycbwiafaHcPG-WgypZ1_9EgqZ-nLb34p9U3uV-g3w7ukrRlbJLR1Y_hK87mdJMoPiDyU/exec?v=101';
+    const ENDPOINT = window.GYM_API_URL;
 
     const trainerImages = {
       "Sameera": "assets/trainers/Sameera.jpg",
@@ -439,7 +440,7 @@
       }
 
       leaderboardDiv.innerHTML = '';
-      const topTrainer = [...data].sort((a,b) => Number(b.marks) - Number(a.marks))[0];
+      const topTrainer = [...data].filter(t => t.clients > 0).sort((a,b) => Number(b.marks) - Number(a.marks))[0] || {name:"—", marks:0};
       $('top-trainer').textContent = topTrainer.name;
       $('top-marks').textContent = topTrainer.marks + ' Marks';
       $('top-photo').src = trainerImages[topTrainer.name] || 'logo.png';
@@ -469,6 +470,7 @@
               <div class="rating-item"><span class="rating-label">Average<br>(+1)</span><span class="rating-count">${t.Average ?? 0}</span></div>
               <div class="rating-item"><span class="rating-label">Needs Improve<br>(0)</span><span class="rating-count">${t['Needs Improvement'] ?? 0}</span></div>
               <div class="rating-item"><span class="rating-label">Poor<br>(−1)</span><span class="rating-count">${t.Poor ?? 0}</span></div>
+              <div class="rating-item"><span class="rating-label">Not Familiar</span><span class="rating-count">${t["Not Familiar"] ?? 0}</span></div>
             </div>
           </div>
         `);
@@ -476,10 +478,11 @@
     }
 
     function loadData() {
-      return fetch(ENDPOINT + '&t=' + Date.now())
+      return fetch(ENDPOINT + '?t=' + Date.now())
         .then(res => res.json())
         .then(response => {
-          allData = (response && response.ok && Array.isArray(response.data)) ? response.data : [];
+          if (!response || !response.ok || !Array.isArray(response.data)) throw new Error(response?.error || "Invalid response");
+          allData = response.data;
           renderDashboard(allData);
           return allData.length;
         })
@@ -557,21 +560,20 @@
       clearBtn.textContent = 'Clearing…';
 
       try {
-        await fetch(ENDPOINT, {
-          method: 'POST',
-          mode: 'no-cors',
-          body: JSON.stringify({ action: 'clear', password: SECRET_PASSWORD })
-        });
+        const res = await fetch(ENDPOINT, {method:'POST', body:JSON.stringify({action:'backupAndClear', password:SECRET_PASSWORD})});
+        const result = await res.json();
+        if (!result.ok || !result.backupUrl) throw new Error(result.error || 'Backup not confirmed');
+        await loadData();
+        toast('Backup saved and data cleared ✓');
+        const link = document.createElement('a');
+        link.href = result.backupUrl; link.target = '_blank'; link.rel = 'noopener';
+        link.textContent = 'Open backup: ' + result.backupName;
+        link.style.cssText = 'display:block;color:#fff;margin:12px;text-align:center';
+        $('clear-btn').parentElement.after(link);
       } catch (err) {
-        console.log('Clear request error:', err);
+        toast('Could not confirm backup and clear: ' + err.message, true);
+        await loadData();
       }
-
-      await new Promise(r => setTimeout(r, 2000));
-      const remaining = await loadData();
-
-      if (remaining === 0) toast('All data cleared ✓');
-      else if (remaining > 0) toast('Data was not cleared. Update the Apps Script and redeploy.', true);
-      else toast('Could not reach the sheet. Try again.', true);
 
       clearBtn.disabled = false;
       clearBtn.textContent = '🗑️ Clear All Data';
