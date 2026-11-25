@@ -78,17 +78,22 @@ function doPost(e) {
         sheet.getParent().getSpreadsheetLocale()
       );
 
-      // COPY EXISTING WORKSHEET
-      const backupSheet = sheet.copyTo(backup);
-      backupSheet.setName(SHEET_NAME);
+     
+// Copy the original worksheet
+const backupSheet = sheet.copyTo(backup);
 
-      backup.getSheets().forEach(function(s) {
-        if (s.getSheetId() !== backupSheet.getSheetId()) {
-          backup.deleteSheet(s);
-        }
-      });
+// Remove the default worksheet first
+backup.getSheets().forEach(function(s) {
+  if (s.getSheetId() !== backupSheet.getSheetId()) {
+    backup.deleteSheet(s);
+  }
+});
 
-      SpreadsheetApp.flush();
+// Rename the copied worksheet after deletion
+backupSheet.setName(SHEET_NAME);
+
+SpreadsheetApp.flush();
+
 
       // VERIFY BACKUP BEFORE CLEARING
       const backupData = backupSheet
