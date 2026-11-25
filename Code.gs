@@ -191,9 +191,21 @@ SpreadsheetApp.flush();
   }
 }
 
+
 // RESULTS DASHBOARD
 function doGet(e) {
+
+  // BACKEND HEALTH CHECK
+  if (e && e.parameter && e.parameter.action === "health") {
+    return jsonResponse({
+      ok: true,
+      version: "backup-v3",
+      sheet: SHEET_NAME
+    });
+  }
+
   const lock = LockService.getScriptLock();
+
 
   try {
     lock.waitLock(30000);
